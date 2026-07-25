@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap Table BIF - Inversors</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;color:#222;background:#fff;}
+input,select{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;}
+
+.top-bar{display:flex;gap:14px;align-items:center;padding:10px 14px;border-bottom:2px solid #D9E1F2;position:sticky;top:0;background:#fff;z-index:200;box-shadow:0 2px 4px rgba(0,0,0,.08);}
+.top-bar h1{font-size:13pt;color:#2c5aa0;margin-right:auto;}
+.top-bar input[type=text]{border:1px solid #ccc;border-radius:4px;padding:5px 8px;width:280px;}
+.count{font-size:9pt;color:#666;}
+
+.table-wrap{overflow:auto;height:calc(100vh - 52px);}
+table{border-collapse:separate;border-spacing:0;font-size:9.5pt;width:100%;}
+th,td{border-right:1px solid #ddd;border-bottom:1px solid #ddd;padding:4px 8px;vertical-align:middle;white-space:nowrap;}
+th:first-child,td:first-child{border-left:1px solid #ddd;}
+th{background:#D9E1F2;font-weight:bold;font-size:8.5pt;text-align:left;color:#333;position:sticky;top:0;z-index:3;cursor:pointer;user-select:none;}
+th:hover{background:#c7d5ee;}
+th.sorted::after{content:" \25BE";}
+th.sorted.asc::after{content:" \25B4";}
+tbody tr:nth-child(even){background:#f9f9f9;}
+tbody tr:hover{background:#eef3fb;}
+.loading,.empty{padding:20px;color:#888;font-style:italic;}
+.error{padding:20px;color:#b00020;}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>Cap Table BIF &mdash; Inversors</h1>
+  <input type="text" id="cerca" placeholder="Cerca per nom, ID, email, poblacio...">
+  <span class="count" id="comptador"></span>
+</div>
+
+<div class="table-wrap">
+  <table id="taula">
+    <thead>
+      <tr>
+        <th data-col="id_inversor">ID</th>
+        <th data-col="inversor">Inversor</th>
+        <th data-col="id_tipo">Tipus ID</th>
+        <th data-col="id_num">Num. ID</th>
+        <th data-col="nacionalidad">Nacionalitat</th>
+        <th data-col="dom_agrupado">Domicili</th>
+        <th data-col="email">Email</th>
+        <th data-col="telf">Telefon</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td class="loading" colspan="8">Carregant dades de Neon...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
