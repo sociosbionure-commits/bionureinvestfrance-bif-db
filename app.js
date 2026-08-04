@@ -1,20 +1,30 @@
 // ============================================================
-// Cap Table BIF -- connexio directa a Neon (sense backend)
-// Rol restringit "bif_app": nomes SELECT/INSERT/UPDATE/DELETE
-// sobre les taules d'aquesta app, sense permisos per esborrar
-// taules ni tocar res mes del projecte de Neon.
+// Cap Table BIF -- crida al proxy /api/query (la credencial de
+// Neon nomes viu al servidor, mai aqui). Cal contrasenya per
+// accedir a les dades.
 // ============================================================
-const NEON_CONN = 'postgresql://bif_app:s8AZVN10yEXmMxZnFbWWf9U@ep-late-wildflower-za5orgw1-pooler.c-2.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-
-let neonSql = null;
-async function initNeon() {
-  if (neonSql) return;
-  const { neon } = await import('https://esm.sh/@neondatabase/serverless');
-  neonSql = neon(NEON_CONN);
+function demanaContrasenya() {
+  let pwd = sessionStorage.getItem('bif_pwd');
+  if (!pwd) {
+    pwd = prompt('Contrasenya d\'acces:') || '';
+    sessionStorage.setItem('bif_pwd', pwd);
+  }
+  return pwd;
 }
-async function neonQuery(sql, params = []) {
-  await initNeon();
-  return params.length ? await neonSql.query(sql, params) : await neonSql.query(sql);
+
+async function apiQuery(action) {
+  const res = await fetch('/api/query', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-app-password': demanaContrasenya() },
+    body: JSON.stringify({ action }),
+  });
+  if (res.status === 401) {
+    sessionStorage.removeItem('bif_pwd');
+    throw new Error('Contrasenya incorrecta');
+  }
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error de servidor');
+  return data.rows;
 }
 
 let dades = [];
@@ -76,8 +86,7 @@ function marcarOrdre() {
 
 async function carregar() {
   try {
-    const res = await neonQuery('SELECT * FROM v_inversor_bif ORDER BY id_inversor');
-    dades = res.rows || res;
+    dades = await apiQuery('listInversors');
     marcarOrdre();
     render();
   } catch (e) {
