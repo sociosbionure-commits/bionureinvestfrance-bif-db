@@ -12,11 +12,11 @@ function demanaContrasenya() {
   return pwd;
 }
 
-async function apiQuery(action) {
+async function apiQuery(action, payload) {
   const res = await fetch('/api/query', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-app-password': demanaContrasenya() },
-    body: JSON.stringify({ action }),
+    body: JSON.stringify({ action, payload }),
   });
   if (res.status === 401) {
     sessionStorage.removeItem('bif_pwd');
@@ -27,14 +27,16 @@ async function apiQuery(action) {
   return data.rows;
 }
 
-let dades = [];
-let ordreCol = 'id_inversor';
-let ordreAsc = true;
-
 function escapeHtml(s) {
   if (s === null || s === undefined) return '';
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+
+// ---------------- Inversors ----------------
+
+let dades = [];
+let ordreCol = 'id_inversor';
+let ordreAsc = true;
 
 function render() {
   const tbody = document.getElementById('tbody');
@@ -59,7 +61,7 @@ function render() {
   document.getElementById('comptador').textContent = `${files.length} de ${dades.length} inversors`;
 
   if (files.length === 0) {
-    tbody.innerHTML = '<tr><td class="empty" colspan="8">Cap resultat</td></tr>';
+    tbody.innerHTML = '<tr><td class="empty" colspan="9">Cap resultat</td></tr>';
     return;
   }
 
@@ -73,12 +75,13 @@ function render() {
       <td>${escapeHtml(r.dom_agrupado)}</td>
       <td>${escapeHtml(r.email)}</td>
       <td>${escapeHtml(r.telf)}</td>
+      <td><button class="btn petit secundari" data-edit-inversor="${r.id_inversor}">Edita</button></td>
     </tr>
   `).join('');
 }
 
 function marcarOrdre() {
-  document.querySelectorAll('th[data-col]').forEach(th => {
+  document.querySelectorAll('#taula th[data-col]').forEach(th => {
     th.classList.toggle('sorted', th.dataset.col === ordreCol);
     th.classList.toggle('asc', th.dataset.col === ordreCol && ordreAsc);
   });
@@ -91,12 +94,12 @@ async function carregar() {
     render();
   } catch (e) {
     document.getElementById('tbody').innerHTML =
-      `<tr><td class="error" colspan="8">Error carregant dades: ${escapeHtml(e.message)}</td></tr>`;
+      `<tr><td class="error" colspan="9">Error carregant dades: ${escapeHtml(e.message)}</td></tr>`;
   }
 }
 
 document.getElementById('cerca').addEventListener('input', render);
-document.querySelectorAll('th[data-col]').forEach(th => {
+document.querySelectorAll('#taula th[data-col]').forEach(th => {
   th.addEventListener('click', () => {
     const col = th.dataset.col;
     if (ordreCol === col) ordreAsc = !ordreAsc;
@@ -104,6 +107,161 @@ document.querySelectorAll('th[data-col]').forEach(th => {
     marcarOrdre();
     render();
   });
+});
+
+// ---------------- Modal inversor ----------------
+
+const campsInversor = ['id_inversor', 'inversor_nom', 'inversor_cnom_rs', 'id_tipo', 'id_num', 'nacionalidad',
+  'administracion', 'administrador', 'co_cargo_dni', 'k_social', 'domicilio', 'cp',
+  'ciudad_pob', 'provincia', 'pais_es', 'email', 'email_idioma', 'telf', 'notas'];
+
+function obrirModalInversor(registre) {
+  document.getElementById('errorInversor').textContent = '';
+  const esEdicio = !!registre;
+  document.getElementById('titolModalInversor').textContent = esEdicio ? `Edita inversor ${registre.id_inversor}` : 'Nou inversor';
+  campsInversor.forEach(c => {
+    document.getElementById('f_' + c).value = (registre && registre[c] !== null && registre[c] !== undefined) ? registre[c] : '';
+  });
+  document.getElementById('f_id_inversor').disabled = esEdicio;
+  document.getElementById('overlayInversor').dataset.mode = esEdicio ? 'edit' : 'new';
+  document.getElementById('overlayInversor').classList.remove('oculta');
+}
+
+function tancarModalInversor() {
+  document.getElementById('overlayInversor').classList.add('oculta');
+}
+
+document.getElementById('btnNouInversor').addEventListener('click', () => obrirModalInversor(null));
+document.getElementById('btnCancelarInversor').addEventListener('click', tancarModalInversor);
+
+document.getElementById('tbody').addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-edit-inversor]');
+  if (!btn) return;
+  const id = Number(btn.dataset.editInversor);
+  const registre = dades.find(r => r.id_inversor === id);
+  if (registre) obrirModalInversor(registre);
+});
+
+document.getElementById('btnGuardarInversor').addEventListener('click', async () => {
+  const errorEl = document.getElementById('errorInversor');
+  errorEl.textContent = '';
+  const payload = {};
+  campsInversor.forEach(c => { payload[c] = document.getElementById('f_' + c).value; });
+  if (!payload.id_inversor) {
+    errorEl.textContent = 'Cal indicar un ID d\'inversor.';
+    return;
+  }
+  const mode = document.getElementById('overlayInversor').dataset.mode;
+  try {
+    await apiQuery(mode === 'edit' ? 'updateInversor' : 'addInversor', payload);
+    tancarModalInversor();
+    await carregar();
+  } catch (e) {
+    errorEl.textContent = e.message;
+  }
+});
+
+// ---------------- Titols ----------------
+
+let dadesTitols = [];
+
+function renderTitols() {
+  const tbody = document.getElementById('tbodyTitols');
+  document.getElementById('comptadorTitols').textContent = `${dadesTitols.length} moviments`;
+  if (dadesTitols.length === 0) {
+    tbody.innerHTML = '<tr><td class="empty" colspan="9">Cap moviment</td></tr>';
+    return;
+  }
+  tbody.innerHTML = dadesTitols.map(r => `
+    <tr>
+      <td>${escapeHtml(r.num_orden)}</td>
+      <td>${escapeHtml(r.inversor)}</td>
+      <td>${r.fecha ? new Date(r.fecha).toLocaleDateString('ca') : ''}</td>
+      <td>${escapeHtml(r.adquisicion)}</td>
+      <td>${escapeHtml(r.enajenacion)}</td>
+      <td>${escapeHtml(r.de)}</td>
+      <td>${escapeHtml(r.a)}</td>
+      <td>${escapeHtml(r.titulo)}</td>
+      <td>${escapeHtml(r.total_acc)}</td>
+    </tr>
+  `).join('');
+}
+
+async function carregarTitols() {
+  try {
+    dadesTitols = await apiQuery('listTitols');
+    renderTitols();
+  } catch (e) {
+    document.getElementById('tbodyTitols').innerHTML =
+      `<tr><td class="error" colspan="9">Error carregant dades: ${escapeHtml(e.message)}</td></tr>`;
+  }
+}
+
+document.getElementById('btnMoviments').addEventListener('click', () => {
+  document.getElementById('barraInversors').classList.add('oculta');
+  document.getElementById('vistaInversors').classList.add('oculta');
+  document.getElementById('barraTitols').classList.remove('oculta');
+  document.getElementById('vistaTitols').classList.remove('oculta');
+  carregarTitols();
+});
+
+document.getElementById('btnInversors').addEventListener('click', () => {
+  document.getElementById('barraTitols').classList.add('oculta');
+  document.getElementById('vistaTitols').classList.add('oculta');
+  document.getElementById('barraInversors').classList.remove('oculta');
+  document.getElementById('vistaInversors').classList.remove('oculta');
+});
+
+// ---------------- Modal moviment de titols ----------------
+
+const campsTitol = ['id_inversor', 'fecha', 'adquisicion', 'enajenacion', 'de', 'a', 'titulo'];
+
+function obrirModalTitol(mode, registre) {
+  document.getElementById('errorTitol').textContent = '';
+  document.getElementById('titolModalTitol').textContent =
+    mode === 'edit' ? `Edita l'ultim moviment (num. ordre ${registre.num_orden})` : 'Nou moviment';
+  campsTitol.forEach(c => {
+    let v = registre ? registre[c] : '';
+    if (c === 'fecha' && v) v = new Date(v).toISOString().slice(0, 10);
+    document.getElementById('t_' + c).value = (v === null || v === undefined) ? '' : v;
+  });
+  document.getElementById('overlayTitol').dataset.mode = mode;
+  document.getElementById('overlayTitol').classList.remove('oculta');
+}
+
+function tancarModalTitol() {
+  document.getElementById('overlayTitol').classList.add('oculta');
+}
+
+document.getElementById('btnNouMoviment').addEventListener('click', () => obrirModalTitol('new', null));
+document.getElementById('btnCancelarTitol').addEventListener('click', tancarModalTitol);
+
+document.getElementById('btnEditarUltim').addEventListener('click', async () => {
+  if (dadesTitols.length === 0) {
+    alert('Encara no hi ha cap moviment.');
+    return;
+  }
+  const ultim = dadesTitols.reduce((max, r) => (r.num_orden > max.num_orden ? r : max), dadesTitols[0]);
+  obrirModalTitol('edit', ultim);
+});
+
+document.getElementById('btnGuardarTitol').addEventListener('click', async () => {
+  const errorEl = document.getElementById('errorTitol');
+  errorEl.textContent = '';
+  const payload = {};
+  campsTitol.forEach(c => { payload[c] = document.getElementById('t_' + c).value; });
+  if (!payload.id_inversor) {
+    errorEl.textContent = 'Cal indicar l\'ID de l\'inversor.';
+    return;
+  }
+  const mode = document.getElementById('overlayTitol').dataset.mode;
+  try {
+    await apiQuery(mode === 'edit' ? 'updateLastTitol' : 'addTitol', payload);
+    tancarModalTitol();
+    await carregarTitols();
+  } catch (e) {
+    errorEl.textContent = e.message;
+  }
 });
 
 carregar();

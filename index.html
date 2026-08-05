@@ -7,18 +7,25 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;color:#222;background:#fff;}
-input,select{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;}
+input,select,textarea{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;}
+button{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;cursor:pointer;}
 
 .top-bar{display:flex;gap:14px;align-items:center;padding:10px 14px;border-bottom:2px solid #D9E1F2;position:sticky;top:0;background:#fff;z-index:200;box-shadow:0 2px 4px rgba(0,0,0,.08);}
 .top-bar h1{font-size:13pt;color:#2c5aa0;margin-right:auto;}
 .top-bar input[type=text]{border:1px solid #ccc;border-radius:4px;padding:5px 8px;width:280px;}
 .count{font-size:9pt;color:#666;}
+.btn{background:#2c5aa0;color:#fff;border:none;border-radius:4px;padding:6px 12px;font-size:9pt;}
+.btn:hover{background:#244887;}
+.btn.secundari{background:#fff;color:#2c5aa0;border:1px solid #2c5aa0;}
+.btn.secundari:hover{background:#eef3fb;}
+.btn.petit{padding:2px 8px;font-size:8.5pt;}
 
 .table-wrap{overflow:auto;height:calc(100vh - 52px);}
 table{border-collapse:separate;border-spacing:0;font-size:9.5pt;width:100%;}
 th,td{border-right:1px solid #ddd;border-bottom:1px solid #ddd;padding:4px 8px;vertical-align:middle;white-space:nowrap;}
 th:first-child,td:first-child{border-left:1px solid #ddd;}
 th{background:#D9E1F2;font-weight:bold;font-size:8.5pt;text-align:left;color:#333;position:sticky;top:0;z-index:3;cursor:pointer;user-select:none;}
+th.no-sort{cursor:default;}
 th:hover{background:#c7d5ee;}
 th.sorted::after{content:" \25BE";}
 th.sorted.asc::after{content:" \25B4";}
@@ -26,17 +33,33 @@ tbody tr:nth-child(even){background:#f9f9f9;}
 tbody tr:hover{background:#eef3fb;}
 .loading,.empty{padding:20px;color:#888;font-style:italic;}
 .error{padding:20px;color:#b00020;}
+
+.oculta{display:none !important;}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:40px 16px;}
+.modal{background:#fff;border-radius:6px;width:100%;max-width:640px;padding:20px 24px;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+.modal h2{font-size:12pt;color:#2c5aa0;margin-bottom:14px;}
+.camps{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;}
+.camp{display:flex;flex-direction:column;gap:3px;}
+.camp.full{grid-column:1 / -1;}
+.camp label{font-size:8.5pt;color:#555;}
+.camp input,.camp textarea{border:1px solid #ccc;border-radius:4px;padding:6px 8px;}
+.camp textarea{resize:vertical;min-height:44px;}
+.modal-accions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+.modal-error{color:#b00020;font-size:9pt;margin-top:8px;min-height:14px;}
 </style>
 </head>
 <body>
 
-<div class="top-bar">
+<div class="top-bar" id="barraInversors">
   <h1>Cap Table BIF &mdash; Inversors</h1>
   <input type="text" id="cerca" placeholder="Cerca per nom, ID, email, poblacio...">
   <span class="count" id="comptador"></span>
+  <button class="btn secundari" id="btnMoviments">Moviments de titols</button>
+  <button class="btn" id="btnNouInversor">+ Nou inversor</button>
 </div>
 
-<div class="table-wrap">
+<div class="table-wrap" id="vistaInversors">
   <table id="taula">
     <thead>
       <tr>
@@ -48,12 +71,94 @@ tbody tr:hover{background:#eef3fb;}
         <th data-col="dom_agrupado">Domicili</th>
         <th data-col="email">Email</th>
         <th data-col="telf">Telefon</th>
+        <th class="no-sort"></th>
       </tr>
     </thead>
     <tbody id="tbody">
-      <tr><td class="loading" colspan="8">Carregant dades de Neon...</td></tr>
+      <tr><td class="loading" colspan="9">Carregant dades de Neon...</td></tr>
     </tbody>
   </table>
+</div>
+
+<div class="top-bar oculta" id="barraTitols">
+  <h1>Cap Table BIF &mdash; Moviments de titols</h1>
+  <span class="count" id="comptadorTitols"></span>
+  <button class="btn secundari" id="btnEditarUltim">Edita l'ultim moviment</button>
+  <button class="btn secundari" id="btnInversors">Veure inversors</button>
+  <button class="btn" id="btnNouMoviment">+ Nou moviment</button>
+</div>
+
+<div class="table-wrap oculta" id="vistaTitols">
+  <table id="taulaTitols">
+    <thead>
+      <tr>
+        <th class="no-sort">Num. ordre</th>
+        <th class="no-sort">Inversor</th>
+        <th class="no-sort">Data</th>
+        <th class="no-sort">Adquisicio</th>
+        <th class="no-sort">Enajenacio</th>
+        <th class="no-sort">De</th>
+        <th class="no-sort">A</th>
+        <th class="no-sort">Titol</th>
+        <th class="no-sort">Total acc.</th>
+      </tr>
+    </thead>
+    <tbody id="tbodyTitols">
+      <tr><td class="loading" colspan="9">Carregant dades de Neon...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="overlay oculta" id="overlayInversor">
+  <div class="modal">
+    <h2 id="titolModalInversor">Nou inversor</h2>
+    <div class="camps">
+      <div class="camp"><label>ID inversor *</label><input type="number" id="f_id_inversor"></div>
+      <div class="camp"><label>Nom</label><input type="text" id="f_inversor_nom"></div>
+      <div class="camp"><label>Cognoms / Raho social</label><input type="text" id="f_inversor_cnom_rs"></div>
+      <div class="camp"><label>Tipus ID</label><input type="text" id="f_id_tipo" placeholder="DNI, NIE, NIF..."></div>
+      <div class="camp"><label>Num. ID</label><input type="text" id="f_id_num"></div>
+      <div class="camp"><label>Nacionalitat</label><input type="text" id="f_nacionalidad"></div>
+      <div class="camp"><label>Administracio</label><input type="text" id="f_administracion"></div>
+      <div class="camp"><label>Administrador</label><input type="text" id="f_administrador"></div>
+      <div class="camp"><label>Carrec / DNI apoderat</label><input type="text" id="f_co_cargo_dni"></div>
+      <div class="camp"><label>Capital social</label><input type="text" id="f_k_social"></div>
+      <div class="camp full"><label>Domicili</label><input type="text" id="f_domicilio"></div>
+      <div class="camp"><label>CP</label><input type="text" id="f_cp"></div>
+      <div class="camp"><label>Ciutat / Poblacio</label><input type="text" id="f_ciudad_pob"></div>
+      <div class="camp"><label>Provincia</label><input type="text" id="f_provincia"></div>
+      <div class="camp"><label>Pais</label><input type="text" id="f_pais_es"></div>
+      <div class="camp"><label>Email</label><input type="text" id="f_email"></div>
+      <div class="camp"><label>Idioma email</label><input type="text" id="f_email_idioma"></div>
+      <div class="camp"><label>Telefon</label><input type="text" id="f_telf"></div>
+      <div class="camp full"><label>Notes</label><textarea id="f_notas"></textarea></div>
+    </div>
+    <div class="modal-error" id="errorInversor"></div>
+    <div class="modal-accions">
+      <button class="btn secundari" id="btnCancelarInversor">Cancela</button>
+      <button class="btn" id="btnGuardarInversor">Guarda</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay oculta" id="overlayTitol">
+  <div class="modal">
+    <h2 id="titolModalTitol">Nou moviment</h2>
+    <div class="camps">
+      <div class="camp"><label>ID inversor *</label><input type="number" id="t_id_inversor"></div>
+      <div class="camp"><label>Data</label><input type="date" id="t_fecha"></div>
+      <div class="camp"><label>Adquisicio</label><input type="number" id="t_adquisicion"></div>
+      <div class="camp"><label>Enajenacio</label><input type="number" id="t_enajenacion"></div>
+      <div class="camp"><label>De</label><input type="number" id="t_de"></div>
+      <div class="camp"><label>A</label><input type="number" id="t_a"></div>
+      <div class="camp full"><label>Titol</label><input type="text" id="t_titulo"></div>
+    </div>
+    <div class="modal-error" id="errorTitol"></div>
+    <div class="modal-accions">
+      <button class="btn secundari" id="btnCancelarTitol">Cancela</button>
+      <button class="btn" id="btnGuardarTitol">Guarda</button>
+    </div>
+  </div>
 </div>
 
 <script src="app.js"></script>
