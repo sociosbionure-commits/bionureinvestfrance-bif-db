@@ -6,12 +6,6 @@
 // ============================================================
 const { neon } = require('@neondatabase/serverless');
 
-const ACTIONS = {
-  listInversors: 'SELECT * FROM v_inversor_bif ORDER BY id_inversor',
-  listInversorFinan: 'SELECT * FROM v_inversor_bif_infofin ORDER BY id_inversor',
-  listTitols: 'SELECT * FROM v_titulos_bif ORDER BY id_inversor, num_orden',
-};
-
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Metode no permes' });
@@ -24,16 +18,23 @@ module.exports = async (req, res) => {
   }
 
   const { action } = req.body || {};
-  const query = ACTIONS[action];
-  if (!query) {
+  const sql = neon(process.env.NEON_CONN);
+
+  const ACTIONS = {
+    listInversors: () => sql`SELECT * FROM v_inversor_bif ORDER BY id_inversor`,
+    listInversorFinan: () => sql`SELECT * FROM v_inversor_bif_infofin ORDER BY id_inversor`,
+    listTitols: () => sql`SELECT * FROM v_titulos_bif ORDER BY num_orden`,
+  };
+
+  const run = ACTIONS[action];
+  if (!run) {
     res.status(400).json({ error: 'Accio desconeguda' });
     return;
   }
 
   try {
-    const sql = neon(process.env.NEON_CONN);
-    const result = await sql.query(query);
-    res.status(200).json({ rows: result.rows || result });
+    const rows = await run();
+    res.status(200).json({ rows });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
