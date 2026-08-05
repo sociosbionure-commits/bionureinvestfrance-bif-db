@@ -181,6 +181,10 @@ let dadesTitols = [];
 function renderTitols() {
   const tbody = document.getElementById('tbodyTitols');
   document.getElementById('comptadorTitols').textContent = `${dadesTitols.length} moviments`;
+
+  const suma = dadesTitols.reduce((acc, r) => acc + (Number(r.total_acc) || 0), 0);
+  document.getElementById('totalAcc').textContent = formatNum(suma);
+
   if (dadesTitols.length === 0) {
     tbody.innerHTML = '<tr><td class="empty" colspan="9">Cap moviment</td></tr>';
     return;

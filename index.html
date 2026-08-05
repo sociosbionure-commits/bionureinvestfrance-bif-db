@@ -34,6 +34,17 @@ tbody tr:hover{background:#eef3fb;}
 .loading,.empty{padding:20px;color:#888;font-style:italic;}
 .error{padding:20px;color:#b00020;}
 
+#taula{table-layout:fixed;width:auto;}
+#taula th:nth-child(1),#taula td:nth-child(1){width:50px;}
+#taula th:nth-child(2),#taula td:nth-child(2){width:220px;white-space:normal;}
+#taula th:nth-child(3),#taula td:nth-child(3){width:70px;}
+#taula th:nth-child(4),#taula td:nth-child(4){width:90px;}
+#taula th:nth-child(5),#taula td:nth-child(5){width:100px;}
+#taula th:nth-child(6),#taula td:nth-child(6){width:320px;white-space:normal;}
+#taula th:nth-child(7),#taula td:nth-child(7){width:200px;white-space:normal;}
+#taula th:nth-child(8),#taula td:nth-child(8){width:90px;}
+#taula th:nth-child(9),#taula td:nth-child(9){width:70px;}
+
 #taulaTitols{table-layout:fixed;width:auto;}
 #taulaTitols th:nth-child(1),#taulaTitols td:nth-child(1){width:55px;text-align:right;}
 #taulaTitols th:nth-child(2),#taulaTitols td:nth-child(2){width:420px;white-space:normal;}
@@ -43,7 +54,8 @@ tbody tr:hover{background:#eef3fb;}
 #taulaTitols th:nth-child(6),#taulaTitols td:nth-child(6),
 #taulaTitols th:nth-child(7),#taulaTitols td:nth-child(7),
 #taulaTitols th:nth-child(9),#taulaTitols td:nth-child(9){width:60px;text-align:right;}
-#taulaTitols th:nth-child(8),#taulaTitols td:nth-child(8){width:504px;white-space:normal;}
+#taulaTitols th:nth-child(8),#taulaTitols td:nth-child(8){width:252px;white-space:normal;}
+#taulaTitols tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
 
 .oculta{display:none !important;}
 
@@ -117,6 +129,12 @@ tbody tr:hover{background:#eef3fb;}
     <tbody id="tbodyTitols">
       <tr><td class="loading" colspan="9">Carregant dades de Neon...</td></tr>
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="8" style="text-align:right;">Total</td>
+        <td id="totalAcc"></td>
+      </tr>
+    </tfoot>
   </table>
 </div>
 
