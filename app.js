@@ -32,6 +32,19 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+function formatNum(v) {
+  if (v === null || v === undefined || v === '') return '';
+  return Number(v).toLocaleString('ca-ES');
+}
+
+function formatData(v) {
+  if (!v) return '';
+  const d = new Date(v);
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dd}.${mm}.${d.getFullYear()}`;
+}
+
 // ---------------- Inversors ----------------
 
 let dades = [];
@@ -174,15 +187,15 @@ function renderTitols() {
   }
   tbody.innerHTML = dadesTitols.map(r => `
     <tr>
-      <td>${escapeHtml(r.num_orden)}</td>
+      <td>${formatNum(r.num_orden)}</td>
       <td>${escapeHtml(r.inversor)}</td>
-      <td>${r.fecha ? new Date(r.fecha).toLocaleDateString('ca') : ''}</td>
-      <td>${escapeHtml(r.adquisicion)}</td>
-      <td>${escapeHtml(r.enajenacion)}</td>
-      <td>${escapeHtml(r.de)}</td>
-      <td>${escapeHtml(r.a)}</td>
+      <td>${formatData(r.fecha)}</td>
+      <td>${formatNum(r.adquisicion)}</td>
+      <td>${formatNum(r.enajenacion)}</td>
+      <td>${formatNum(r.de)}</td>
+      <td>${formatNum(r.a)}</td>
       <td>${escapeHtml(r.titulo)}</td>
-      <td>${escapeHtml(r.total_acc)}</td>
+      <td>${formatNum(r.total_acc)}</td>
     </tr>
   `).join('');
 }
