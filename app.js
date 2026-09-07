@@ -111,7 +111,22 @@ async function carregar() {
   }
 }
 
-document.getElementById('cerca').addEventListener('input', render);
+function actualitzaCreuCerca() {
+  document.getElementById('cercaWrap').classList.toggle('te-text', document.getElementById('cerca').value.length > 0);
+}
+
+document.getElementById('cerca').addEventListener('input', () => {
+  actualitzaCreuCerca();
+  render();
+});
+
+document.getElementById('cercaNeteja').addEventListener('click', () => {
+  const input = document.getElementById('cerca');
+  input.value = '';
+  input.focus();
+  actualitzaCreuCerca();
+  render();
+});
 document.querySelectorAll('#taula th[data-col]').forEach(th => {
   th.addEventListener('click', () => {
     const col = th.dataset.col;
