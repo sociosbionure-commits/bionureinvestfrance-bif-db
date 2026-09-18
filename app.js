@@ -286,10 +286,10 @@ function renderPerInversor() {
   const idsOrdenats = [...grups.keys()].sort((a, b) => a - b);
 
   if (idsOrdenats.length === 0) {
-    tbody.innerHTML = '<tr><td class="empty" colspan="9">Cap moviment</td></tr>';
+    tbody.innerHTML = '<tr><td class="empty" colspan="10">Cap moviment</td></tr>';
   }
 
-  let totalAdq = 0, totalEna = 0, totalAcc = 0, html = '';
+  let totalAdq = 0, totalEna = 0, totalAcc = 0, totalTrams = 0, html = '';
   idsOrdenats.forEach(id => {
     const files = grups.get(id);
     let subAcc = 0;
@@ -308,13 +308,16 @@ function renderPerInversor() {
           <td>${formatNum(r.a)}</td>
           <td>${escapeHtml(r.titulo)}</td>
           <td>${formatNum(r.total_acc)}</td>
+          <td></td>
         </tr>`;
     });
     totalAcc += subAcc;
+    totalTrams += files.length;
     html += `
       <tr class="subtotal">
-        <td colspan="8" style="text-align:right;">Total ${escapeHtml(files[0].inversor)} (${files.length} moviments)</td>
+        <td colspan="8" style="text-align:right;">Total ${escapeHtml(files[0].inversor)}</td>
         <td style="text-align:right;">${formatNum(subAcc)}</td>
+        <td style="text-align:right;">${files.length}</td>
       </tr>`;
   });
 
@@ -326,6 +329,7 @@ function renderPerInversor() {
   document.getElementById('totalGeneralAdq').textContent = formatNum(totalAdq);
   document.getElementById('totalGeneralEna').textContent = formatNum(totalEna);
   document.getElementById('totalGeneralAcc').textContent = formatNum(totalAcc);
+  document.getElementById('totalGeneralTrams').textContent = formatNum(totalTrams);
 }
 
 // ---------------- Modal moviment de titols ----------------

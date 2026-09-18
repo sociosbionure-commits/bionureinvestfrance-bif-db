@@ -76,9 +76,14 @@ tbody tr:hover{background:#eef3fb;}
 #taulaPerInversor th:nth-child(6),#taulaPerInversor td:nth-child(6),
 #taulaPerInversor th:nth-child(7),#taulaPerInversor td:nth-child(7),
 #taulaPerInversor th:nth-child(9),#taulaPerInversor td:nth-child(9){width:85px;text-align:right;}
+#taulaPerInversor th:nth-child(10),#taulaPerInversor td:nth-child(10){width:55px;text-align:right;}
 #taulaPerInversor th:nth-child(8),#taulaPerInversor td:nth-child(8){width:290px;white-space:normal;}
 #taulaPerInversor tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
 #taulaPerInversor tr.subtotal td{font-weight:bold;background:#eef3fb;border-top:1px solid #b7c6e6;}
+
+#taulaTitols th:nth-child(5),#taulaTitols td:nth-child(5),
+#taulaPerInversor th:nth-child(5),#taulaPerInversor td:nth-child(5),
+#kpiPiEnajenacio,#totalGeneralEna{color:#b00020;}
 
 .oculta{display:none !important;}
 
@@ -198,10 +203,11 @@ tbody tr:hover{background:#eef3fb;}
         <th class="no-sort">A</th>
         <th class="no-sort">Titol</th>
         <th class="no-sort">Total acc.</th>
+        <th class="no-sort">Trams</th>
       </tr>
     </thead>
     <tbody id="tbodyPerInversor">
-      <tr><td class="loading" colspan="9">Carregant dades de Neon...</td></tr>
+      <tr><td class="loading" colspan="10">Carregant dades de Neon...</td></tr>
     </tbody>
     <tfoot>
       <tr>
@@ -210,6 +216,7 @@ tbody tr:hover{background:#eef3fb;}
         <td id="totalGeneralEna" style="text-align:right;"></td>
         <td></td><td></td><td></td>
         <td id="totalGeneralAcc" style="text-align:right;"></td>
+        <td id="totalGeneralTrams" style="text-align:right;"></td>
       </tr>
     </tfoot>
   </table>
