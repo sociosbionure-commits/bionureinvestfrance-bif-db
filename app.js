@@ -273,13 +273,49 @@ document.getElementById('btnBaixPerInversor').addEventListener('click', () => {
   el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
 });
 
+document.getElementById('cercaPerInversor').addEventListener('input', () => {
+  document.getElementById('cercaPiWrap').classList.toggle('te-text', document.getElementById('cercaPerInversor').value.length > 0);
+  renderPerInversor();
+});
+
+document.getElementById('cercaPiNeteja').addEventListener('click', () => {
+  const input = document.getElementById('cercaPerInversor');
+  input.value = '';
+  input.focus();
+  document.getElementById('cercaPiWrap').classList.remove('te-text');
+  renderPerInversor();
+});
+
 // ---------------- Moviments per Inversor ----------------
 
+function omplePiDatalist() {
+  const inversors = new Map();
+  dadesTitols.forEach(r => inversors.set(r.id_inversor, r.inversor));
+  const opcions = [...inversors.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([id, nom]) => `<option value="${escapeHtml(id + ' - ' + nom)}">`)
+    .join('');
+  document.getElementById('llistaInversorsPi').innerHTML = opcions;
+}
+
+function filtraDadesPerInversor(filtre) {
+  const f = filtre.trim().toLowerCase();
+  if (!f) return dadesTitols;
+  return dadesTitols.filter(r =>
+    String(r.id_inversor) === filtre.trim() ||
+    r.inversor.toLowerCase().includes(f) ||
+    (r.id_inversor + ' - ' + r.inversor).toLowerCase().includes(f)
+  );
+}
+
 function renderPerInversor() {
+  omplePiDatalist();
   const tbody = document.getElementById('tbodyPerInversor');
+  const filtre = document.getElementById('cercaPerInversor').value;
+  const dadesUsades = filtraDadesPerInversor(filtre);
 
   const grups = new Map();
-  dadesTitols.forEach(r => {
+  dadesUsades.forEach(r => {
     if (!grups.has(r.id_inversor)) grups.set(r.id_inversor, []);
     grups.get(r.id_inversor).push(r);
   });
