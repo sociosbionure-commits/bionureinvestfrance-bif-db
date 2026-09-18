@@ -234,20 +234,99 @@ async function carregarTitols() {
   }
 }
 
+const VISTES = {
+  inversors: { barra: 'barraInversors', vista: 'vistaInversors' },
+  titols: { barra: 'barraTitols', vista: 'vistaTitols' },
+  perInversor: { barra: 'barraPerInversor', vista: 'vistaPerInversor' },
+};
+
+function mostrarVista(nom) {
+  Object.values(VISTES).forEach(v => {
+    document.getElementById(v.barra).classList.add('oculta');
+    document.getElementById(v.vista).classList.add('oculta');
+  });
+  document.getElementById(VISTES[nom].barra).classList.remove('oculta');
+  document.getElementById(VISTES[nom].vista).classList.remove('oculta');
+}
+
 document.getElementById('btnMoviments').addEventListener('click', () => {
-  document.getElementById('barraInversors').classList.add('oculta');
-  document.getElementById('vistaInversors').classList.add('oculta');
-  document.getElementById('barraTitols').classList.remove('oculta');
-  document.getElementById('vistaTitols').classList.remove('oculta');
+  mostrarVista('titols');
   carregarTitols();
 });
 
-document.getElementById('btnInversors').addEventListener('click', () => {
-  document.getElementById('barraTitols').classList.add('oculta');
-  document.getElementById('vistaTitols').classList.add('oculta');
-  document.getElementById('barraInversors').classList.remove('oculta');
-  document.getElementById('vistaInversors').classList.remove('oculta');
+document.getElementById('btnInversors').addEventListener('click', () => mostrarVista('inversors'));
+document.getElementById('btnPerInversorInversors').addEventListener('click', () => mostrarVista('inversors'));
+document.getElementById('btnPerInversorMoviments').addEventListener('click', () => mostrarVista('titols'));
+
+document.getElementById('btnPerInversor').addEventListener('click', () => {
+  mostrarVista('perInversor');
+  renderPerInversor();
 });
+
+document.getElementById('btnBaixTitols').addEventListener('click', () => {
+  const el = document.getElementById('vistaTitols');
+  el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+});
+
+document.getElementById('btnBaixPerInversor').addEventListener('click', () => {
+  const el = document.getElementById('vistaPerInversor');
+  el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+});
+
+// ---------------- Moviments per Inversor ----------------
+
+function renderPerInversor() {
+  const tbody = document.getElementById('tbodyPerInversor');
+
+  const grups = new Map();
+  dadesTitols.forEach(r => {
+    if (!grups.has(r.id_inversor)) grups.set(r.id_inversor, []);
+    grups.get(r.id_inversor).push(r);
+  });
+  const idsOrdenats = [...grups.keys()].sort((a, b) => a - b);
+
+  if (idsOrdenats.length === 0) {
+    tbody.innerHTML = '<tr><td class="empty" colspan="9">Cap moviment</td></tr>';
+  }
+
+  let totalAdq = 0, totalEna = 0, totalAcc = 0, html = '';
+  idsOrdenats.forEach(id => {
+    const files = grups.get(id);
+    let subAcc = 0;
+    files.forEach(r => {
+      totalAdq += Number(r.adquisicion) || 0;
+      totalEna += Number(r.enajenacion) || 0;
+      subAcc += Number(r.total_acc) || 0;
+      html += `
+        <tr>
+          <td>${formatNum(r.id_inversor)}</td>
+          <td>${escapeHtml(r.inversor)}</td>
+          <td>${formatData(r.fecha)}</td>
+          <td>${formatNum(r.adquisicion)}</td>
+          <td>${formatNum(r.enajenacion)}</td>
+          <td>${formatNum(r.de)}</td>
+          <td>${formatNum(r.a)}</td>
+          <td>${escapeHtml(r.titulo)}</td>
+          <td>${formatNum(r.total_acc)}</td>
+        </tr>`;
+    });
+    totalAcc += subAcc;
+    html += `
+      <tr class="subtotal">
+        <td colspan="8" style="text-align:right;">Total ${escapeHtml(files[0].inversor)} (${files.length} moviments)</td>
+        <td>${formatNum(subAcc)}</td>
+      </tr>`;
+  });
+
+  if (idsOrdenats.length > 0) tbody.innerHTML = html;
+
+  document.getElementById('kpiPiTotalAcc').textContent = `${formatNum(totalAcc)} accions`;
+  document.getElementById('kpiPiAdquisicio').textContent = `${formatNum(totalAdq)} adquisicions`;
+  document.getElementById('kpiPiEnajenacio').textContent = `${formatNum(totalEna)} enajenacions`;
+  document.getElementById('totalGeneralAdq').textContent = formatNum(totalAdq);
+  document.getElementById('totalGeneralEna').textContent = formatNum(totalEna);
+  document.getElementById('totalGeneralAcc').textContent = formatNum(totalAcc);
+}
 
 // ---------------- Modal moviment de titols ----------------
 

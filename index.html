@@ -24,6 +24,7 @@ button{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;cursor:pointer;}
 .btn.secundari{background:#fff;color:#2c5aa0;border:1px solid #2c5aa0;}
 .btn.secundari:hover{background:#eef3fb;}
 .btn.petit{padding:2px 8px;font-size:8.5pt;}
+.btn.fletxa{padding:6px 10px;font-weight:bold;}
 
 .table-wrap{overflow:auto;height:calc(100vh - 52px);}
 table{border-collapse:separate;border-spacing:0;font-size:9.5pt;width:100%;}
@@ -64,7 +65,20 @@ tbody tr:hover{background:#eef3fb;}
 #taulaTitols tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
 
 .kpis{display:flex;gap:8px;}
-.kpi{display:inline-flex;align-items:center;white-space:nowrap;border:1px solid #2c5aa0;border-radius:14px;padding:4px 12px;font-size:8.5pt;color:#2c5aa0;background:#fff;}
+.kpi{display:inline-flex;align-items:center;white-space:nowrap;border:1px solid #2c5aa0;border-radius:4px;padding:4px 12px;font-size:8.5pt;color:#2c5aa0;background:#fff;}
+
+#taulaPerInversor{table-layout:fixed;width:auto;}
+#taulaPerInversor th:nth-child(1),#taulaPerInversor td:nth-child(1){width:55px;text-align:right;}
+#taulaPerInversor th:nth-child(2),#taulaPerInversor td:nth-child(2){width:420px;white-space:normal;}
+#taulaPerInversor th:nth-child(3),#taulaPerInversor td:nth-child(3){width:80px;}
+#taulaPerInversor th:nth-child(4),#taulaPerInversor td:nth-child(4),
+#taulaPerInversor th:nth-child(5),#taulaPerInversor td:nth-child(5),
+#taulaPerInversor th:nth-child(6),#taulaPerInversor td:nth-child(6),
+#taulaPerInversor th:nth-child(7),#taulaPerInversor td:nth-child(7),
+#taulaPerInversor th:nth-child(9),#taulaPerInversor td:nth-child(9){width:60px;text-align:right;}
+#taulaPerInversor th:nth-child(8),#taulaPerInversor td:nth-child(8){width:252px;white-space:normal;}
+#taulaPerInversor tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
+#taulaPerInversor tr.subtotal td{font-weight:bold;background:#eef3fb;border-top:1px solid #b7c6e6;}
 
 .oculta{display:none !important;}
 
@@ -122,6 +136,8 @@ tbody tr:hover{background:#eef3fb;}
     <span class="kpi" id="kpiTotalAcc"></span>
     <span class="kpi" id="kpiUltimaAccio"></span>
   </span>
+  <button class="btn fletxa" id="btnBaixTitols" title="Vés al final del llistat">&darr;</button>
+  <button class="btn secundari" id="btnPerInversor">Per inversor</button>
   <button class="btn secundari" id="btnEditarUltim">Edita l'ultim moviment</button>
   <button class="btn secundari" id="btnInversors">Veure inversors</button>
   <button class="btn" id="btnNouMoviment">+ Nou moviment</button>
@@ -152,6 +168,48 @@ tbody tr:hover{background:#eef3fb;}
         <td style="text-align:right;">Total</td>
         <td id="totalAcc"></td>
         <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<div class="top-bar oculta" id="barraPerInversor">
+  <h1>Cap Table BIF &mdash; Moviments per Inversor</h1>
+  <span class="kpis" id="kpisPerInversor">
+    <span class="kpi" id="kpiPiTotalAcc"></span>
+    <span class="kpi" id="kpiPiAdquisicio"></span>
+    <span class="kpi" id="kpiPiEnajenacio"></span>
+  </span>
+  <button class="btn fletxa" id="btnBaixPerInversor" title="Vés al final del llistat">&darr;</button>
+  <button class="btn secundari" id="btnPerInversorMoviments">Veure moviments</button>
+  <button class="btn secundari" id="btnPerInversorInversors">Veure inversors</button>
+</div>
+
+<div class="table-wrap oculta" id="vistaPerInversor">
+  <table id="taulaPerInversor">
+    <thead>
+      <tr>
+        <th class="no-sort">ID</th>
+        <th class="no-sort">Inversor</th>
+        <th class="no-sort">Data</th>
+        <th class="no-sort">Adquisicio</th>
+        <th class="no-sort">Enajenacio</th>
+        <th class="no-sort">De</th>
+        <th class="no-sort">A</th>
+        <th class="no-sort">Titol</th>
+        <th class="no-sort">Total acc.</th>
+      </tr>
+    </thead>
+    <tbody id="tbodyPerInversor">
+      <tr><td class="loading" colspan="9">Carregant dades de Neon...</td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" style="text-align:right;">Total general</td>
+        <td id="totalGeneralAdq"></td>
+        <td id="totalGeneralEna"></td>
+        <td></td><td></td><td></td>
+        <td id="totalGeneralAcc"></td>
       </tr>
     </tfoot>
   </table>
