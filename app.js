@@ -195,18 +195,22 @@ let dadesTitols = [];
 
 function renderTitols() {
   const tbody = document.getElementById('tbodyTitols');
-  document.getElementById('comptadorTitols').textContent = `${dadesTitols.length} moviments`;
 
   const suma = dadesTitols.reduce((acc, r) => acc + (Number(r.total_acc) || 0), 0);
+  const ultimaAccio = dadesTitols.reduce((max, r) => Math.max(max, Number(r.a) || 0), 0);
+
+  document.getElementById('kpiMoviments').textContent = `${dadesTitols.length} moviments`;
+  document.getElementById('kpiTotalAcc').textContent = `${formatNum(suma)} accions`;
+  document.getElementById('kpiUltimaAccio').textContent = `Ultima accio: ${formatNum(ultimaAccio)}`;
   document.getElementById('totalAcc').textContent = formatNum(suma);
 
   if (dadesTitols.length === 0) {
-    tbody.innerHTML = '<tr><td class="empty" colspan="9">Cap moviment</td></tr>';
+    tbody.innerHTML = '<tr><td class="empty" colspan="10">Cap moviment</td></tr>';
     return;
   }
   tbody.innerHTML = dadesTitols.map(r => `
     <tr>
-      <td>${formatNum(r.num_orden)}</td>
+      <td>${formatNum(r.id_inversor)}</td>
       <td>${escapeHtml(r.inversor)}</td>
       <td>${formatData(r.fecha)}</td>
       <td>${formatNum(r.adquisicion)}</td>
@@ -215,6 +219,7 @@ function renderTitols() {
       <td>${formatNum(r.a)}</td>
       <td>${escapeHtml(r.titulo)}</td>
       <td>${formatNum(r.total_acc)}</td>
+      <td>${formatNum(r.num_orden)}</td>
     </tr>
   `).join('');
 }
@@ -225,7 +230,7 @@ async function carregarTitols() {
     renderTitols();
   } catch (e) {
     document.getElementById('tbodyTitols').innerHTML =
-      `<tr><td class="error" colspan="9">Error carregant dades: ${escapeHtml(e.message)}</td></tr>`;
+      `<tr><td class="error" colspan="10">Error carregant dades: ${escapeHtml(e.message)}</td></tr>`;
   }
 }
 
