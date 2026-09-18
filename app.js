@@ -314,7 +314,7 @@ function renderPerInversor() {
     html += `
       <tr class="subtotal">
         <td colspan="8" style="text-align:right;">Total ${escapeHtml(files[0].inversor)} (${files.length} moviments)</td>
-        <td>${formatNum(subAcc)}</td>
+        <td style="text-align:right;">${formatNum(subAcc)}</td>
       </tr>`;
   });
 

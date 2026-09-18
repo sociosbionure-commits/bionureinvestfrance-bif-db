@@ -53,15 +53,15 @@ tbody tr:hover{background:#eef3fb;}
 
 #taulaTitols{table-layout:fixed;width:auto;}
 #taulaTitols th:nth-child(1),#taulaTitols td:nth-child(1){width:55px;text-align:right;}
-#taulaTitols th:nth-child(2),#taulaTitols td:nth-child(2){width:420px;white-space:normal;}
+#taulaTitols th:nth-child(2),#taulaTitols td:nth-child(2){width:480px;white-space:normal;}
 #taulaTitols th:nth-child(3),#taulaTitols td:nth-child(3){width:80px;}
 #taulaTitols th:nth-child(4),#taulaTitols td:nth-child(4),
 #taulaTitols th:nth-child(5),#taulaTitols td:nth-child(5),
 #taulaTitols th:nth-child(6),#taulaTitols td:nth-child(6),
 #taulaTitols th:nth-child(7),#taulaTitols td:nth-child(7),
-#taulaTitols th:nth-child(9),#taulaTitols td:nth-child(9),
+#taulaTitols th:nth-child(9),#taulaTitols td:nth-child(9){width:85px;text-align:right;}
 #taulaTitols th:nth-child(10),#taulaTitols td:nth-child(10){width:60px;text-align:right;}
-#taulaTitols th:nth-child(8),#taulaTitols td:nth-child(8){width:252px;white-space:normal;}
+#taulaTitols th:nth-child(8),#taulaTitols td:nth-child(8){width:290px;white-space:normal;}
 #taulaTitols tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
 
 .kpis{display:flex;gap:8px;}
@@ -69,14 +69,14 @@ tbody tr:hover{background:#eef3fb;}
 
 #taulaPerInversor{table-layout:fixed;width:auto;}
 #taulaPerInversor th:nth-child(1),#taulaPerInversor td:nth-child(1){width:55px;text-align:right;}
-#taulaPerInversor th:nth-child(2),#taulaPerInversor td:nth-child(2){width:420px;white-space:normal;}
+#taulaPerInversor th:nth-child(2),#taulaPerInversor td:nth-child(2){width:480px;white-space:normal;}
 #taulaPerInversor th:nth-child(3),#taulaPerInversor td:nth-child(3){width:80px;}
 #taulaPerInversor th:nth-child(4),#taulaPerInversor td:nth-child(4),
 #taulaPerInversor th:nth-child(5),#taulaPerInversor td:nth-child(5),
 #taulaPerInversor th:nth-child(6),#taulaPerInversor td:nth-child(6),
 #taulaPerInversor th:nth-child(7),#taulaPerInversor td:nth-child(7),
-#taulaPerInversor th:nth-child(9),#taulaPerInversor td:nth-child(9){width:60px;text-align:right;}
-#taulaPerInversor th:nth-child(8),#taulaPerInversor td:nth-child(8){width:252px;white-space:normal;}
+#taulaPerInversor th:nth-child(9),#taulaPerInversor td:nth-child(9){width:85px;text-align:right;}
+#taulaPerInversor th:nth-child(8),#taulaPerInversor td:nth-child(8){width:290px;white-space:normal;}
 #taulaPerInversor tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
 #taulaPerInversor tr.subtotal td{font-weight:bold;background:#eef3fb;border-top:1px solid #b7c6e6;}
 
@@ -166,8 +166,8 @@ tbody tr:hover{background:#eef3fb;}
       <tr>
         <td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="text-align:right;">Total</td>
-        <td id="totalAcc"></td>
-        <td></td>
+        <td id="totalAcc" style="text-align:right;"></td>
+        <td></td><td></td>
       </tr>
     </tfoot>
   </table>
@@ -206,10 +206,10 @@ tbody tr:hover{background:#eef3fb;}
     <tfoot>
       <tr>
         <td colspan="3" style="text-align:right;">Total general</td>
-        <td id="totalGeneralAdq"></td>
-        <td id="totalGeneralEna"></td>
+        <td id="totalGeneralAdq" style="text-align:right;"></td>
+        <td id="totalGeneralEna" style="text-align:right;"></td>
         <td></td><td></td><td></td>
-        <td id="totalGeneralAcc"></td>
+        <td id="totalGeneralAcc" style="text-align:right;"></td>
       </tr>
     </tfoot>
   </table>
