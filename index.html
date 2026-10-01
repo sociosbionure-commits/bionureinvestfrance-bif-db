@@ -101,9 +101,8 @@ tbody tr:hover{background:#eef3fb;}
 .cert-signatura{margin-top:40px;}
 
 @media print {
-  body *{visibility:hidden;}
-  .cert-overlay, .cert-overlay *{visibility:visible;}
-  .cert-overlay{position:static;background:#fff;}
+  body > *:not(.cert-overlay){display:none !important;}
+  .cert-overlay{position:static !important;background:#fff;overflow:visible;}
   .cert-barra{display:none !important;}
   .cert-pagina{box-shadow:none;margin:0;width:auto;min-height:auto;}
 }
