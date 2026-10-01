@@ -37,6 +37,11 @@ function formatNum(v) {
   return Number(v).toLocaleString('ca-ES');
 }
 
+function formatPct(v) {
+  if (v === null || v === undefined || isNaN(v)) return '';
+  return v.toLocaleString('ca-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+}
+
 function formatData(v) {
   if (!v) return '';
   const d = new Date(v);
@@ -199,16 +204,24 @@ function renderTitols() {
   const suma = dadesTitols.reduce((acc, r) => acc + (Number(r.total_acc) || 0), 0);
   const ultimaAccio = dadesTitols.reduce((max, r) => Math.max(max, Number(r.a) || 0), 0);
 
+  const totalsPerInversor = new Map();
+  dadesTitols.forEach(r => {
+    totalsPerInversor.set(r.id_inversor, (totalsPerInversor.get(r.id_inversor) || 0) + (Number(r.total_acc) || 0));
+  });
+
   document.getElementById('kpiMoviments').textContent = `${dadesTitols.length} moviments`;
   document.getElementById('kpiTotalAcc').textContent = `${formatNum(suma)} accions`;
   document.getElementById('kpiUltimaAccio').textContent = `Ultima accio: ${formatNum(ultimaAccio)}`;
   document.getElementById('totalAcc').textContent = formatNum(suma);
+  document.getElementById('totalPctTitols').textContent = suma ? formatPct(100) : '';
 
   if (dadesTitols.length === 0) {
-    tbody.innerHTML = '<tr><td class="empty" colspan="10">Cap moviment</td></tr>';
+    tbody.innerHTML = '<tr><td class="empty" colspan="11">Cap moviment</td></tr>';
     return;
   }
-  tbody.innerHTML = dadesTitols.map(r => `
+  tbody.innerHTML = dadesTitols.map(r => {
+    const pct = suma ? (totalsPerInversor.get(r.id_inversor) / suma) * 100 : 0;
+    return `
     <tr>
       <td>${formatNum(r.id_inversor)}</td>
       <td>${escapeHtml(r.inversor)}</td>
@@ -219,9 +232,11 @@ function renderTitols() {
       <td>${formatNum(r.a)}</td>
       <td>${escapeHtml(r.titulo)}</td>
       <td>${formatNum(r.total_acc)}</td>
+      <td>${formatPct(pct)}</td>
       <td>${formatNum(r.num_orden)}</td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 }
 
 async function carregarTitols() {
@@ -314,6 +329,10 @@ function renderPerInversor() {
   const filtre = document.getElementById('cercaPerInversor').value;
   const dadesUsades = filtraDadesPerInversor(filtre);
 
+  // El capital final sempre es calcula sobre TOTES les dades, no nomes les filtrades,
+  // perque el % de cada inversor ha de ser sempre respecte al total real.
+  const capitalFinal = dadesTitols.reduce((acc, r) => acc + (Number(r.total_acc) || 0), 0);
+
   const grups = new Map();
   dadesUsades.forEach(r => {
     if (!grups.has(r.id_inversor)) grups.set(r.id_inversor, []);
@@ -322,7 +341,7 @@ function renderPerInversor() {
   const idsOrdenats = [...grups.keys()].sort((a, b) => a - b);
 
   if (idsOrdenats.length === 0) {
-    tbody.innerHTML = '<tr><td class="empty" colspan="10">Cap moviment</td></tr>';
+    tbody.innerHTML = '<tr><td class="empty" colspan="11">Cap moviment</td></tr>';
   }
 
   let totalAdq = 0, totalEna = 0, totalAcc = 0, totalTrams = 0, html = '';
@@ -345,19 +364,24 @@ function renderPerInversor() {
           <td>${escapeHtml(r.titulo)}</td>
           <td>${formatNum(r.total_acc)}</td>
           <td></td>
+          <td></td>
         </tr>`;
     });
     totalAcc += subAcc;
     totalTrams += files.length;
+    const pctInversor = capitalFinal ? (subAcc / capitalFinal) * 100 : 0;
     html += `
       <tr class="subtotal">
         <td colspan="8" style="text-align:right;">Total ${escapeHtml(files[0].inversor)}</td>
         <td style="text-align:right;">${formatNum(subAcc)}</td>
+        <td style="text-align:right;">${formatPct(pctInversor)}</td>
         <td style="text-align:right;">${files.length}</td>
       </tr>`;
   });
 
   if (idsOrdenats.length > 0) tbody.innerHTML = html;
+
+  const pctGeneral = capitalFinal ? (totalAcc / capitalFinal) * 100 : 0;
 
   document.getElementById('kpiPiTotalAcc').textContent = `${formatNum(totalAcc)} accions`;
   document.getElementById('kpiPiAdquisicio').textContent = `${formatNum(totalAdq)} adquisicions`;
@@ -365,6 +389,7 @@ function renderPerInversor() {
   document.getElementById('totalGeneralAdq').textContent = formatNum(totalAdq);
   document.getElementById('totalGeneralEna').textContent = formatNum(totalEna);
   document.getElementById('totalGeneralAcc').textContent = formatNum(totalAcc);
+  document.getElementById('totalGeneralPct').textContent = formatPct(pctGeneral);
   document.getElementById('totalGeneralTrams').textContent = formatNum(totalTrams);
 }
 

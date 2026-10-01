@@ -55,6 +55,7 @@ tbody tr:hover{background:#eef3fb;}
 #taulaTitols th:nth-child(7),#taulaTitols td:nth-child(7),
 #taulaTitols th:nth-child(9),#taulaTitols td:nth-child(9){text-align:right;}
 #taulaTitols th:nth-child(10),#taulaTitols td:nth-child(10){text-align:right;}
+#taulaTitols th:nth-child(11),#taulaTitols td:nth-child(11){text-align:right;}
 #taulaTitols th:nth-child(8),#taulaTitols td:nth-child(8){white-space:normal;}
 #taulaTitols tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
 
@@ -70,6 +71,7 @@ tbody tr:hover{background:#eef3fb;}
 #taulaPerInversor th:nth-child(7),#taulaPerInversor td:nth-child(7),
 #taulaPerInversor th:nth-child(9),#taulaPerInversor td:nth-child(9){text-align:right;}
 #taulaPerInversor th:nth-child(10),#taulaPerInversor td:nth-child(10){text-align:right;}
+#taulaPerInversor th:nth-child(11),#taulaPerInversor td:nth-child(11){text-align:right;}
 #taulaPerInversor th:nth-child(8),#taulaPerInversor td:nth-child(8){white-space:normal;}
 #taulaPerInversor tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
 #taulaPerInversor tr.subtotal td{font-weight:bold;background:#eef3fb;border-top:1px solid #b7c6e6;}
@@ -150,7 +152,7 @@ tbody tr:hover{background:#eef3fb;}
     <colgroup>
       <col style="width:55px"><col style="width:480px"><col style="width:80px"><col style="width:105px">
       <col style="width:105px"><col style="width:105px"><col style="width:105px"><col style="width:290px">
-      <col style="width:105px"><col style="width:60px">
+      <col style="width:105px"><col style="width:70px"><col style="width:60px">
     </colgroup>
     <thead>
       <tr>
@@ -163,18 +165,20 @@ tbody tr:hover{background:#eef3fb;}
         <th class="no-sort">A</th>
         <th class="no-sort">Titol</th>
         <th class="no-sort">Total acc.</th>
+        <th class="no-sort">%</th>
         <th class="no-sort">Num. ordre</th>
       </tr>
     </thead>
     <tbody id="tbodyTitols">
-      <tr><td class="loading" colspan="10">Carregant dades de Neon...</td></tr>
+      <tr><td class="loading" colspan="11">Carregant dades de Neon...</td></tr>
     </tbody>
     <tfoot>
       <tr>
-        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="text-align:right;">Total</td>
         <td id="totalAcc" style="text-align:right;"></td>
-        <td></td><td></td>
+        <td id="totalPctTitols" style="text-align:right;"></td>
+        <td></td>
       </tr>
     </tfoot>
   </table>
@@ -202,7 +206,7 @@ tbody tr:hover{background:#eef3fb;}
     <colgroup>
       <col style="width:55px"><col style="width:480px"><col style="width:80px"><col style="width:105px">
       <col style="width:105px"><col style="width:105px"><col style="width:105px"><col style="width:290px">
-      <col style="width:105px"><col style="width:53px">
+      <col style="width:105px"><col style="width:70px"><col style="width:53px">
     </colgroup>
     <thead>
       <tr>
@@ -215,11 +219,12 @@ tbody tr:hover{background:#eef3fb;}
         <th class="no-sort">A</th>
         <th class="no-sort">Titol</th>
         <th class="no-sort">Total acc.</th>
+        <th class="no-sort">%</th>
         <th class="no-sort">Trams</th>
       </tr>
     </thead>
     <tbody id="tbodyPerInversor">
-      <tr><td class="loading" colspan="10">Carregant dades de Neon...</td></tr>
+      <tr><td class="loading" colspan="11">Carregant dades de Neon...</td></tr>
     </tbody>
     <tfoot>
       <tr>
@@ -228,6 +233,7 @@ tbody tr:hover{background:#eef3fb;}
         <td id="totalGeneralEna" style="text-align:right;"></td>
         <td></td><td></td><td></td>
         <td id="totalGeneralAcc" style="text-align:right;"></td>
+        <td id="totalGeneralPct" style="text-align:right;"></td>
         <td id="totalGeneralTrams" style="text-align:right;"></td>
       </tr>
     </tfoot>
