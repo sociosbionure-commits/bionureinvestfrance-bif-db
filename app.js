@@ -350,11 +350,13 @@ function generaCertificat(idInversor) {
   const numId = escapeHtml(inv.id_num || '');
 
   document.getElementById('certificatContingut').innerHTML = `
-    <img class="cert-logo" src="data:image/png;base64,${LOGO_BIONURE_B64}" alt="Bionure">
-    <div class="cert-cap-empresa">
-      BIONURE INVESTISSEMENT FRANCE, S.A.S. au capital de 37 284 680,00 &euro; (fixe)<br>
-      Si&egrave;ge social&nbsp;: 10 rue de Penthi&egrave;vre, 75008 Paris (France)<br>
-      RCS de Paris sous le n&deg; 942 104 944
+    <div class="cert-header">
+      <img class="cert-logo" src="data:image/png;base64,${LOGO_BIONURE_B64}" alt="Bionure">
+      <div class="cert-cap-empresa">
+        BIONURE INVESTISSEMENT FRANCE, S.A.S. au capital de 37 284 680,00 &euro; (fixe)<br>
+        Si&egrave;ge social&nbsp;: 10 rue de Penthi&egrave;vre, 75008 Paris (France)<br>
+        RCS de Paris sous le n&deg; 942 104 944
+      </div>
     </div>
     <div class="cert-dates">
       Barcelona, ${dEs}<br>
