@@ -350,36 +350,34 @@ function generaCertificat(idInversor) {
   const numId = escapeHtml(inv.id_num || '');
 
   document.getElementById('certificatContingut').innerHTML = `
-    <div class="cert-header">
-      <img class="cert-logo" src="data:image/png;base64,${LOGO_BIONURE_B64}" alt="Bionure">
-      <div class="cert-cap-empresa">
-        BIONURE INVESTISSEMENT FRANCE, S.A.S. au capital de 37 284 680,00 &euro; (fixe)<br>
-        Si&egrave;ge social&nbsp;: 10 rue de Penthi&egrave;vre, 75008 Paris (France)<br>
-        RCS de Paris sous le n&deg; 942 104 944
-      </div>
+    <img class="cert-logo" src="data:image/png;base64,${LOGO_BIONURE_B64}" alt="Bionure">
+    <div class="cert-cap-empresa">
+      BIONURE INVESTISSEMENT FRANCE, S.A.S. au capital de 37 284 680,00 &euro; (fixe)<br>
+      Si&egrave;ge social&nbsp;: 10 rue de Penthi&egrave;vre, 75008 Paris (France)<br>
+      RCS de Paris sous le n&deg; 942 104 944
     </div>
     <div class="cert-dates">
-      Barcelona, ${dEs}<br>
-      Barcelone, le ${dFr}
+      Paris, ${dEs}<br>
+      Paris, le ${dFr}
     </div>
     <div class="cert-assumpte">
       Asunto:&nbsp; Certificado de acciones en Bionure Investment France<br>
       Objet&nbsp;:&nbsp; Attestation d'actions de Bionure Investment France
     </div>
     <div class="cert-destinatari">${nomDestinatari}</div>
+    <div class="cert-salutacio">
+      Estimado accionista:<br>
+      Cher actionnaire,
+    </div>
     <div class="cert-cols">
-      <div class="cert-col">
-        <p class="cert-salutacio">Estimado accionista:</p>
-        <p>Le certifico que, a fecha ${dEs}, con domicilio en ${domicili}, y n&uacute;mero de ${tipusId} ${numId}, es titular de ${totalAccFmt} acciones de Bionure Investment France (equivalente a las ${participacionsFmt} participaciones sociales de Bionure Therapeutics, S.L., que aport&oacute; a Bionure Investment Fance, S.A.S.), de un euro (1,00&nbsp;&euro;) de valor nominal cada una de ellas, representativas de un ${pctFmt} del capital social de Bionure Investment France, S.A.S.</p>
-        <p>Y para que as&iacute; conste y surta los efectos oportunos, expido la presente certificaci&oacute;n, en Barcelona, a ${dEs}.</p>
-        <p>Reciban un cordial saludo.</p>
-      </div>
-      <div class="cert-col">
-        <p class="cert-salutacio">Cher actionnaire,</p>
-        <p>Je certifie qu'&agrave; la date du ${dFr}, domicili&eacute;(e) &agrave; ${domicili} et titulaire de la carte d'identit&eacute; n&deg; ${tipusId} ${numId}, est titulaire de ${totalAccFmt} actions de Bionure Investment France (&eacute;quivalentes aux ${participacionsFmt} parts sociales de Bionure Therapeutics, SL qu'il a apport&eacute;es &agrave; Bionure Investment France, S.A.S.), d'une valeur nominale d'un euro (1,00&nbsp;&euro;) chacune, repr&eacute;sentant ${pctFmt} du capital social de Bionure Investment France, S.A.S.</p>
-        <p>Et afin que cela soit consign&eacute; et produise les effets voulus, je d&eacute;livre la pr&eacute;sente attestation, &agrave; Barcelone, le ${dFr}.</p>
-        <p>Veuillez agr&eacute;er nos salutations distingu&eacute;es.</p>
-      </div>
+      <p>Le certifico que, a fecha ${dEs}, con domicilio en ${domicili}, y n&uacute;mero de ${tipusId} ${numId}, es titular de ${totalAccFmt} acciones de Bionure Investment France (equivalente a las ${participacionsFmt} participaciones sociales de Bionure Therapeutics, S.L., que aport&oacute; a Bionure Investment Fance, S.A.S.), de un euro (1,00&nbsp;&euro;) de valor nominal cada una de ellas, representativas de un ${pctFmt} del capital social de Bionure Investment France, S.A.S.</p>
+      <p>Y para que as&iacute; conste y surta los efectos oportunos, expido la presente certificaci&oacute;n, en Barcelona, a ${dEs}.</p>
+      <p>Je certifie qu'&agrave; la date du ${dFr}, domicili&eacute;(e) &agrave; ${domicili} et titulaire de la carte d'identit&eacute; n&deg; ${tipusId} ${numId}, est titulaire de ${totalAccFmt} actions de Bionure Investment France (&eacute;quivalentes aux ${participacionsFmt} parts sociales de Bionure Therapeutics, SL qu'il a apport&eacute;es &agrave; Bionure Investment France, S.A.S.), d'une valeur nominale d'un euro (1,00&nbsp;&euro;) chacune, repr&eacute;sentant ${pctFmt} du capital social de Bionure Investment France, S.A.S.</p>
+      <p>Et afin que cela soit consign&eacute; et produise les effets voulus, je d&eacute;livre la pr&eacute;sente attestation, &agrave; Barcelone, le ${dFr}.</p>
+    </div>
+    <div class="cert-final">
+      Reciban un cordial saludo.<br>
+      Veuillez agr&eacute;er nos salutations distingu&eacute;es.
     </div>
     <div class="cert-signatura">
       Pascal Nizet<br>

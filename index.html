@@ -88,18 +88,17 @@ tbody tr:hover{background:#eef3fb;}
 .cert-overlay{position:fixed;inset:0;background:#ccc;z-index:700;overflow:auto;}
 .cert-barra{position:sticky;top:0;background:#fff;padding:10px 16px;display:flex;gap:10px;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.15);z-index:2;margin-bottom:24px;}
 .cert-pagina{background:#fff;width:210mm;min-height:297mm;margin:0 auto 24px;padding:20mm;box-shadow:0 2px 12px rgba(0,0,0,.25);font-family:'Aptos',Calibri,Arial,sans-serif;font-size:11pt;color:#000;line-height:1.35;}
-.cert-header{display:flex;align-items:center;gap:16px;margin-top:-5mm;margin-bottom:36px;}
-.cert-logo{width:152px;flex:0 0 auto;display:block;}
-.cert-cap-empresa{font-size:9pt;line-height:1.4;}
-.cert-dates{margin-bottom:12px;}
-.cert-assumpte{font-weight:700;margin-bottom:28px;}
-.cert-destinatari{margin-bottom:24px;}
-.cert-salutacio{margin-bottom:16px;}
-.cert-cols{display:flex;gap:28px;margin-bottom:16px;}
-.cert-col{flex:1;text-align:justify;}
-.cert-col p{margin-bottom:10px;}
-.cert-final{margin-bottom:28px;}
-.cert-signatura{margin-top:40px;}
+.cert-logo{width:152px;display:block;margin-top:-5mm;margin-bottom:24px;}
+.cert-cap-empresa{font-size:9pt;line-height:1.4;margin-bottom:40px;}
+.cert-dates{text-align:right;margin-bottom:20px;}
+.cert-assumpte{font-weight:700;margin-bottom:60px;}
+.cert-destinatari{margin-bottom:60px;}
+.cert-salutacio{margin-bottom:60px;}
+.cert-cols{column-count:2;column-gap:12.5mm;margin-bottom:60px;}
+.cert-cols p{text-align:justify;margin-bottom:20px;break-inside:avoid;}
+.cert-cols p:nth-child(3){break-before:column;}
+.cert-final{margin-bottom:0;}
+.cert-signatura{margin-top:60px;}
 
 @media print {
   body > *:not(.cert-overlay){display:none !important;}
