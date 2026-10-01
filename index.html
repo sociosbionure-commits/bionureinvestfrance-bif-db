@@ -82,6 +82,32 @@ tbody tr:hover{background:#eef3fb;}
 
 .oculta{display:none !important;}
 
+.cert-placeholder{padding:40px;color:#888;font-style:italic;}
+.cert-error{padding:0 40px;color:#b00020;}
+
+.cert-overlay{position:fixed;inset:0;background:#ccc;z-index:700;overflow:auto;}
+.cert-barra{position:sticky;top:0;background:#fff;padding:10px 16px;display:flex;gap:10px;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.15);z-index:2;margin-bottom:24px;}
+.cert-pagina{background:#fff;width:210mm;min-height:297mm;margin:0 auto 24px;padding:20mm;box-shadow:0 2px 12px rgba(0,0,0,.25);font-family:'Aptos',Calibri,Arial,sans-serif;font-size:11pt;color:#000;line-height:1.35;}
+.cert-logo{width:152px;display:block;margin-bottom:14px;}
+.cert-cap-empresa{font-size:9pt;line-height:1.4;margin-bottom:16px;}
+.cert-dates{margin-bottom:12px;}
+.cert-assumpte{margin-bottom:16px;}
+.cert-destinatari{margin-bottom:12px;}
+.cert-salutacio{margin-bottom:16px;}
+.cert-cols{display:flex;gap:28px;margin-bottom:16px;}
+.cert-col{flex:1;text-align:justify;}
+.cert-col p{margin-bottom:10px;}
+.cert-final{margin-bottom:28px;}
+.cert-signatura{margin-top:40px;}
+
+@media print {
+  body *{visibility:hidden;}
+  .cert-overlay, .cert-overlay *{visibility:visible;}
+  .cert-overlay{position:static;background:#fff;}
+  .cert-barra{display:none !important;}
+  .cert-pagina{box-shadow:none;margin:0;width:auto;min-height:auto;}
+}
+
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:40px 16px;}
 .modal{background:#fff;border-radius:6px;width:100%;max-width:640px;padding:20px 24px;box-shadow:0 8px 24px rgba(0,0,0,.25);}
 .modal h2{font-size:12pt;color:#2c5aa0;margin-bottom:14px;}
@@ -197,6 +223,7 @@ tbody tr:hover{background:#eef3fb;}
     <span class="kpi" id="kpiPiEnajenacio"></span>
   </span>
   <button class="btn fletxa" id="btnBaixPerInversor" title="Vés al final del llistat">&darr;</button>
+  <button class="btn secundari" id="btnPerInversorCertificats">Certificats</button>
   <button class="btn secundari" id="btnPerInversorMoviments">Veure moviments</button>
   <button class="btn secundari" id="btnPerInversorInversors">Veure inversors</button>
 </div>
@@ -238,6 +265,31 @@ tbody tr:hover{background:#eef3fb;}
       </tr>
     </tfoot>
   </table>
+</div>
+
+<div class="top-bar oculta" id="barraCertificats">
+  <h1>Cap Table BIF &mdash; Certificats</h1>
+  <span class="cerca-wrap" id="cercaCertWrap">
+    <input type="text" id="cercaCertificat" list="llistaInversorsCert" placeholder="Cerca inversor (nom o ID)...">
+    <datalist id="llistaInversorsCert"></datalist>
+    <button type="button" class="cerca-neteja" id="cercaCertNeteja" title="Neteja la cerca">&times;</button>
+  </span>
+  <button class="btn" id="btnGenerarCertificat">Generar certificat</button>
+  <button class="btn secundari" id="btnCertPerInversor">Per inversor</button>
+  <button class="btn secundari" id="btnCertInversors">Veure inversors</button>
+</div>
+
+<div class="table-wrap oculta" id="vistaCertificats">
+  <div class="cert-placeholder" id="certificatPlaceholder">Cerca i selecciona un inversor, i clica "Generar certificat".</div>
+  <div class="cert-error" id="certificatError"></div>
+</div>
+
+<div class="cert-overlay oculta" id="overlayCertificat">
+  <div class="cert-barra">
+    <button class="btn secundari" id="btnTancarCertificat">Tanca</button>
+    <button class="btn" id="btnImprimirCertificat">Imprimir</button>
+  </div>
+  <div class="cert-pagina" id="certificatContingut"></div>
 </div>
 
 <div class="overlay oculta" id="overlayInversor">
