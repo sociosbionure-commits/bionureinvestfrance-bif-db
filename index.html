@@ -101,10 +101,12 @@ tbody tr:hover{background:#eef3fb;}
 .cert-signatura{margin-top:60px;}
 
 @media print {
+  @page{size:A4;margin:0;}
   body > *:not(.cert-overlay){display:none !important;}
   .cert-overlay{position:static !important;background:#fff;overflow:visible;}
   .cert-barra{display:none !important;}
-  .cert-pagina{box-shadow:none;margin:0;width:auto;min-height:auto;}
+  .cert-pagina{box-shadow:none;margin:0;width:auto;min-height:auto;padding:16mm;}
+  .cert-final,.cert-signatura{break-inside:avoid;}
 }
 
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:40px 16px;}
