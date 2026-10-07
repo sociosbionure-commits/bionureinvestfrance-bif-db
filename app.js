@@ -587,6 +587,45 @@ function renderPerInversor() {
   document.getElementById('totalGeneralTrams').textContent = formatNum(totalTrams);
 }
 
+function exportaPerInversorExcel() {
+  const filtre = document.getElementById('cercaPerInversor').value;
+  const dadesUsades = filtraDadesPerInversor(filtre);
+  const capitalFinal = dadesTitols.reduce((acc, r) => acc + (Number(r.total_acc) || 0), 0);
+
+  const grups = new Map();
+  dadesUsades.forEach(r => {
+    if (!grups.has(r.id_inversor)) grups.set(r.id_inversor, []);
+    grups.get(r.id_inversor).push(r);
+  });
+  const idsOrdenats = [...grups.keys()].sort((a, b) => a - b);
+
+  const files = [['ID', 'Inversor', 'Data', 'Adquisicio', 'Enajenacio', 'De', 'A', 'Titol', 'Total acc.', '%', 'Trams']];
+  let totalAdq = 0, totalEna = 0, totalAcc = 0, totalTrams = 0;
+  idsOrdenats.forEach(id => {
+    const registres = grups.get(id);
+    let subAcc = 0;
+    registres.forEach(r => {
+      totalAdq += Number(r.adquisicion) || 0;
+      totalEna += Number(r.enajenacion) || 0;
+      subAcc += Number(r.total_acc) || 0;
+      files.push([r.id_inversor, r.inversor, formatData(r.fecha), r.adquisicion, r.enajenacion, r.de, r.a, r.titulo, r.total_acc, '', '']);
+    });
+    totalAcc += subAcc;
+    totalTrams += registres.length;
+    const pctInversor = capitalFinal ? (subAcc / capitalFinal) * 100 : 0;
+    files.push(['', `Total ${registres[0].inversor}`, '', '', '', '', '', '', subAcc, Number(pctInversor.toFixed(2)), registres.length]);
+  });
+  const pctGeneral = capitalFinal ? (totalAcc / capitalFinal) * 100 : 0;
+  files.push(['', 'Total general', '', totalAdq, totalEna, '', '', '', totalAcc, Number(pctGeneral.toFixed(2)), totalTrams]);
+
+  const ws = XLSX.utils.aoa_to_sheet(files);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Per Inversor');
+  XLSX.writeFile(wb, 'Cap Table BIF - Moviments per Inversor.xlsx');
+}
+
+document.getElementById('btnExportPerInversor').addEventListener('click', exportaPerInversorExcel);
+
 // ---------------- Modal moviment de titols ----------------
 
 const campsTitol = ['id_inversor', 'fecha', 'adquisicion', 'enajenacion', 'de', 'a', 'titulo'];
