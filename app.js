@@ -142,6 +142,40 @@ document.querySelectorAll('#taula th[data-col]').forEach(th => {
   });
 });
 
+function exportaInversorsExcel() {
+  const filtre = document.getElementById('cerca').value.trim().toLowerCase();
+  let files = dades;
+  if (filtre) {
+    files = files.filter(r =>
+      ['id_inversor', 'inversor', 'id_tipo', 'id_num', 'nacionalidad', 'dom_agrupado', 'email', 'telf']
+        .some(c => (r[c] !== null && r[c] !== undefined) && String(r[c]).toLowerCase().includes(filtre))
+    );
+  }
+  files = [...files].sort((a, b) => {
+    const va = a[ordreCol], vb = b[ordreCol];
+    if (va === null || va === undefined) return 1;
+    if (vb === null || vb === undefined) return -1;
+    const cmp = typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb), 'ca');
+    return ordreAsc ? cmp : -cmp;
+  });
+  const dadesExport = files.map(r => ({
+    'ID': r.id_inversor,
+    'Inversor': r.inversor,
+    'Tipus ID': r.id_tipo,
+    'Num. ID': r.id_num,
+    'Nacionalitat': r.nacionalidad,
+    'Domicili': r.dom_agrupado,
+    'Email': r.email,
+    'Telefon': r.telf,
+  }));
+  const ws = XLSX.utils.json_to_sheet(dadesExport);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Inversors');
+  XLSX.writeFile(wb, 'Cap Table BIF - Inversors.xlsx');
+}
+
+document.getElementById('btnExportInversors').addEventListener('click', exportaInversorsExcel);
+
 // ---------------- Modal inversor ----------------
 
 const campsInversor = ['id_inversor', 'inversor_nom', 'inversor_cnom_rs', 'id_tipo', 'id_num', 'nacionalidad',
@@ -238,6 +272,36 @@ function renderTitols() {
   `;
   }).join('');
 }
+
+function exportaTitolsExcel() {
+  const suma = dadesTitols.reduce((acc, r) => acc + (Number(r.total_acc) || 0), 0);
+  const totalsPerInversor = new Map();
+  dadesTitols.forEach(r => {
+    totalsPerInversor.set(r.id_inversor, (totalsPerInversor.get(r.id_inversor) || 0) + (Number(r.total_acc) || 0));
+  });
+  const dadesExport = dadesTitols.map(r => {
+    const pct = suma ? (totalsPerInversor.get(r.id_inversor) / suma) * 100 : 0;
+    return {
+      'ID': r.id_inversor,
+      'Inversor': r.inversor,
+      'Data': formatData(r.fecha),
+      'Adquisicio': r.adquisicion,
+      'Enajenacio': r.enajenacion,
+      'De': r.de,
+      'A': r.a,
+      'Titol': r.titulo,
+      'Total acc.': r.total_acc,
+      '%': Number(pct.toFixed(2)),
+      'Num. ordre': r.num_orden,
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(dadesExport);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Moviments');
+  XLSX.writeFile(wb, 'Cap Table BIF - Moviments.xlsx');
+}
+
+document.getElementById('btnExportTitols').addEventListener('click', exportaTitolsExcel);
 
 async function carregarTitols() {
   try {
