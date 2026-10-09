@@ -432,15 +432,18 @@ function generaCertificat(idInversor) {
       Asunto:&nbsp; Certificado de acciones en Bionure Investment France<br>
       Objet&nbsp;:&nbsp; Attestation d'actions de Bionure Investment France
     </div>
-    <div class="cert-destinatari">${nomDestinatari}</div>
+    <div class="cert-destinatari">
+      A quien corresponda:<br>
+      &Agrave; qui de droit&nbsp;:
+    </div>
     <div class="cert-salutacio">
       Estimado accionista:<br>
       Cher actionnaire,
     </div>
     <div class="cert-cols">
-      <p>Le certifico que, a fecha ${dEs}, con domicilio en ${domicili}, y n&uacute;mero de ${tipusId} ${numId}, es titular de ${totalAccFmt} acciones de Bionure Investment France (equivalente a las ${participacionsFmt} participaciones sociales de Bionure Therapeutics, S.L., que aport&oacute; a Bionure Investment Fance, S.A.S.), de un euro (1,00&nbsp;&euro;) de valor nominal cada una de ellas, representativas de un ${pctFmt} del capital social de Bionure Investment France, S.A.S.</p>
+      <p>Le certifico que, a fecha ${dEs}, ${nomDestinatari}, con domicilio en ${domicili}, y n&uacute;mero de ${tipusId} ${numId}, es titular de ${totalAccFmt} acciones de Bionure Investment France (equivalente a las ${participacionsFmt} participaciones sociales de Bionure Therapeutics, S.L., que aport&oacute; a Bionure Investment Fance, S.A.S.), de un euro (1,00&nbsp;&euro;) de valor nominal cada una de ellas, representativas de un ${pctFmt} del capital social de Bionure Investment France, S.A.S.</p>
       <p>Y para que as&iacute; conste y surta los efectos oportunos, expido la presente certificaci&oacute;n, en Barcelona, a ${dEs}.</p>
-      <p>Je certifie qu'&agrave; la date du ${dFr}, domicili&eacute;(e) &agrave; ${domicili} ${identificacioFr} ${numId}, est titulaire de ${totalAccFmt} actions de Bionure Investment France (&eacute;quivalentes aux ${participacionsFmt} parts sociales de Bionure Therapeutics, SL que vous avez apport&eacute;es &agrave; Bionure Investment France, S.A.S.), d'une valeur nominale d'un euro (1,00&nbsp;&euro;) chacune, repr&eacute;sentant ${pctFmt} du capital social de Bionure Investment France, S.A.S.</p>
+      <p>Je certifie qu'&agrave; la date du ${dFr}, ${nomDestinatari}, domicili&eacute;(e) &agrave; ${domicili} ${identificacioFr} ${numId}, est titulaire de ${totalAccFmt} actions de Bionure Investment France (&eacute;quivalentes aux ${participacionsFmt} parts sociales de Bionure Therapeutics, SL apport&eacute;es &agrave; Bionure Investment France, S.A.S.), d'une valeur nominale d'un euro (1,00&nbsp;&euro;) chacune, repr&eacute;sentant ${pctFmt} du capital social de Bionure Investment France, S.A.S.</p>
       <p>Et afin que cela soit consign&eacute; et produise les effets voulus, je d&eacute;livre la pr&eacute;sente attestation, &agrave; Barcelone, le ${dFr}.</p>
     </div>
     <div class="cert-final">
