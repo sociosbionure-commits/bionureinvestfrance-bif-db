@@ -35,20 +35,21 @@ module.exports = async (req, res) => {
 
     addInversor: () => sql`
       INSERT INTO inversor_bif
-        (id_inversor, inversor_nom, inversor_cnom_rs, id_tipo, id_num, nacionalidad,
-         administracion, administrador, co_cargo_dni, k_social, domicilio, cp,
+        (id_inversor, inversor_nom, inversor_cnom_rs, id_tipo, id_num, nacionalidad, fecha_nacimiento,
+         administracion, administrador, dni_admin, fecha_nac_admin, nacionalidad_admin, k_social, domicilio, cp,
          ciudad_pob, provincia, pais_es, email, email_idioma, telf, notas)
       VALUES
-        (${n(p.id_inversor)}, ${n(p.inversor_nom)}, ${n(p.inversor_cnom_rs)}, ${n(p.id_tipo)}, ${n(p.id_num)}, ${n(p.nacionalidad)},
-         ${n(p.administracion)}, ${n(p.administrador)}, ${n(p.co_cargo_dni)}, ${n(p.k_social)}, ${n(p.domicilio)}, ${n(p.cp)},
+        (${n(p.id_inversor)}, ${n(p.inversor_nom)}, ${n(p.inversor_cnom_rs)}, ${n(p.id_tipo)}, ${n(p.id_num)}, ${n(p.nacionalidad)}, ${n(p.fecha_nacimiento)},
+         ${n(p.administracion)}, ${n(p.administrador)}, ${n(p.dni_admin)}, ${n(p.fecha_nac_admin)}, ${n(p.nacionalidad_admin)}, ${n(p.k_social)}, ${n(p.domicilio)}, ${n(p.cp)},
          ${n(p.ciudad_pob)}, ${n(p.provincia)}, ${n(p.pais_es)}, ${n(p.email)}, ${n(p.email_idioma)}, ${n(p.telf)}, ${n(p.notas)})
       RETURNING id_inversor`,
 
     updateInversor: () => sql`
       UPDATE inversor_bif SET
         inversor_nom=${n(p.inversor_nom)}, inversor_cnom_rs=${n(p.inversor_cnom_rs)}, id_tipo=${n(p.id_tipo)}, id_num=${n(p.id_num)},
-        nacionalidad=${n(p.nacionalidad)}, administracion=${n(p.administracion)}, administrador=${n(p.administrador)},
-        co_cargo_dni=${n(p.co_cargo_dni)}, k_social=${n(p.k_social)}, domicilio=${n(p.domicilio)}, cp=${n(p.cp)},
+        nacionalidad=${n(p.nacionalidad)}, fecha_nacimiento=${n(p.fecha_nacimiento)}, administracion=${n(p.administracion)}, administrador=${n(p.administrador)},
+        dni_admin=${n(p.dni_admin)}, fecha_nac_admin=${n(p.fecha_nac_admin)}, nacionalidad_admin=${n(p.nacionalidad_admin)},
+        k_social=${n(p.k_social)}, domicilio=${n(p.domicilio)}, cp=${n(p.cp)},
         ciudad_pob=${n(p.ciudad_pob)}, provincia=${n(p.provincia)}, pais_es=${n(p.pais_es)}, email=${n(p.email)},
         email_idioma=${n(p.email_idioma)}, telf=${n(p.telf)}, notas=${n(p.notas)}
       WHERE id_inversor=${n(p.id_inversor)}

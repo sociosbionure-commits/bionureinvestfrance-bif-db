@@ -63,7 +63,8 @@ function render() {
   let files = dades;
   if (filtre) {
     files = files.filter(r =>
-      ['id_inversor', 'inversor', 'id_tipo', 'id_num', 'nacionalidad', 'dom_agrupado', 'email', 'telf']
+      ['id_inversor', 'inversor', 'id_tipo', 'id_num', 'nacionalidad', 'administracion', 'administrador',
+        'dni_admin', 'nacionalidad_admin', 'dom_agrupado', 'email', 'telf']
         .some(c => (r[c] !== null && r[c] !== undefined) && String(r[c]).toLowerCase().includes(filtre))
     );
   }
@@ -79,7 +80,7 @@ function render() {
   document.getElementById('comptador').textContent = `${files.length} de ${dades.length} inversors`;
 
   if (files.length === 0) {
-    tbody.innerHTML = '<tr><td class="empty" colspan="9">Cap resultat</td></tr>';
+    tbody.innerHTML = '<tr><td class="empty" colspan="15">Cap resultat</td></tr>';
     return;
   }
 
@@ -90,6 +91,12 @@ function render() {
       <td>${escapeHtml(r.id_tipo)}</td>
       <td>${escapeHtml(r.id_num)}</td>
       <td>${escapeHtml(r.nacionalidad)}</td>
+      <td>${formatData(r.fecha_nacimiento)}</td>
+      <td>${escapeHtml(r.administracion)}</td>
+      <td>${escapeHtml(r.administrador)}</td>
+      <td>${escapeHtml(r.dni_admin)}</td>
+      <td>${formatData(r.fecha_nac_admin)}</td>
+      <td>${escapeHtml(r.nacionalidad_admin)}</td>
       <td>${escapeHtml(r.dom_agrupado)}</td>
       <td>${escapeHtml(r.email)}</td>
       <td>${escapeHtml(r.telf)}</td>
@@ -147,7 +154,8 @@ function exportaInversorsExcel() {
   let files = dades;
   if (filtre) {
     files = files.filter(r =>
-      ['id_inversor', 'inversor', 'id_tipo', 'id_num', 'nacionalidad', 'dom_agrupado', 'email', 'telf']
+      ['id_inversor', 'inversor', 'id_tipo', 'id_num', 'nacionalidad', 'administracion', 'administrador',
+        'dni_admin', 'nacionalidad_admin', 'dom_agrupado', 'email', 'telf']
         .some(c => (r[c] !== null && r[c] !== undefined) && String(r[c]).toLowerCase().includes(filtre))
     );
   }
@@ -164,6 +172,12 @@ function exportaInversorsExcel() {
     'Tipus ID': r.id_tipo,
     'Num. ID': r.id_num,
     'Nacionalitat': r.nacionalidad,
+    'Data naixement': formatData(r.fecha_nacimiento),
+    'Administracio': r.administracion,
+    'Administrador': r.administrador,
+    'DNI Admin': r.dni_admin,
+    'Data naix. admin.': formatData(r.fecha_nac_admin),
+    'Nacionalitat admin.': r.nacionalidad_admin,
     'Domicili': r.dom_agrupado,
     'Email': r.email,
     'Telefon': r.telf,
@@ -179,15 +193,18 @@ document.getElementById('btnExportInversors').addEventListener('click', exportaI
 // ---------------- Modal inversor ----------------
 
 const campsInversor = ['id_inversor', 'inversor_nom', 'inversor_cnom_rs', 'id_tipo', 'id_num', 'nacionalidad',
-  'administracion', 'administrador', 'co_cargo_dni', 'k_social', 'domicilio', 'cp',
-  'ciudad_pob', 'provincia', 'pais_es', 'email', 'email_idioma', 'telf', 'notas'];
+  'fecha_nacimiento', 'administracion', 'administrador', 'dni_admin', 'fecha_nac_admin', 'nacionalidad_admin',
+  'k_social', 'domicilio', 'cp', 'ciudad_pob', 'provincia', 'pais_es', 'email', 'email_idioma', 'telf', 'notas'];
+const campsInversorData = ['fecha_nacimiento', 'fecha_nac_admin'];
 
 function obrirModalInversor(registre) {
   document.getElementById('errorInversor').textContent = '';
   const esEdicio = !!registre;
   document.getElementById('titolModalInversor').textContent = esEdicio ? `Edita inversor ${registre.id_inversor}` : 'Nou inversor';
   campsInversor.forEach(c => {
-    document.getElementById('f_' + c).value = (registre && registre[c] !== null && registre[c] !== undefined) ? registre[c] : '';
+    let v = registre ? registre[c] : '';
+    if (campsInversorData.includes(c) && v) v = new Date(v).toISOString().slice(0, 10);
+    document.getElementById('f_' + c).value = (v === null || v === undefined) ? '' : v;
   });
   document.getElementById('f_id_inversor').disabled = esEdicio;
   document.getElementById('overlayInversor').dataset.mode = esEdicio ? 'edit' : 'new';

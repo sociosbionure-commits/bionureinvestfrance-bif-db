@@ -43,8 +43,8 @@ tbody tr:hover{background:#eef3fb;}
 
 #taula{table-layout:fixed;width:auto;}
 #taula th:nth-child(2),#taula td:nth-child(2){white-space:normal;}
-#taula th:nth-child(6),#taula td:nth-child(6){white-space:normal;}
-#taula th:nth-child(7),#taula td:nth-child(7){white-space:normal;}
+#taula th:nth-child(12),#taula td:nth-child(12){white-space:normal;}
+#taula th:nth-child(13),#taula td:nth-child(13){white-space:normal;}
 
 #taulaTitols{table-layout:fixed;width:auto;}
 #taulaTitols th:nth-child(1),#taulaTitols td:nth-child(1){text-align:right;}
@@ -139,8 +139,10 @@ tbody tr:hover{background:#eef3fb;}
 <div class="table-wrap" id="vistaInversors">
   <table id="taula">
     <colgroup>
-      <col style="width:50px"><col style="width:330px"><col style="width:70px"><col style="width:90px">
-      <col style="width:100px"><col style="width:640px"><col style="width:200px"><col style="width:90px"><col style="width:70px">
+      <col style="width:50px"><col style="width:260px"><col style="width:70px"><col style="width:90px">
+      <col style="width:100px"><col style="width:95px"><col style="width:110px"><col style="width:140px">
+      <col style="width:90px"><col style="width:95px"><col style="width:100px">
+      <col style="width:450px"><col style="width:180px"><col style="width:90px"><col style="width:70px">
     </colgroup>
     <thead>
       <tr>
@@ -149,6 +151,12 @@ tbody tr:hover{background:#eef3fb;}
         <th data-col="id_tipo">Tipus ID</th>
         <th data-col="id_num">Num. ID</th>
         <th data-col="nacionalidad">Nacionalitat</th>
+        <th data-col="fecha_nacimiento">Data naix.</th>
+        <th data-col="administracion">Administracio</th>
+        <th data-col="administrador">Administrador</th>
+        <th data-col="dni_admin">DNI Admin</th>
+        <th data-col="fecha_nac_admin">Data naix. admin.</th>
+        <th data-col="nacionalidad_admin">Nacionalitat admin.</th>
         <th data-col="dom_agrupado">Domicili</th>
         <th data-col="email">Email</th>
         <th data-col="telf">Telefon</th>
@@ -156,7 +164,7 @@ tbody tr:hover{background:#eef3fb;}
       </tr>
     </thead>
     <tbody id="tbody">
-      <tr><td class="loading" colspan="9">Carregant dades de Neon...</td></tr>
+      <tr><td class="loading" colspan="15">Carregant dades de Neon...</td></tr>
     </tbody>
   </table>
 </div>
@@ -306,9 +314,12 @@ tbody tr:hover{background:#eef3fb;}
       <div class="camp"><label>Tipus ID</label><input type="text" id="f_id_tipo" placeholder="DNI, NIE, NIF..."></div>
       <div class="camp"><label>Num. ID</label><input type="text" id="f_id_num"></div>
       <div class="camp"><label>Nacionalitat</label><input type="text" id="f_nacionalidad"></div>
+      <div class="camp"><label>Data naixement</label><input type="date" id="f_fecha_nacimiento"></div>
       <div class="camp"><label>Administracio</label><input type="text" id="f_administracion"></div>
       <div class="camp"><label>Administrador</label><input type="text" id="f_administrador"></div>
-      <div class="camp"><label>Carrec / DNI apoderat</label><input type="text" id="f_co_cargo_dni"></div>
+      <div class="camp"><label>DNI Admin</label><input type="text" id="f_dni_admin"></div>
+      <div class="camp"><label>Data naix. admin.</label><input type="date" id="f_fecha_nac_admin"></div>
+      <div class="camp"><label>Nacionalitat admin.</label><input type="text" id="f_nacionalidad_admin"></div>
       <div class="camp"><label>Capital social</label><input type="text" id="f_k_social"></div>
       <div class="camp full"><label>Domicili</label><input type="text" id="f_domicilio"></div>
       <div class="camp"><label>CP</label><input type="text" id="f_cp"></div>
