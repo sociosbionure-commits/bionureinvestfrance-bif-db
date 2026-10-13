@@ -100,7 +100,7 @@ function render() {
       <td>${escapeHtml(r.dom_agrupado)}</td>
       <td>${escapeHtml(r.email)}</td>
       <td>${escapeHtml(r.telf)}</td>
-      <td><button class="btn petit secundari" data-edit-inversor="${r.id_inversor}">Edita</button></td>
+      <td><button class="btn icona secundari" data-edit-inversor="${r.id_inversor}" title="Edita">&#9998;</button></td>
     </tr>
   `).join('');
 }
