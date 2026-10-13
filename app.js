@@ -335,6 +335,7 @@ const VISTES = {
   titols: { barra: 'barraTitols', vista: 'vistaTitols' },
   perInversor: { barra: 'barraPerInversor', vista: 'vistaPerInversor' },
   certificats: { barra: 'barraCertificats', vista: 'vistaCertificats' },
+  resum: { barra: 'barraResum', vista: 'vistaResum' },
 };
 
 function mostrarVista(nom) {
@@ -368,6 +369,129 @@ document.getElementById('btnPerInversorCertificats').addEventListener('click', a
 });
 document.getElementById('btnCertPerInversor').addEventListener('click', () => mostrarVista('perInversor'));
 document.getElementById('btnCertInversors').addEventListener('click', () => mostrarVista('inversors'));
+
+let ordreColResum = 'id_inversor';
+let ordreAscResum = true;
+
+function calculaResum() {
+  const totalsPerInversor = new Map();
+  dadesTitols.forEach(r => {
+    totalsPerInversor.set(r.id_inversor, (totalsPerInversor.get(r.id_inversor) || 0) + (Number(r.total_acc) || 0));
+  });
+  return dades.map(inv => ({
+    id_inversor: inv.id_inversor,
+    inversor: inv.inversor,
+    id_tipo: inv.id_tipo,
+    id_num: inv.id_num,
+    total_acc: totalsPerInversor.get(inv.id_inversor) || 0,
+  }));
+}
+
+function renderResum() {
+  const tbody = document.getElementById('tbodyResum');
+  const filtre = document.getElementById('cercaResum').value.trim().toLowerCase();
+
+  let files = calculaResum();
+  if (filtre) {
+    files = files.filter(r =>
+      ['id_inversor', 'inversor', 'id_tipo', 'id_num']
+        .some(c => (r[c] !== null && r[c] !== undefined) && String(r[c]).toLowerCase().includes(filtre))
+    );
+  }
+
+  files = [...files].sort((a, b) => {
+    const va = a[ordreColResum], vb = b[ordreColResum];
+    if (va === null || va === undefined) return 1;
+    if (vb === null || vb === undefined) return -1;
+    const cmp = typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb), 'ca');
+    return ordreAscResum ? cmp : -cmp;
+  });
+
+  document.getElementById('comptadorResum').textContent = `${files.length} de ${dades.length} inversors`;
+
+  if (files.length === 0) {
+    tbody.innerHTML = '<tr><td class="empty" colspan="5">Cap resultat</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = files.map(r => `
+    <tr>
+      <td>${escapeHtml(r.id_inversor)}</td>
+      <td>${escapeHtml(r.inversor)}</td>
+      <td>${escapeHtml(r.id_tipo)}</td>
+      <td>${escapeHtml(r.id_num)}</td>
+      <td>${formatNum(r.total_acc)}</td>
+    </tr>
+  `).join('');
+}
+
+function marcarOrdreResum() {
+  document.querySelectorAll('#taulaResum th[data-col]').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.col === ordreColResum);
+    th.classList.toggle('asc', th.dataset.col === ordreColResum && ordreAscResum);
+  });
+}
+
+document.querySelectorAll('#taulaResum th[data-col]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (ordreColResum === col) ordreAscResum = !ordreAscResum;
+    else { ordreColResum = col; ordreAscResum = true; }
+    marcarOrdreResum();
+    renderResum();
+  });
+});
+
+function exportaResumExcel() {
+  const filtre = document.getElementById('cercaResum').value.trim().toLowerCase();
+  let files = calculaResum();
+  if (filtre) {
+    files = files.filter(r =>
+      ['id_inversor', 'inversor', 'id_tipo', 'id_num']
+        .some(c => (r[c] !== null && r[c] !== undefined) && String(r[c]).toLowerCase().includes(filtre))
+    );
+  }
+  files = [...files].sort((a, b) => {
+    const va = a[ordreColResum], vb = b[ordreColResum];
+    if (va === null || va === undefined) return 1;
+    if (vb === null || vb === undefined) return -1;
+    const cmp = typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb), 'ca');
+    return ordreAscResum ? cmp : -cmp;
+  });
+  const dadesExport = files.map(r => ({
+    'ID': r.id_inversor,
+    'Inversor': r.inversor,
+    'Tipus ID': r.id_tipo,
+    'Num. ID': r.id_num,
+    'Total accions': r.total_acc,
+  }));
+  const ws = XLSX.utils.json_to_sheet(dadesExport);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Resum');
+  XLSX.writeFile(wb, 'Cap Table BIF - Resum Inversors.xlsx');
+}
+
+document.getElementById('btnExportResum').addEventListener('click', exportaResumExcel);
+document.getElementById('btnResumMoviments').addEventListener('click', () => mostrarVista('titols'));
+document.getElementById('btnResumInversors').addEventListener('click', () => mostrarVista('inversors'));
+
+document.getElementById('btnResumAccions').addEventListener('click', async () => {
+  mostrarVista('resum');
+  if (dadesTitols.length === 0) await carregarTitols();
+  renderResum();
+});
+
+document.getElementById('cercaResum').addEventListener('input', () => {
+  document.getElementById('cercaResumWrap').classList.toggle('te-text', document.getElementById('cercaResum').value.length > 0);
+  renderResum();
+});
+document.getElementById('cercaResumNeteja').addEventListener('click', () => {
+  const input = document.getElementById('cercaResum');
+  input.value = '';
+  input.focus();
+  document.getElementById('cercaResumWrap').classList.remove('te-text');
+  renderResum();
+});
 
 document.getElementById('cercaCertificat').addEventListener('input', () => {
   document.getElementById('cercaCertWrap').classList.toggle('te-text', document.getElementById('cercaCertificat').value.length > 0);

@@ -76,6 +76,7 @@ tbody tr:hover{background:#eef3fb;}
 #taulaPerInversor th:nth-child(8),#taulaPerInversor td:nth-child(8){white-space:normal;}
 #taulaPerInversor tfoot td{position:sticky;bottom:0;background:#D9E1F2;font-weight:bold;border-top:2px solid #b7c6e6;z-index:3;}
 #taulaPerInversor tr.subtotal td{font-weight:bold;background:#eef3fb;border-top:1px solid #b7c6e6;}
+#taulaResum th:nth-child(5),#taulaResum td:nth-child(5){text-align:right;}
 
 #taulaTitols th:nth-child(5),#taulaTitols td:nth-child(5),
 #taulaPerInversor th:nth-child(5),#taulaPerInversor td:nth-child(5),
@@ -133,6 +134,7 @@ tbody tr:hover{background:#eef3fb;}
   </span>
   <span class="count" id="comptador"></span>
   <button class="btn secundari" id="btnExportInversors">Exportar Excel</button>
+  <button class="btn secundari" id="btnResumAccions">Resum accions</button>
   <button class="btn secundari" id="btnMoviments">Moviments de titols</button>
   <button class="btn" id="btnNouInversor">+ Nou inversor</button>
 </div>
@@ -277,6 +279,39 @@ tbody tr:hover{background:#eef3fb;}
         <td id="totalGeneralTrams" style="text-align:right;"></td>
       </tr>
     </tfoot>
+  </table>
+</div>
+
+<div class="top-bar oculta" id="barraResum">
+  <h1>Cap Table BIF &mdash; Resum d'Inversors</h1>
+  <span class="cerca-wrap" id="cercaResumWrap">
+    <input type="text" id="cercaResum" placeholder="Cerca per nom, ID, Tipus ID, Num. ID...">
+    <button type="button" class="cerca-neteja" id="cercaResumNeteja" title="Neteja la cerca">&times;</button>
+  </span>
+  <span class="count" id="comptadorResum"></span>
+  <button class="btn secundari" id="btnExportResum">Exportar Excel</button>
+  <button class="btn secundari" id="btnResumMoviments">Moviments de titols</button>
+  <button class="btn secundari" id="btnResumInversors">Veure inversors</button>
+</div>
+
+<div class="table-wrap oculta" id="vistaResum">
+  <table id="taulaResum">
+    <colgroup>
+      <col style="width:50px"><col style="width:330px"><col style="width:90px"><col style="width:110px">
+      <col style="width:130px">
+    </colgroup>
+    <thead>
+      <tr>
+        <th data-col="id_inversor">ID</th>
+        <th data-col="inversor">Inversor</th>
+        <th data-col="id_tipo">Tipus ID</th>
+        <th data-col="id_num">Num. ID</th>
+        <th data-col="total_acc" style="text-align:right;">Total accions</th>
+      </tr>
+    </thead>
+    <tbody id="tbodyResum">
+      <tr><td class="loading" colspan="5">Carregant dades de Neon...</td></tr>
+    </tbody>
   </table>
 </div>
 
