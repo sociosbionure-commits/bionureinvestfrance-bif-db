@@ -314,6 +314,44 @@ function filaExcelAInversor(fila) {
   return out;
 }
 
+// No bloqueja la importacio (un mateix administrador/apoderat pot
+// ser-ho de mes d'una empresa), nomes avisa al resum final. Simula
+// l'estat despres d'aplicar les files del fitxer (nomes canvien els
+// camps amb contingut) i busca valors repetits entre inversors diferents.
+function detectaDuplicatsImport(inversorsAImportar) {
+  const estatIdNum = new Map();
+  const estatDniAdmin = new Map();
+  const noms = new Map();
+  dades.forEach(r => {
+    estatIdNum.set(r.id_inversor, r.id_num || '');
+    estatDniAdmin.set(r.id_inversor, r.dni_admin || '');
+    noms.set(r.id_inversor, r.inversor);
+  });
+  inversorsAImportar.forEach(r => {
+    if (r.id_num !== undefined) estatIdNum.set(r.id_inversor, r.id_num);
+    if (r.dni_admin !== undefined) estatDniAdmin.set(r.id_inversor, r.dni_admin);
+    if (r.inversor_nom && !noms.has(r.id_inversor)) noms.set(r.id_inversor, r.inversor_nom);
+  });
+
+  function agrupa(mapa) {
+    const grups = new Map();
+    mapa.forEach((valor, id) => {
+      const v = String(valor || '').trim().toLowerCase();
+      if (!v) return;
+      if (!grups.has(v)) grups.set(v, []);
+      grups.get(v).push(id);
+    });
+    return [...grups.values()].filter(ids => ids.length > 1);
+  }
+
+  const linies = [];
+  agrupa(estatIdNum).forEach(ids =>
+    linies.push(`Num. ID repetit entre: ${ids.map(id => `${id} - ${noms.get(id) || ''}`).join(', ')}`));
+  agrupa(estatDniAdmin).forEach(ids =>
+    linies.push(`DNI Admin repetit entre: ${ids.map(id => `${id} - ${noms.get(id) || ''}`).join(', ')}`));
+  return linies;
+}
+
 async function importaInversorsExcel(file) {
   const estat = document.getElementById('estatImport');
   estat.textContent = 'Llegint fitxer...';
@@ -332,6 +370,8 @@ async function importaInversorsExcel(file) {
       return;
     }
 
+    const avisosDuplicats = detectaDuplicatsImport(inversorsAImportar);
+
     const MIDA_LOT = 40;
     let creats = 0, actualitzats = 0, errors = [];
     for (let i = 0; i < inversorsAImportar.length; i += MIDA_LOT) {
@@ -348,6 +388,10 @@ async function importaInversorsExcel(file) {
     estat.textContent = '';
     let resum = `Importacio acabada.\nActualitzats: ${actualitzats}\nCreats: ${creats}`;
     if (errors.length) resum += `\nErrors (${errors.length}):\n` + errors.slice(0, 15).join('\n');
+    if (avisosDuplicats.length) {
+      resum += `\n\nAvis: Num. ID o DNI Admin repetits entre inversors (${avisosDuplicats.length}):\n` +
+        avisosDuplicats.slice(0, 15).join('\n');
+    }
     alert(resum);
     await carregar();
   } catch (e) {
@@ -403,6 +447,23 @@ document.getElementById('tbody').addEventListener('click', (ev) => {
   if (registre) obrirModalInversor(registre);
 });
 
+// Comprova si id_num o dni_admin ja els fa servir un ALTRE inversor.
+// No es un bloqueig: el mateix administrador/apoderat pot ser-ho de
+// mes d'una empresa, aixi que es demana confirmacio, no es prohibeix.
+function trobaDuplicatsInversor(idInversorPropi, idNum, dniAdmin) {
+  const norm = (v) => String(v || '').trim().toLowerCase();
+  const nIdNum = norm(idNum);
+  const nDniAdmin = norm(dniAdmin);
+  const duplicatsIdNum = [];
+  const duplicatsDniAdmin = [];
+  dades.forEach(r => {
+    if (r.id_inversor === idInversorPropi) return;
+    if (nIdNum && norm(r.id_num) === nIdNum) duplicatsIdNum.push(r);
+    if (nDniAdmin && norm(r.dni_admin) === nDniAdmin) duplicatsDniAdmin.push(r);
+  });
+  return { duplicatsIdNum, duplicatsDniAdmin };
+}
+
 document.getElementById('btnGuardarInversor').addEventListener('click', async () => {
   const errorEl = document.getElementById('errorInversor');
   errorEl.textContent = '';
@@ -413,6 +474,20 @@ document.getElementById('btnGuardarInversor').addEventListener('click', async ()
     return;
   }
   const mode = document.getElementById('overlayInversor').dataset.mode;
+  const idPropi = mode === 'edit' ? Number(payload.id_inversor) : null;
+  const { duplicatsIdNum, duplicatsDniAdmin } = trobaDuplicatsInversor(idPropi, payload.id_num, payload.dni_admin);
+  if (duplicatsIdNum.length || duplicatsDniAdmin.length) {
+    let avis = '';
+    if (duplicatsIdNum.length) {
+      avis += `El Num. ID "${payload.id_num}" ja el fa servir: ` +
+        duplicatsIdNum.map(r => `${r.id_inversor} - ${r.inversor}`).join(', ') + '\n';
+    }
+    if (duplicatsDniAdmin.length) {
+      avis += `El DNI Admin "${payload.dni_admin}" ja el fa servir: ` +
+        duplicatsDniAdmin.map(r => `${r.id_inversor} - ${r.inversor}`).join(', ') + '\n';
+    }
+    if (!confirm(avis + '\nVols desar-ho igualment?')) return;
+  }
   try {
     await apiQuery(mode === 'edit' ? 'updateInversor' : 'addInversor', payload);
     tancarModalInversor();
