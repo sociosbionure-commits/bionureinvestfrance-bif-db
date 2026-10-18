@@ -64,7 +64,7 @@ function render() {
   if (filtre) {
     files = files.filter(r =>
       ['id_inversor', 'inversor', 'id_tipo', 'id_num', 'nacionalidad', 'administracion', 'administrador',
-        'dni_admin', 'nacionalidad_admin', 'dom_agrupado', 'email', 'telf']
+        'tipo_id_admin', 'dni_admin', 'nacionalidad_admin', 'dom_agrupado', 'email', 'telf']
         .some(c => (r[c] !== null && r[c] !== undefined) && String(r[c]).toLowerCase().includes(filtre))
     );
   }
@@ -80,7 +80,7 @@ function render() {
   document.getElementById('comptador').textContent = `${files.length} de ${dades.length} inversors`;
 
   if (files.length === 0) {
-    tbody.innerHTML = '<tr><td class="empty" colspan="15">Cap resultat</td></tr>';
+    tbody.innerHTML = '<tr><td class="empty" colspan="16">Cap resultat</td></tr>';
     return;
   }
 
@@ -94,6 +94,7 @@ function render() {
       <td>${formatData(r.fecha_nacimiento)}</td>
       <td>${escapeHtml(r.administracion)}</td>
       <td>${escapeHtml(r.administrador)}</td>
+      <td>${escapeHtml(r.tipo_id_admin)}</td>
       <td>${escapeHtml(r.dni_admin)}</td>
       <td>${formatData(r.fecha_nac_admin)}</td>
       <td>${escapeHtml(r.nacionalidad_admin)}</td>
@@ -155,7 +156,7 @@ function exportaInversorsExcel() {
   if (filtre) {
     files = files.filter(r =>
       ['id_inversor', 'inversor', 'id_tipo', 'id_num', 'nacionalidad', 'administracion', 'administrador',
-        'dni_admin', 'nacionalidad_admin', 'dom_agrupado', 'email', 'telf']
+        'tipo_id_admin', 'dni_admin', 'nacionalidad_admin', 'dom_agrupado', 'email', 'telf']
         .some(c => (r[c] !== null && r[c] !== undefined) && String(r[c]).toLowerCase().includes(filtre))
     );
   }
@@ -175,6 +176,7 @@ function exportaInversorsExcel() {
     'Data naixement': formatData(r.fecha_nacimiento),
     'Administracio': r.administracion,
     'Administrador': r.administrador,
+    'Tipus ID Admin': r.tipo_id_admin,
     'DNI Admin': r.dni_admin,
     'Data naix. admin.': formatData(r.fecha_nac_admin),
     'Nacionalitat admin.': r.nacionalidad_admin,
@@ -190,10 +192,185 @@ function exportaInversorsExcel() {
 
 document.getElementById('btnExportInversors').addEventListener('click', exportaInversorsExcel);
 
+// ---------------- Importacio d'inversors des d'Excel ----------------
+
+const MAPA_IMPORT_INVERSORS = {
+  'ID': 'id_inversor',
+  'Inversor': 'inversor_nom',
+  'Tipus ID': 'id_tipo',
+  'Num. ID': 'id_num',
+  'Nacionalitat': 'nacionalidad',
+  'Data naixement': 'fecha_nacimiento',
+  'Administracio': 'administracion',
+  'Administrador': 'administrador',
+  'Tipus ID Admin': 'tipo_id_admin',
+  'DNI Admin': 'dni_admin',
+  'Data naix. admin.': 'fecha_nac_admin',
+  'Nacionalitat admin.': 'nacionalidad_admin',
+  'Domicili': 'domicilio',
+  'CP': 'cp',
+  'CiudadPob': 'ciudad_pob',
+  'Provincia': 'provincia',
+  'Pais': 'pais_es',
+  'Email': 'email',
+  'Telefon': 'telf',
+  'Notas': 'notas',
+  // "Domicili agrupat" s'ignora expressament: es un camp calculat, no editable.
+};
+const CAMPS_DATA_IMPORT = new Set(['fecha_nacimiento', 'fecha_nac_admin']);
+
+function parseDataImport(v) {
+  if (v === null || v === undefined || v === '') return null;
+  // Numero de serie d'Excel (dies des de 1899-12-30): conversio exacta,
+  // sense cap ambiguitat de format. Mai es passa per Date() amb string,
+  // perque "12.03.1975" es pot interpretar com MM.DD a l'estil USA.
+  if (typeof v === 'number' && isFinite(v)) {
+    const ms = Math.round((v - 25569) * 86400 * 1000);
+    return new Date(ms).toISOString().slice(0, 10);
+  }
+  const s = String(v).trim();
+  if (!s) return null;
+  let m = s.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})$/);
+  if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m) return `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`;
+  return null;
+}
+
+// Parser de CSV fet a ma (no usa SheetJS): SheetJS interpreta text com
+// "12.03.1975" com a data a l'estil EUA (mes.dia.any) durant la lectura
+// del CSV, abans que puguem corregir-ho, i cap opcio de sheet_to_json ho
+// evita. Aquest parser no interpreta res, nomes talla text en camps.
+function detectaDelimitadorCSV(text) {
+  const primeraLinia = text.split(/\r\n|\n/, 1)[0] || '';
+  const comes = (primeraLinia.match(/,/g) || []).length;
+  const punts = (primeraLinia.match(/;/g) || []).length;
+  return punts > comes ? ';' : ',';
+}
+
+function parseCSV(text) {
+  const delim = detectaDelimitadorCSV(text);
+  const files = [];
+  let fila = [];
+  let camp = '';
+  let dinsCometes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (dinsCometes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { camp += '"'; i++; continue; }
+        dinsCometes = false;
+        continue;
+      }
+      camp += c;
+      continue;
+    }
+    if (c === '"') { dinsCometes = true; continue; }
+    if (c === delim) { fila.push(camp); camp = ''; continue; }
+    if (c === '\r') continue;
+    if (c === '\n') { fila.push(camp); files.push(fila); fila = []; camp = ''; continue; }
+    camp += c;
+  }
+  if (camp.length || fila.length) { fila.push(camp); files.push(fila); }
+  if (files.length === 0) return [];
+  const capcaleres = files[0].map(h => h.trim());
+  return files.slice(1)
+    .filter(f => f.some(c => c.trim() !== ''))
+    .map(f => {
+      const obj = {};
+      capcaleres.forEach((h, idx) => { obj[h] = (f[idx] !== undefined ? f[idx] : '').trim(); });
+      return obj;
+    });
+}
+
+async function llegeixFitxerImport(file) {
+  if (/\.csv$/i.test(file.name)) {
+    const buf = await file.arrayBuffer();
+    let text;
+    try {
+      text = new TextDecoder('utf-8', { fatal: true }).decode(buf);
+    } catch {
+      text = new TextDecoder('windows-1252').decode(buf);
+    }
+    return parseCSV(text);
+  }
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf);
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  // raw:false -> sempre retorna el text tal com es mostra a la cel·la,
+  // mai un objecte Date ni un numero de serie.
+  return XLSX.utils.sheet_to_json(ws, { defval: '', raw: false });
+}
+
+function filaExcelAInversor(fila) {
+  const out = {};
+  for (const [capcalera, camp] of Object.entries(MAPA_IMPORT_INVERSORS)) {
+    let v = fila[capcalera];
+    if (v === undefined || v === null) continue;
+    if (typeof v === 'string') v = v.trim();
+    if (v === '') continue;
+    out[camp] = CAMPS_DATA_IMPORT.has(camp) ? parseDataImport(v) : v;
+  }
+  return out;
+}
+
+async function importaInversorsExcel(file) {
+  const estat = document.getElementById('estatImport');
+  estat.textContent = 'Llegint fitxer...';
+  try {
+    const filesExcel = await llegeixFitxerImport(file);
+
+    const inversorsAImportar = filesExcel
+      .map(filaExcelAInversor)
+      .filter(r => r.id_inversor !== undefined && r.id_inversor !== '')
+      .map(r => ({ ...r, id_inversor: Number(r.id_inversor) }))
+      .filter(r => !isNaN(r.id_inversor));
+
+    if (inversorsAImportar.length === 0) {
+      estat.textContent = '';
+      alert('No s\'ha trobat cap fila amb ID vàlid al fitxer.');
+      return;
+    }
+
+    const MIDA_LOT = 40;
+    let creats = 0, actualitzats = 0, errors = [];
+    for (let i = 0; i < inversorsAImportar.length; i += MIDA_LOT) {
+      const lot = inversorsAImportar.slice(i, i + MIDA_LOT);
+      estat.textContent = `Important... ${Math.min(i + MIDA_LOT, inversorsAImportar.length)}/${inversorsAImportar.length}`;
+      const resultats = await apiQuery('bulkUpsertInversors', { rows: lot });
+      resultats.forEach(r => {
+        if (r.status === 'creat') creats++;
+        else if (r.status === 'actualitzat') actualitzats++;
+        else errors.push(`ID ${r.id_inversor}: ${r.error}`);
+      });
+    }
+
+    estat.textContent = '';
+    let resum = `Importacio acabada.\nActualitzats: ${actualitzats}\nCreats: ${creats}`;
+    if (errors.length) resum += `\nErrors (${errors.length}):\n` + errors.slice(0, 15).join('\n');
+    alert(resum);
+    await carregar();
+  } catch (e) {
+    estat.textContent = '';
+    alert('Error important el fitxer: ' + e.message);
+  }
+}
+
+document.getElementById('btnImportInversors').addEventListener('click', () => {
+  document.getElementById('fitxerImportInversors').click();
+});
+document.getElementById('fitxerImportInversors').addEventListener('change', async (ev) => {
+  const file = ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  if (!confirm(`Importar inversors des de "${file.name}"? Nomes es tocaran els camps no buits; les cel·les buides no esborren dades existents.`)) return;
+  await importaInversorsExcel(file);
+});
+
 // ---------------- Modal inversor ----------------
 
 const campsInversor = ['id_inversor', 'inversor_nom', 'inversor_cnom_rs', 'id_tipo', 'id_num', 'nacionalidad',
-  'fecha_nacimiento', 'administracion', 'administrador', 'dni_admin', 'fecha_nac_admin', 'nacionalidad_admin',
+  'fecha_nacimiento', 'administracion', 'administrador', 'tipo_id_admin', 'dni_admin', 'fecha_nac_admin', 'nacionalidad_admin',
   'k_social', 'domicilio', 'cp', 'ciudad_pob', 'provincia', 'pais_es', 'email', 'email_idioma', 'telf', 'notas'];
 const campsInversorData = ['fecha_nacimiento', 'fecha_nac_admin'];
 
