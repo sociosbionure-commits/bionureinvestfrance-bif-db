@@ -1041,6 +1041,21 @@ function generaProxy(idInversor) {
       <span>${casella(false)} Non / No</span>
     </div>
 
+    <div class="proxy-fila" style="margin-top:16px;">
+      <div class="fr">Si vous avez coch&eacute; &laquo; Non &raquo;, ou si l'une des donn&eacute;es est manquante, nous vous prions de bien vouloir indiquer ci-dessous vos donn&eacute;es exactes (uniquement celles &agrave; modifier).</div>
+      <div class="es">En caso de haber marcado &laquo;No&raquo;, o si alguno de los datos no consta, le rogamos que indique a continuaci&oacute;n sus datos correctos (solo los que deban modificarse).</div>
+    </div>
+    <div class="proxy-seccio-titol">1B. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
+    <table class="proxy-taula">
+      <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta">Domicile / Domicilio</td><td>&nbsp;</td></tr>
+    </table>
+    <div class="proxy-fila">
+      <div class="fr">R&eacute;gime matrimonial&nbsp;: si vous &ecirc;tes mari&eacute;(e) sous un r&eacute;gime de communaut&eacute; de biens (par exemple, communaut&eacute; r&eacute;duite aux acqu&ecirc;ts), nous vous prions de bien vouloir nous en informer.</div>
+      <div class="es">R&eacute;gimen econ&oacute;mico matrimonial: si est&aacute; casado/a en r&eacute;gimen de comunidad de bienes (por ejemplo, sociedad de gananciales), le rogamos que nos lo comunique.</div>
+    </div>
+
     <div class="proxy-seccio-titol">2. Coordonn&eacute;es bancaires / Datos bancarios</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>${nom}</td></tr>
