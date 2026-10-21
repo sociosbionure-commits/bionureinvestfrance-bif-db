@@ -943,6 +943,7 @@ function generaProxy(idInversor) {
   const ibanText = emmascaraIban(finan.iban);
 
   document.getElementById('proxyContingut').innerHTML = `
+  <div class="cert-pagina proxy-pag">
     <img class="cert-logo" src="data:image/png;base64,${LOGO_BIONURE_B64}" alt="Bionure">
     <div class="cert-cap-empresa">
       BIONURE INVESTMENT FRANCE, S.A.S. au capital de 37 284 680,00 &euro; (fixe)<br>
@@ -1024,7 +1025,9 @@ function generaProxy(idInversor) {
       <div class="fr">Veuillez agr&eacute;er, Madame, Monsieur, l'expression de mes salutations distingu&eacute;es.</div>
       <div class="es">Atentamente,</div>
     </div>
+  </div>
 
+  <div class="cert-pagina proxy-pag salt">
     <div class="proxy-seccio-titol">1A. Donn&eacute;es de l'actionnaire &ndash; personne physique / Datos del accionista &ndash; persona f&iacute;sica</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>${nom}</td></tr>
@@ -1032,20 +1035,17 @@ function generaProxy(idInversor) {
       <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia}</td></tr>
       <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de acciones de BIF</td><td>${totalAccFmt}</td></tr>
     </table>
-    <div class="proxy-fila" style="margin-bottom:6px;">
-      <div class="fr">Les donn&eacute;es de l'actionnaire sont-elles exactes&nbsp;?</div>
-      <div class="es">&iquest;Son correctos los datos del accionista?</div>
-    </div>
-    <div class="proxy-check-linia">
-      <span>${casella(false)} Oui / S&iacute;</span>
-      <span>${casella(false)} Non / No</span>
-    </div>
-
-    <div class="proxy-fila" style="margin-top:16px;">
+    <table class="proxy-check-taula">
+      <tr>
+        <td class="pregunta">Les donn&eacute;es de l'actionnaire sont-elles exactes&nbsp;?<br>&iquest;Son correctos los datos del accionista?</td>
+        <td><span class="proxy-check-linia">${casella(false)} Oui / S&iacute;&nbsp;&nbsp;&nbsp;${casella(false)} Non / No</span></td>
+      </tr>
+    </table>
+    <div class="proxy-fila">
       <div class="fr">Si vous avez coch&eacute; &laquo; Non &raquo;, ou si l'une des donn&eacute;es est manquante, nous vous prions de bien vouloir indiquer ci-dessous vos donn&eacute;es exactes (uniquement celles &agrave; modifier).</div>
       <div class="es">En caso de haber marcado &laquo;No&raquo;, o si alguno de los datos no consta, le rogamos que indique a continuaci&oacute;n sus datos correctos (solo los que deban modificarse).</div>
     </div>
-    <div class="proxy-seccio-titol">1B. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
+    <div class="proxy-seccio-titol" style="margin-top:20px;">1B. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>&nbsp;</td></tr>
       <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>&nbsp;</td></tr>
@@ -1055,51 +1055,50 @@ function generaProxy(idInversor) {
       <div class="fr">R&eacute;gime matrimonial&nbsp;: si vous &ecirc;tes mari&eacute;(e) sous un r&eacute;gime de communaut&eacute; de biens (par exemple, communaut&eacute; r&eacute;duite aux acqu&ecirc;ts), nous vous prions de bien vouloir nous en informer.</div>
       <div class="es">R&eacute;gimen econ&oacute;mico matrimonial: si est&aacute; casado/a en r&eacute;gimen de comunidad de bienes (por ejemplo, sociedad de gananciales), le rogamos que nos lo comunique.</div>
     </div>
+  </div>
 
+  <div class="cert-pagina proxy-pag salt">
     <div class="proxy-seccio-titol">2. Coordonn&eacute;es bancaires / Datos bancarios</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>${nom}</td></tr>
       <tr><td class="etiqueta">Compte bancaire (IBAN)<br>Cuenta bancaria (IBAN)</td><td>${ibanText}</td></tr>
     </table>
-    <div class="proxy-fila" style="margin-bottom:6px;">
-      <div class="fr">Ces coordonn&eacute;es bancaires sont-elles toujours exactes&nbsp;?</div>
-      <div class="es">&iquest;Siguen siendo correctos estos datos bancarios?</div>
-    </div>
-    <div class="proxy-check-linia" style="margin-bottom:14px;">
-      <span>${casella(false)} Oui / S&iacute;</span>
-      <span>${casella(false)} Non / No</span>
-    </div>
-    <div class="proxy-fila" style="margin-bottom:6px;">
-      <div class="fr">Nous disposons du RIB certifi&eacute; de ce compte bancaire</div>
-      <div class="es">Disponemos del certificado de titularidad de esta cuenta bancaria</div>
-    </div>
-    <div class="proxy-check-linia">
-      <span>${casella(teCertBanc)} Oui / S&iacute;</span>
-      <span>${casella(!teCertBanc)} Non / No</span>
-    </div>
-
-    <div class="proxy-fila" style="margin-top:16px;">
+    <table class="proxy-check-taula">
+      <tr>
+        <td class="pregunta">Ces coordonn&eacute;es bancaires sont-elles toujours exactes&nbsp;?<br>&iquest;Siguen siendo correctos estos datos bancarios?</td>
+        <td><span class="proxy-check-linia">${casella(false)} Oui / S&iacute;&nbsp;&nbsp;&nbsp;${casella(false)} Non / No</span></td>
+      </tr>
+    </table>
+    <table class="proxy-check-taula">
+      <tr>
+        <td class="pregunta">Nous disposons du RIB certifi&eacute; de ce compte bancaire<br>Disponemos del certificado de titularidad de esta cuenta bancaria</td>
+        <td><span class="proxy-check-linia">${casella(teCertBanc)} Oui / S&iacute;&nbsp;&nbsp;&nbsp;${casella(!teCertBanc)} Non / No</span></td>
+      </tr>
+    </table>
+    <div class="proxy-fila">
       <div class="fr">Cochez &laquo; Oui &raquo; si le compte reste le m&ecirc;me. Si vous avez coch&eacute; &laquo; Non &raquo; (erreur ou changement de compte), nous vous prions de bien vouloir indiquer ci-dessous vos nouvelles coordonn&eacute;es bancaires&nbsp;:</div>
       <div class="es">Marque &laquo;S&iacute;&raquo; si la cuenta sigue siendo la misma. En caso de haber marcado &laquo;No&raquo; (error o cambio de cuenta), le rogamos que indique a continuaci&oacute;n sus nuevos datos bancarios:</div>
     </div>
-    <table class="proxy-taula">
+    <table class="proxy-taula" style="margin-top:10px;">
       <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>&nbsp;</td></tr>
       <tr><td class="etiqueta">Compte bancaire (IBAN)<br>Cuenta bancaria (IBAN)</td><td>&nbsp;</td></tr>
     </table>
 
-    <div class="proxy-nota">
-      Important&nbsp;: Si, dans les deux cas, la r&eacute;ponse est &laquo; Oui &raquo;, il n'est pas n&eacute;cessaire de nous faire parvenir &agrave; nouveau l'attestation de titularit&eacute; du compte bancaire. En revanche, si la case coch&eacute;e est &laquo; Non &raquo;, il est indispensable de nous faire parvenir une attestation de titularit&eacute; du compte bancaire d&eacute;livr&eacute;e par votre banque, avec le pr&eacute;sent document sign&eacute;.<br>
-      Importante: Si en los dos casos el resultado es &laquo;S&iacute;&raquo;, no es necesario que nos haga llegar de nuevo el certificado de titularidad de la cuenta bancaria. Por el contrario, si lo que aparece marcado es &laquo;No&raquo;, es imprescindible que nos haga llegar un certificado de titularidad de la cuenta bancaria emitido por su entidad, junto con el presente documento firmado.
+    <div class="proxy-important">
+      <div class="fr"><strong>Important&nbsp;:</strong> Si, dans les deux cas, la r&eacute;ponse est &laquo; Oui &raquo;, il n'est pas n&eacute;cessaire de nous faire parvenir &agrave; nouveau l'attestation de titularit&eacute; du compte bancaire. En revanche, si la case coch&eacute;e est &laquo; Non &raquo;, il est indispensable de nous faire parvenir une attestation de titularit&eacute; du compte bancaire d&eacute;livr&eacute;e par votre banque, avec le pr&eacute;sent document sign&eacute;.</div>
+      <div class="es"><strong>Importante:</strong> Si en los dos casos el resultado es &laquo;S&iacute;&raquo;, no es necesario que nos haga llegar de nuevo el certificado de titularidad de la cuenta bancaria. Por el contrario, si lo que aparece marcado es &laquo;No&raquo;, es imprescindible que nos haga llegar un certificado de titularidad de la cuenta bancaria emitido por su entidad, junto con el presente documento firmado.</div>
     </div>
 
-    <div class="proxy-signatura-final">
-      <div class="camp">Signature de l'actionnaire / Firma del accionista</div>
-      <div class="camp">Date / Fecha</div>
+    <div class="proxy-seccio-titol" style="margin-top:28px;">Signature de l'actionnaire / Firma del accionista</div>
+    <table class="proxy-taula">
+      <tr><td class="etiqueta">Signature / Firma</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta">Date / Fecha</td><td>&nbsp;</td></tr>
+    </table>
+    <div class="proxy-nota-final">
+      <div class="fr">Le pr&eacute;sent document peut &ecirc;tre sign&eacute; de mani&egrave;re manuscrite (imprim&eacute;, sign&eacute; et num&eacute;ris&eacute;) ou au moyen d'une signature &eacute;lectronique avec certificat num&eacute;rique.</div>
+      <div class="es">El presente documento puede firmarse de forma manuscrita (impreso, firmado y escaneado) o mediante firma electr&oacute;nica con certificado digital.</div>
     </div>
-    <div class="proxy-nota">
-      Le pr&eacute;sent document peut &ecirc;tre sign&eacute; de mani&egrave;re manuscrite (imprim&eacute;, sign&eacute; et num&eacute;ris&eacute;) ou au moyen d'une signature &eacute;lectronique avec certificat num&eacute;rique.<br>
-      El presente documento puede firmarse de forma manuscrita (impreso, firmado y escaneado) o mediante firma electr&oacute;nica con certificado digital.
-    </div>
+  </div>
   `;
   document.getElementById('overlayProxy').classList.remove('oculta');
 }
