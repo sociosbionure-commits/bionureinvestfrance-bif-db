@@ -1121,6 +1121,66 @@ document.getElementById('btnTancarProxy').addEventListener('click', () => {
   document.getElementById('overlayProxy').classList.add('oculta');
 });
 
+// ---------------- Importacio (esborra-i-recarrega) de dades bancaries ----------------
+
+const CAMPS_IMPORT_FINAN = ['id_inversor', 'iban', 'iban_proof', 'bic_swift', 'cert_banc', 'tipo_tansf', 'concepto', 'banco_bionure', 'notas_infofin'];
+
+function filaExcelAFinan(fila) {
+  const out = {};
+  CAMPS_IMPORT_FINAN.forEach(camp => {
+    let v = fila[camp];
+    if (v === undefined || v === null) return;
+    if (typeof v === 'string') v = v.trim();
+    if (v === '') return;
+    out[camp] = v;
+  });
+  return out;
+}
+
+async function importaDadesFinances(file) {
+  const estat = document.getElementById('estatImportFinan');
+  estat.textContent = 'Llegint fitxer...';
+  try {
+    const filesExcel = await llegeixFitxerImport(file);
+    const filesAImportar = filesExcel
+      .map(filaExcelAFinan)
+      .filter(r => r.id_inversor !== undefined && r.id_inversor !== '')
+      .map(r => ({ ...r, id_inversor: Number(r.id_inversor) }))
+      .filter(r => !isNaN(r.id_inversor));
+
+    if (filesAImportar.length === 0) {
+      estat.textContent = '';
+      alert('No s\'ha trobat cap fila amb ID vàlid al fitxer.');
+      return;
+    }
+
+    estat.textContent = 'Desant...';
+    await apiQuery('bulkReplaceInversorFinan', { rows: filesAImportar });
+    estat.textContent = '';
+    dadesFinan = [];
+    alert(`Fet. S'han substituït totes les dades bancàries per les ${filesAImportar.length} files del fitxer.`);
+  } catch (e) {
+    estat.textContent = '';
+    alert('Error important el fitxer: ' + e.message);
+  }
+}
+
+document.getElementById('btnImportFinan').addEventListener('click', () => {
+  document.getElementById('fitxerImportFinan').click();
+});
+document.getElementById('fitxerImportFinan').addEventListener('change', async (ev) => {
+  const file = ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  const resposta = prompt(
+    `Això ESBORRARÀ TOTES les dades bancàries actuals i les substituirà per les del fitxer "${file.name}".\n` +
+    'Aquesta acció no es pot desfer des de l\'app.\n\n' +
+    'Escriu ESBORRAR per confirmar:'
+  );
+  if (resposta !== 'ESBORRAR') return;
+  await importaDadesFinances(file);
+});
+
 document.getElementById('btnBaixTitols').addEventListener('click', () => {
   const el = document.getElementById('vistaTitols');
   el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });

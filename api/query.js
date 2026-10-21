@@ -33,6 +33,24 @@ module.exports = async (req, res) => {
     listInversorFinan: () => sql`SELECT * FROM v_inversor_bif_infofin ORDER BY id_inversor`,
     listTitols: () => sql`SELECT * FROM v_titulos_bif ORDER BY num_orden`,
 
+    // Substitueix TOTES les files de inversor_bif_infofin per les del
+    // fitxer importat, en una sola transaccio (si falla res, no es
+    // perd res; o tot o res).
+    bulkReplaceInversorFinan: async () => {
+      const rows = Array.isArray(p.rows) ? p.rows : [];
+      const queries = [
+        sql`DELETE FROM inversor_bif_infofin`,
+        ...rows.map(f => sql`
+          INSERT INTO inversor_bif_infofin
+            (id_inversor, iban, iban_proof, bic_swift, cert_banc, tipo_tansf, concepto, banco_bionure, notas_infofin)
+          VALUES
+            (${f.id_inversor}, ${n(f.iban)}, ${n(f.iban_proof)}, ${n(f.bic_swift)}, ${n(f.cert_banc)},
+             ${n(f.tipo_tansf)}, ${n(f.concepto)}, ${n(f.banco_bionure)}, ${n(f.notas_infofin)})`),
+      ];
+      await sql.transaction(queries);
+      return [{ status: 'ok', count: rows.length }];
+    },
+
     addInversor: () => sql`
       INSERT INTO inversor_bif
         (id_inversor, inversor_nom, inversor_cnom_rs, id_tipo, id_num, nacionalidad, fecha_nacimiento,
