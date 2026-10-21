@@ -588,6 +588,7 @@ const VISTES = {
   perInversor: { barra: 'barraPerInversor', vista: 'vistaPerInversor' },
   certificats: { barra: 'barraCertificats', vista: 'vistaCertificats' },
   resum: { barra: 'barraResum', vista: 'vistaResum' },
+  proxys: { barra: 'barraProxys', vista: 'vistaProxys' },
 };
 
 function mostrarVista(nom) {
@@ -621,6 +622,31 @@ document.getElementById('btnPerInversorCertificats').addEventListener('click', a
 });
 document.getElementById('btnCertPerInversor').addEventListener('click', () => mostrarVista('perInversor'));
 document.getElementById('btnCertInversors').addEventListener('click', () => mostrarVista('inversors'));
+
+let dadesFinan = [];
+async function carregaDadesFinanSiCal() {
+  if (dadesFinan.length === 0) dadesFinan = await apiQuery('listInversorFinan');
+}
+
+document.getElementById('btnPerInversorProxys').addEventListener('click', async () => {
+  mostrarVista('proxys');
+  if (dadesTitols.length === 0) await carregarTitols();
+  await carregaDadesFinanSiCal();
+  omplePiDatalist();
+  document.getElementById('llistaInversorsProxy').innerHTML = document.getElementById('llistaInversorsPi').innerHTML;
+});
+document.getElementById('btnProxyPerInversor').addEventListener('click', () => mostrarVista('perInversor'));
+document.getElementById('btnProxyInversors').addEventListener('click', () => mostrarVista('inversors'));
+
+document.getElementById('cercaProxy').addEventListener('input', () => {
+  document.getElementById('cercaProxyWrap').classList.toggle('te-text', document.getElementById('cercaProxy').value.length > 0);
+});
+document.getElementById('cercaProxyNeteja').addEventListener('click', () => {
+  const input = document.getElementById('cercaProxy');
+  input.value = '';
+  input.focus();
+  document.getElementById('cercaProxyWrap').classList.remove('te-text');
+});
 
 let ordreColResum = 'id_inversor';
 let ordreAscResum = true;
@@ -867,6 +893,217 @@ document.getElementById('btnGenerarCertificat').addEventListener('click', () => 
 document.getElementById('btnImprimirCertificat').addEventListener('click', () => window.print());
 document.getElementById('btnTancarCertificat').addEventListener('click', () => {
   document.getElementById('overlayCertificat').classList.add('oculta');
+});
+
+// ---------------- Proxys (persona fisica) ----------------
+
+function emmascaraIban(iban) {
+  const net = String(iban || '').replace(/\s+/g, '').toUpperCase();
+  if (net.length <= 8) return net;
+  const inici = net.slice(0, 4);
+  const final = net.slice(-4);
+  const grupsX = Math.ceil((net.length - 8) / 4);
+  const mig = Array(grupsX).fill('XXXX').join(' ');
+  return `${inici} ${mig} ${final}`;
+}
+
+function casella(marcada) {
+  return marcada ? '&#9745;' : '&#9744;';
+}
+
+function generaProxy(idInversor) {
+  const errorEl = document.getElementById('proxyError');
+  errorEl.textContent = '';
+
+  const inv = dades.find(r => r.id_inversor === idInversor);
+  if (!inv) {
+    errorEl.textContent = `No s'ha trobat cap inversor amb ID ${idInversor}.`;
+    return;
+  }
+  const totalAcc = dadesTitols
+    .filter(r => r.id_inversor === idInversor)
+    .reduce((acc, r) => acc + (Number(r.total_acc) || 0), 0);
+  if (totalAcc <= 0) {
+    errorEl.textContent = `L'inversor ${idInversor} no te accions registrades.`;
+    return;
+  }
+
+  const finan = dadesFinan.find(r => r.id_inversor === idInversor) || {};
+  const teCertBanc = finan.cert_banc === 'OK';
+
+  const avui = new Date();
+  const dEs = dataEs(avui);
+  const dFr = dataFr(avui);
+  const totalAccFmt = formatNum(totalAcc);
+  const nom = escapeHtml(inv.inversor);
+  const tipusId = escapeHtml(inv.id_tipo || '');
+  const numId = escapeHtml(inv.id_num || '');
+  const ciutat = escapeHtml(inv.ciudad_pob || '');
+  const domiciliLinia = `${escapeHtml(inv.domicilio || '')}, ${escapeHtml(inv.cp || '')} ${ciutat} (${escapeHtml(inv.provincia || '')}), ${escapeHtml(inv.pais_es || '')}`;
+  const ibanText = emmascaraIban(finan.iban);
+
+  document.getElementById('proxyContingut').innerHTML = `
+    <img class="cert-logo" src="data:image/png;base64,${LOGO_BIONURE_B64}" alt="Bionure">
+    <div class="cert-cap-empresa">
+      BIONURE INVESTMENT FRANCE, S.A.S. au capital de 37 284 680,00 &euro; (fixe)<br>
+      Si&egrave;ge social&nbsp;: 10 rue de Penthi&egrave;vre, 75008 Paris (France)<br>
+      RCS de Paris sous le n&deg; 942 104 944
+    </div>
+    <div class="proxy-titol">
+      POUVOIR AUX FINS DE LA CESSION D'ACTIONS DE LA SOCI&Eacute;T&Eacute; &laquo; BIONURE INVESTMENT FRANCE, S.A.S. &raquo; (PROXY)<br>
+      DOCUMENTO DE OTORGAMIENTO DE FACULTADES PARA LA VENTA DE ACCIONES DE LA SOCIEDAD &laquo;BIONURE INVESTMENT FRANCE, S.A.S.&raquo; (PROXY)
+    </div>
+    <div class="proxy-dates">
+      &Agrave; ${ciutat}, ${dFr}.<br>
+      En ${ciutat}, ${dEs}.
+    </div>
+    <div class="proxy-destinatari">
+      BIONURE INVESTMENT FRANCE, S.A.S.<br>
+      10 rue de Penthi&egrave;vre<br>
+      75008 Paris / Par&iacute;s (France / Francia)
+      <br><br>
+      &Agrave; l'attention de / A la atenci&oacute;n de&nbsp;:<br>
+      Madame / Do&ntilde;a Carmen Sanfrancisco Mill&aacute;n<br>
+      Repr&eacute;sentante d' / Representante de ALPHA LYRAE HOLDING, S.L.,<br>
+      Pr&eacute;sident de / Presidente de BIONURE INVESTMENT FRANCE, S.A.S.
+    </div>
+    <div class="proxy-salutacio">
+      Madame, Monsieur,<br>
+      Distinguidos Sres.:
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Je fais suite &agrave; votre courrier de septembre 2026 ainsi qu'&agrave; l'Assembl&eacute;e G&eacute;n&eacute;rale du 30 septembre 2026, par lesquels vous m'avez inform&eacute;(e), en ma qualit&eacute; d'actionnaire de la soci&eacute;t&eacute; BIONURE INVESTMENT FRANCE, S.A.S. (ci-apr&egrave;s &laquo; la Soci&eacute;t&eacute; &raquo; ou &laquo; BIF &raquo;), de la possibilit&eacute; de c&eacute;der les actions dont je suis titulaire dans BIONURE INVESTMENT FRANCE, S.A.S. au profit de la Soci&eacute;t&eacute; elle-m&ecirc;me, dans le cadre de l'entr&eacute;e d'un nouvel Investisseur au capital de celle-ci.</div>
+      <div class="es">Me dirijo a ustedes en respuesta a su carta de septiembre de 2026 y a la posterior Junta General de 30 de septiembre de 2026, en virtud de las cuales me comunicaron, en mi calidad de accionista de la Compa&ntilde;&iacute;a BIONURE INVESTMENT FRANCE, S.A.S. (en adelante, &laquo;la Sociedad&raquo; o &laquo;BIF&raquo;), la posibilidad de venta de las acciones de las que soy titular en BIONURE INVESTMENT FRANCE, S.A.S. a favor de la propia Sociedad, dentro del marco de la entrada de un nuevo Inversor en la misma.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Par la pr&eacute;sente, je vous fais part de mani&egrave;re expresse de ma volont&eacute; et de mon consentement pour que, le cas &eacute;ch&eacute;ant, il soit proc&eacute;d&eacute; &agrave; la cession de la totalit&eacute; des actions que je d&eacute;tiens &agrave; ce jour dans BIONURE INVESTMENT FRANCE, S.A.S., au prix de 1,11423 euro par action de BIF (soit l'&eacute;quivalent de 156,00 euros pour chacune des anciennes parts sociales que je d&eacute;tenais dans Bionure Therapeutics, S.L.), au profit de la Soci&eacute;t&eacute; ou, &agrave; d&eacute;faut, de l'Investisseur d&eacute;sign&eacute; par le Pr&eacute;sident de la Soci&eacute;t&eacute;.</div>
+      <div class="es">En virtud de la presente, de forma fehaciente, les comunico mi voluntad y consentimiento para que, en su caso, procedan a la venta de la totalidad de las acciones que a fecha de hoy tengo en BIONURE INVESTMENT FRANCE, S.A.S., por un precio de 1,11423 euros por acci&oacute;n de BIF (equivalente a 156,00 euros por cada antigua participaci&oacute;n que ten&iacute;a en Bionure Therapeutics, S.L.), a favor de la Sociedad o, en su defecto, a favor del Inversor que designe el Presidente de la Sociedad.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">&Agrave; cet effet, par la signature du pr&eacute;sent document, je conf&egrave;re les pouvoirs les plus &eacute;tendus &agrave; MONSIEUR PASCAL-ROGER-GASTON-BERNARD-J. NIZET (administrateur conjoint d'ALPHA LYRAE HOLDING, S.L., Pr&eacute;sident de la Soci&eacute;t&eacute;), majeur, de nationalit&eacute; belge, domicili&eacute; &agrave; cet effet &agrave; Barcelone (08031), paseo Maragall n&deg; 260, 3e &eacute;tage, porte 3, titulaire du passeport belge n&deg; EP311709 et du NIE n&deg; X-1882700-N, et &agrave; MADAME CARMEN SANFRANCISCO MILL&Aacute;N (administratrice conjointe d'ALPHA LYRAE HOLDING, S.L., Pr&eacute;sident de la Soci&eacute;t&eacute;), majeure, de nationalit&eacute; espagnole, domicili&eacute;e &agrave; Dosrius, calle Montserrat 25, titulaire du DNI n&deg; 38.085.986-X, agissant indistinctement ou solidairement l'un ou l'autre, afin d'exercer en mon nom les pouvoirs suivants&nbsp;:</div>
+      <div class="es">A tal fin, con la firma del presente documento, otorgo las m&aacute;s amplias facultades para que DON PASCAL-ROGER-GASTON-BERNARD-J. NIZET (Administrador mancomunado de ALPHA LYRAE HOLDING, S.L., presidente de la Sociedad), mayor de edad, de nacionalidad belga, con domicilio a estos efectos en 08031 Barcelona, paseo Maragall, n&uacute;mero 260, piso tercero, puerta tercera, provisto de pasaporte belga n&uacute;mero EP311709 y de NIE n&uacute;mero X-1882700-N; y DO&Ntilde;A CARMEN SANFRANCISCO MILL&Aacute;N (Administradora mancomunada de ALPHA LYRAE HOLDING, S.L., presidente de la Sociedad), mayor de edad, de nacionalidad espa&ntilde;ola, domiciliada en Dosrius, calle Montserrat 25, y provista de DNI n&uacute;mero 38.085.986-X, actuando de forma indistinta o solidaria cualquiera de ellos, puedan ejercitar en mi nombre las siguientes facultades:</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">1. C&eacute;der la totalit&eacute; de mes actions de BIONURE INVESTMENT FRANCE, S.A.S., au prix de 1,11423 euro brut par action, au profit de la Soci&eacute;t&eacute; ou, &agrave; d&eacute;faut, de l'Investisseur d&eacute;sign&eacute; par le Pr&eacute;sident de la Soci&eacute;t&eacute;, les mandataires &eacute;tant express&eacute;ment autoris&eacute;s &agrave; agir nonobstant toute situation de contrat avec soi-m&ecirc;me ou de conflit d'int&eacute;r&ecirc;ts pouvant exister.</div>
+      <div class="es">1. Vender la totalidad de mis acciones de BIONURE INVESTMENT FRANCE, S.A.S., por un precio de 1,11423 euros brutos por acci&oacute;n, a favor de la Sociedad o, en su defecto, del Inversor que designe el Presidente de la Sociedad, salvando los casos de autocontrataci&oacute;n y contraposici&oacute;n de intereses que pudieran existir.</div>
+    </div>
+    <div class="proxy-fila">
+      <div class="fr">2. Faire toutes d&eacute;clarations, attestations et garanties relatives auxdites actions de la Soci&eacute;t&eacute;.</div>
+      <div class="es">2. Otorgar las manifestaciones, declaraciones y garant&iacute;as en relaci&oacute;n con dichas acciones de la Sociedad.</div>
+    </div>
+    <div class="proxy-fila">
+      <div class="fr">3. Signer en mon nom tous actes authentiques et sous seing priv&eacute; n&eacute;cessaires &agrave; la r&eacute;alisation de la cession de mes actions de BIONURE INVESTMENT FRANCE, S.A.S., et notamment l'ordre de mouvement de valeurs mobili&egrave;res non admises sur un march&eacute; r&eacute;glement&eacute;.</div>
+      <div class="es">3. Firmar en mi nombre cuantos documentos p&uacute;blicos y privados fueran necesarios para otorgar la compraventa de mis acciones de BIONURE INVESTMENT FRANCE, S.A.S., y en especial para firmar el documento de movimiento de acciones (&laquo;ordre de mouvement de valeurs mobili&egrave;res non admises sur un march&eacute; r&eacute;glement&eacute;&raquo;).</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">&Agrave; cet effet, les mandataires susvis&eacute;s pourront signer tous actes authentiques et sous seing priv&eacute; de cession n&eacute;cessaires et encaisser le prix de ladite cession, lequel devra &ecirc;tre vers&eacute; sur mon compte bancaire indiqu&eacute; au bas du pr&eacute;sent document.</div>
+      <div class="es">A tal fin, los apoderados antes indicados podr&aacute;n otorgar los documentos p&uacute;blicos y privados de compraventa que sean necesarios y cobrar el precio de dicha transmisi&oacute;n, que deber&aacute; ingresarse en mi cuenta bancaria indicada al pie del presente documento.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">La pr&eacute;sente autorisation implique la renonciation expresse &agrave; tous les droits de pr&eacute;emption que me reconnaissent les statuts et la loi en cas de cession d'actions par d'autres actionnaires de la Soci&eacute;t&eacute; dans le cadre de l'op&eacute;ration communiqu&eacute;e par l'&eacute;quipe de direction.</div>
+      <div class="es">La presente autorizaci&oacute;n implica la renuncia expresa a cuantos derechos de adquisici&oacute;n preferente (droit de pr&eacute;emption) me reconozcan los estatutos y la ley por la transmisi&oacute;n de las acciones de otros accionistas de la Sociedad en el marco de la operaci&oacute;n comunicada por el equipo directivo.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">La pr&eacute;sente autorisation est valable jusqu'au 31 juillet 2027. Si, &agrave; cette date, le transfert de mes actions n'a pas &eacute;t&eacute; effectu&eacute;, une nouvelle &laquo; procuration &raquo; sera n&eacute;cessaire pour pouvoir le r&eacute;aliser apr&egrave;s cette date.</div>
+      <div class="es">La presente autorizaci&oacute;n se concede hasta el 31 de julio de 2027. Si en dicha fecha no se hubiese ejecutado la transmisi&oacute;n de mis acciones, ser&aacute; necesario un nuevo &laquo;proxy&raquo; para poder materializarla posteriormente a dicha fecha.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Le pr&eacute;sent document est &eacute;tabli en fran&ccedil;ais et en espagnol. En cas de divergence entre les deux versions, la version fran&ccedil;aise fait foi.</div>
+      <div class="es">El presente documento se redacta en franc&eacute;s y en espa&ntilde;ol. En caso de discrepancia entre ambas versiones, prevalecer&aacute; la versi&oacute;n francesa.</div>
+    </div>
+
+    <div class="proxy-fila tancament">
+      <div class="fr">Veuillez agr&eacute;er, Madame, Monsieur, l'expression de mes salutations distingu&eacute;es.</div>
+      <div class="es">Atentamente,</div>
+    </div>
+
+    <div class="proxy-seccio-titol">1A. Donn&eacute;es de l'actionnaire &ndash; personne physique / Datos del accionista &ndash; persona f&iacute;sica</div>
+    <table class="proxy-taula">
+      <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>${nom}</td></tr>
+      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${tipusId} ${numId}</td></tr>
+      <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia}</td></tr>
+      <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de acciones de BIF</td><td>${totalAccFmt}</td></tr>
+    </table>
+    <div class="proxy-fila" style="margin-bottom:6px;">
+      <div class="fr">Les donn&eacute;es de l'actionnaire sont-elles exactes&nbsp;?</div>
+      <div class="es">&iquest;Son correctos los datos del accionista?</div>
+    </div>
+    <div class="proxy-check-linia">
+      <span>${casella(false)} Oui / S&iacute;</span>
+      <span>${casella(false)} Non / No</span>
+    </div>
+
+    <div class="proxy-seccio-titol">2. Coordonn&eacute;es bancaires / Datos bancarios</div>
+    <table class="proxy-taula">
+      <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>${nom}</td></tr>
+      <tr><td class="etiqueta">Compte bancaire (IBAN)<br>Cuenta bancaria (IBAN)</td><td>${ibanText}</td></tr>
+    </table>
+    <div class="proxy-fila" style="margin-bottom:6px;">
+      <div class="fr">Ces coordonn&eacute;es bancaires sont-elles toujours exactes&nbsp;?</div>
+      <div class="es">&iquest;Siguen siendo correctos estos datos bancarios?</div>
+    </div>
+    <div class="proxy-check-linia" style="margin-bottom:14px;">
+      <span>${casella(false)} Oui / S&iacute;</span>
+      <span>${casella(false)} Non / No</span>
+    </div>
+    <div class="proxy-fila" style="margin-bottom:6px;">
+      <div class="fr">Nous disposons du RIB certifi&eacute; de ce compte bancaire</div>
+      <div class="es">Disponemos del certificado de titularidad de esta cuenta bancaria</div>
+    </div>
+    <div class="proxy-check-linia">
+      <span>${casella(teCertBanc)} Oui / S&iacute;</span>
+      <span>${casella(!teCertBanc)} Non / No</span>
+    </div>
+
+    <div class="proxy-fila" style="margin-top:16px;">
+      <div class="fr">Cochez &laquo; Oui &raquo; si le compte reste le m&ecirc;me. Si vous avez coch&eacute; &laquo; Non &raquo; (erreur ou changement de compte), nous vous prions de bien vouloir indiquer ci-dessous vos nouvelles coordonn&eacute;es bancaires&nbsp;:</div>
+      <div class="es">Marque &laquo;S&iacute;&raquo; si la cuenta sigue siendo la misma. En caso de haber marcado &laquo;No&raquo; (error o cambio de cuenta), le rogamos que indique a continuaci&oacute;n sus nuevos datos bancarios:</div>
+    </div>
+    <table class="proxy-taula">
+      <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta">Compte bancaire (IBAN)<br>Cuenta bancaria (IBAN)</td><td>&nbsp;</td></tr>
+    </table>
+
+    <div class="proxy-nota">
+      Important&nbsp;: Si, dans les deux cas, la r&eacute;ponse est &laquo; Oui &raquo;, il n'est pas n&eacute;cessaire de nous faire parvenir &agrave; nouveau l'attestation de titularit&eacute; du compte bancaire. En revanche, si la case coch&eacute;e est &laquo; Non &raquo;, il est indispensable de nous faire parvenir une attestation de titularit&eacute; du compte bancaire d&eacute;livr&eacute;e par votre banque, avec le pr&eacute;sent document sign&eacute;.<br>
+      Importante: Si en los dos casos el resultado es &laquo;S&iacute;&raquo;, no es necesario que nos haga llegar de nuevo el certificado de titularidad de la cuenta bancaria. Por el contrario, si lo que aparece marcado es &laquo;No&raquo;, es imprescindible que nos haga llegar un certificado de titularidad de la cuenta bancaria emitido por su entidad, junto con el presente documento firmado.
+    </div>
+
+    <div class="proxy-signatura-final">
+      <div class="camp">Signature de l'actionnaire / Firma del accionista</div>
+      <div class="camp">Date / Fecha</div>
+    </div>
+    <div class="proxy-nota">
+      Le pr&eacute;sent document peut &ecirc;tre sign&eacute; de mani&egrave;re manuscrite (imprim&eacute;, sign&eacute; et num&eacute;ris&eacute;) ou au moyen d'une signature &eacute;lectronique avec certificat num&eacute;rique.<br>
+      El presente documento puede firmarse de forma manuscrita (impreso, firmado y escaneado) o mediante firma electr&oacute;nica con certificado digital.
+    </div>
+  `;
+  document.getElementById('overlayProxy').classList.remove('oculta');
+}
+
+document.getElementById('btnGenerarProxy').addEventListener('click', () => {
+  const errorEl = document.getElementById('proxyError');
+  errorEl.textContent = '';
+  const valor = document.getElementById('cercaProxy').value.trim();
+  const match = valor.match(/^(\d+)/);
+  if (!match) {
+    errorEl.textContent = 'Cerca i selecciona un inversor de la llista.';
+    return;
+  }
+  generaProxy(Number(match[1]));
+});
+
+document.getElementById('btnImprimirProxy').addEventListener('click', () => window.print());
+document.getElementById('btnTancarProxy').addEventListener('click', () => {
+  document.getElementById('overlayProxy').classList.add('oculta');
 });
 
 document.getElementById('btnBaixTitols').addEventListener('click', () => {

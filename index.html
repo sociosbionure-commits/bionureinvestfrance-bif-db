@@ -102,6 +102,23 @@ tbody tr:hover{background:#eef3fb;}
 .cert-final{margin-bottom:0;}
 .cert-signatura{margin-top:60px;}
 
+.proxy-titol{font-weight:700;text-align:center;margin-bottom:4px;}
+.proxy-dates{text-align:right;margin:24px 0;}
+.proxy-destinatari{margin-bottom:24px;}
+.proxy-salutacio{margin-bottom:20px;}
+.proxy-fila{display:flex;gap:24px;margin-bottom:14px;}
+.proxy-fila .fr,.proxy-fila .es{flex:1;text-align:justify;}
+.proxy-fila.tancament{margin-top:10px;margin-bottom:40px;}
+.proxy-firma-top{margin-top:40px;margin-bottom:24px;}
+.proxy-taula{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:10pt;}
+.proxy-taula td{border:1px solid #999;padding:5px 8px;vertical-align:top;}
+.proxy-taula td.etiqueta{width:40%;background:#f5f5f5;font-weight:600;}
+.proxy-check-linia{display:flex;gap:28px;align-items:baseline;margin-top:4px;}
+.proxy-seccio-titol{font-weight:700;margin:24px 0 8px;}
+.proxy-nota{font-size:9pt;font-style:italic;margin-top:10px;}
+.proxy-signatura-final{margin-top:50px;display:flex;gap:60px;}
+.proxy-signatura-final .camp{flex:1;border-top:1px solid #333;padding-top:4px;}
+
 @media print {
   @page{size:A4;margin:0;}
   body > *:not(.cert-overlay){display:none !important;}
@@ -243,6 +260,7 @@ tbody tr:hover{background:#eef3fb;}
   <button class="btn fletxa" id="btnBaixPerInversor" title="Vés al final del llistat">&darr;</button>
   <button class="btn secundari" id="btnExportPerInversor">Exportar Excel</button>
   <button class="btn secundari" id="btnPerInversorCertificats">Certificats</button>
+  <button class="btn secundari" id="btnPerInversorProxys">Proxys</button>
   <button class="btn secundari" id="btnPerInversorMoviments">Veure moviments</button>
   <button class="btn secundari" id="btnPerInversorInversors">Veure inversors</button>
 </div>
@@ -342,6 +360,31 @@ tbody tr:hover{background:#eef3fb;}
     <button class="btn" id="btnImprimirCertificat">Imprimir</button>
   </div>
   <div class="cert-pagina" id="certificatContingut"></div>
+</div>
+
+<div class="top-bar oculta" id="barraProxys">
+  <h1>Cap Table BIF &mdash; Proxys</h1>
+  <span class="cerca-wrap" id="cercaProxyWrap">
+    <input type="text" id="cercaProxy" list="llistaInversorsProxy" placeholder="Cerca inversor (nom o ID)...">
+    <datalist id="llistaInversorsProxy"></datalist>
+    <button type="button" class="cerca-neteja" id="cercaProxyNeteja" title="Neteja la cerca">&times;</button>
+  </span>
+  <button class="btn" id="btnGenerarProxy">Generar proxy</button>
+  <button class="btn secundari" id="btnProxyPerInversor">Per inversor</button>
+  <button class="btn secundari" id="btnProxyInversors">Veure inversors</button>
+</div>
+
+<div class="table-wrap oculta" id="vistaProxys">
+  <div class="cert-placeholder" id="proxyPlaceholder">Cerca i selecciona un inversor, i clica "Generar proxy".</div>
+  <div class="cert-error" id="proxyError"></div>
+</div>
+
+<div class="cert-overlay oculta" id="overlayProxy">
+  <div class="cert-barra">
+    <button class="btn secundari" id="btnTancarProxy">Tanca</button>
+    <button class="btn" id="btnImprimirProxy">Imprimir</button>
+  </div>
+  <div class="cert-pagina" id="proxyContingut"></div>
 </div>
 
 <div class="overlay oculta" id="overlayInversor">
