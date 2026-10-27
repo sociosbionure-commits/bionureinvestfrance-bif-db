@@ -945,6 +945,18 @@ function generaProxy(idInversor) {
   const administrador = escapeHtml(inv.administrador || '');
   const dniAdmin = escapeHtml(inv.dni_admin || '');
   const administracio = escapeHtml(inv.administracion || '');
+  const esJuridica = (inv.id_tipo || '').trim().toUpperCase() === 'NIF';
+  const nomCognoms1A = esJuridica ? '' : nomCognoms;
+  const dniText1A = esJuridica ? '' : dniText;
+  const domiciliLinia1A = esJuridica ? '' : domiciliLinia;
+  const totalAccFmt1A = esJuridica ? '' : totalAccFmt;
+  const nomCognoms1B = esJuridica ? nomCognoms : '';
+  const dniText1B = esJuridica ? dniText : '';
+  const domiciliLinia1B = esJuridica ? domiciliLinia : '';
+  const totalAccFmt1B = esJuridica ? totalAccFmt : '';
+  const administrador1B = esJuridica ? administrador : '';
+  const dniAdmin1B = esJuridica ? dniAdmin : '';
+  const administracio1B = esJuridica ? administracio : '';
 
   const peuNomRaw = `${inv.inversor_nom || ''} ${inv.inversor_cnom_rs || ''}`.trim();
   const peuNomCss = peuNomRaw.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
@@ -1107,12 +1119,12 @@ function generaProxy(idInversor) {
   </div>
 
   <div class="cert-pagina proxy-pag salt">
-    <div class="proxy-seccio-titol">1A. Donn&eacute;es de l'actionnaire &ndash; personne physique / Datos del accionista &ndash; persona f&iacute;sica</div>
+    <div class="proxy-seccio-titol"><strong>1A. Donn&eacute;es de l'actionnaire &ndash; personne physique</strong> / Datos del accionista &ndash; persona f&iacute;sica</div>
     <table class="proxy-taula">
-      <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>${nomCognoms}</td></tr>
-      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${dniText}</td></tr>
-      <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia}</td></tr>
-      <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de acciones de BIF</td><td>${totalAccFmt}</td></tr>
+      <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>${nomCognoms1A}</td></tr>
+      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${dniText1A}</td></tr>
+      <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia1A}</td></tr>
+      <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de acciones de BIF</td><td>${totalAccFmt1A}</td></tr>
     </table>
     <div class="proxy-nota-final">
       <div class="fr">* Je joins une photocopie de ma carte d'identit&eacute; nationale/de mon passeport.</div>
@@ -1128,7 +1140,7 @@ function generaProxy(idInversor) {
       <div class="fr">Si vous avez coch&eacute; &laquo; Non &raquo;, ou si l'une des donn&eacute;es est manquante, nous vous prions de bien vouloir indiquer ci-dessous vos donn&eacute;es exactes (uniquement celles &agrave; modifier).</div>
       <div class="es">En caso de haber marcado &laquo;No&raquo;, o si alguno de los datos no consta, le rogamos que indique a continuaci&oacute;n sus datos correctos (solo los que deban modificarse).</div>
     </div>
-    <div class="proxy-seccio-titol" style="margin-top:20px;">1 bis. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
+    <div class="proxy-seccio-titol" style="margin-top:20px;"><strong>1 bis. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique</strong> / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>&nbsp;</td></tr>
       <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>&nbsp;</td></tr>
@@ -1138,15 +1150,15 @@ function generaProxy(idInversor) {
       <div class="fr">R&eacute;gime matrimonial&nbsp;: si vous &ecirc;tes mari&eacute;(e) sous un r&eacute;gime de communaut&eacute; de biens (par exemple, communaut&eacute; r&eacute;duite aux acqu&ecirc;ts), nous vous prions de bien vouloir nous en informer.</div>
       <div class="es">R&eacute;gimen econ&oacute;mico matrimonial: si est&aacute; casado/a en r&eacute;gimen de comunidad de bienes (por ejemplo, sociedad de gananciales), le rogamos que nos lo comunique.</div>
     </div>
-    <div class="proxy-seccio-titol" style="margin-top:20px;">1B. Donn&eacute;es de l'actionnaire &ndash; personne morale / Datos del accionista &ndash; persona jur&iacute;dica</div>
+    <div class="proxy-seccio-titol" style="margin-top:20px;"><strong>1B. Donn&eacute;es de l'actionnaire &ndash; personne morale</strong> / Datos del accionista &ndash; persona jur&iacute;dica</div>
     <table class="proxy-taula">
-      <tr><td class="etiqueta">D&eacute;nomination sociale<br>Denominaci&oacute;n social</td><td>${nomCognoms}</td></tr>
-      <tr><td class="etiqueta">SIREN / NIF</td><td>${dniText}</td></tr>
-      <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia}</td></tr>
-      <tr><td class="etiqueta">Nom et pr&eacute;nom de la personne physique signataire<br>Nombre y apellidos de la persona f&iacute;sica firmante</td><td>${administrador}</td></tr>
-      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${dniAdmin}</td></tr>
-      <tr><td class="etiqueta">Fonction de la personne physique signataire /cargo de la persona f&iacute;sica firmante *</td><td>${administracio}</td></tr>
-      <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de Acciones de BIF</td><td>${totalAccFmt}</td></tr>
+      <tr><td class="etiqueta">D&eacute;nomination sociale<br>Denominaci&oacute;n social</td><td>${nomCognoms1B}</td></tr>
+      <tr><td class="etiqueta">SIREN / NIF</td><td>${dniText1B}</td></tr>
+      <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia1B}</td></tr>
+      <tr><td class="etiqueta">Nom et pr&eacute;nom de la personne physique signataire<br>Nombre y apellidos de la persona f&iacute;sica firmante</td><td>${administrador1B}</td></tr>
+      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${dniAdmin1B}</td></tr>
+      <tr><td class="etiqueta">Fonction de la personne physique signataire /cargo de la persona f&iacute;sica firmante *</td><td>${administracio1B}</td></tr>
+      <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de Acciones de BIF</td><td>${totalAccFmt1B}</td></tr>
     </table>
     <div class="proxy-nota-final">
       <div class="fr">Je joins une photocopie de la carte d'identit&eacute;/passeport du repr&eacute;sentant physique et du document de repr&eacute;sentation de la personne morale actionnaire.</div>
@@ -1155,7 +1167,7 @@ function generaProxy(idInversor) {
   </div>
 
   <div class="cert-pagina proxy-pag salt">
-    <div class="proxy-seccio-titol">Coordonn&eacute;es bancaires / Datos bancarios</div>
+    <div class="proxy-seccio-titol"><strong>Coordonn&eacute;es bancaires</strong> / Datos bancarios</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>${nomCognoms}</td></tr>
       <tr><td class="etiqueta">Compte bancaire (IBAN)<br>Cuenta bancaria (IBAN)</td><td>${ibanText}</td></tr>
@@ -1188,7 +1200,7 @@ function generaProxy(idInversor) {
   </div>
 
   <div class="cert-pagina proxy-pag salt">
-    <div class="proxy-seccio-titol">Protection des donn&eacute;es / Protecci&oacute;n de datos</div>
+    <div class="proxy-seccio-titol"><strong>Protection des donn&eacute;es</strong> / Protecci&oacute;n de datos</div>
     <div class="proxy-fila">
       <div class="fr">J'autorise express&eacute;ment BIONURE INVESTMENT FRANCE, S.A.S., ainsi que les Mandataires d&eacute;sign&eacute;s dans le pr&eacute;sent document, &agrave; traiter mes donn&eacute;es &agrave; caract&egrave;re personnel, y compris mes donn&eacute;es d'identification et de contact, celles relatives &agrave; ma qualit&eacute; d'actionnaire et &agrave; la d&eacute;tention de mes Actions et, le cas &eacute;ch&eacute;ant, les coordonn&eacute;es bancaires fournies, dans la mesure o&ugrave; cela s'av&egrave;re n&eacute;cessaire &agrave; la gestion, &agrave; la formalisation, &agrave; l'ex&eacute;cution et au suivi de l'Op&eacute;ration.</div>
       <div class="es">Autorizo expresamente a BIONURE INVESTMENT FRANCE, S.A.S., as&iacute; como a los Apoderados designados en el presente documento, a tratar mis datos personales, incluidos mis datos identificativos y de contacto, los relativos a mi condici&oacute;n de accionista y a la titularidad de mis Acciones y, en su caso, los datos bancarios facilitados, en la medida en que resulte necesario para la gesti&oacute;n, formalizaci&oacute;n, ejecuci&oacute;n y seguimiento de la Operaci&oacute;n.</div>
@@ -1202,7 +1214,7 @@ function generaProxy(idInversor) {
       <div class="es">Mis datos personales podr&aacute;n ser conservados durante el tiempo necesario para la gesti&oacute;n y ejecuci&oacute;n de la presente autorizaci&oacute;n y de la Operaci&oacute;n y, con posterioridad, durante los plazos legalmente establecidos y mientras puedan derivarse responsabilidades de las actuaciones realizadas, transcurridos los cuales ser&aacute;n suprimidos o bloqueados de conformidad con la normativa aplicable.</div>
     </div>
 
-    <div class="proxy-seccio-titol" style="margin-top:20px;">Confidentialit&eacute; / Confidencialidad</div>
+    <div class="proxy-seccio-titol" style="margin-top:20px;"><strong>Confidentialit&eacute;</strong> / Confidencialidad</div>
     <div class="proxy-fila">
       <div class="fr">Je m'engage &agrave; conserver la plus stricte confidentialit&eacute; en ce qui concerne le contenu du pr&eacute;sent document ainsi que les termes et conditions de l'Op&eacute;ration, et &agrave; ne pas divulguer ces informations &agrave; des tiers, sauf dans les cas suivants&nbsp;: (i) lorsque cette divulgation est requise par la loi, par une autorit&eacute; judiciaire ou administrative comp&eacute;tente&nbsp;; (ii) lorsqu'elle est n&eacute;cessaire pour mes conseillers juridiques, fiscaux ou financiers, eux-m&ecirc;mes tenus &agrave; une obligation de confidentialit&eacute; &eacute;quivalente&nbsp;; ou (iii) lorsque les informations concern&eacute;es sont ou deviennent publiques sans manquement de ma part &agrave; la pr&eacute;sente obligation.</div>
       <div class="es">Me comprometo a mantener la m&aacute;s estricta confidencialidad respecto del contenido del presente documento, as&iacute; como de los t&eacute;rminos y condiciones de la Operaci&oacute;n, y a no divulgar dicha informaci&oacute;n a terceros, salvo en los siguientes supuestos: (i) cuando dicha divulgaci&oacute;n sea exigida por la ley, por una autoridad judicial o administrativa competente; (ii) cuando resulte necesaria para mis asesores jur&iacute;dicos, fiscales o financieros, quienes estar&aacute;n sujetos a una obligaci&oacute;n de confidencialidad equivalente; o (iii) cuando la informaci&oacute;n en cuesti&oacute;n sea o llegue a ser p&uacute;blica sin incumplimiento por mi parte de la presente obligaci&oacute;n.</div>
@@ -1212,7 +1224,7 @@ function generaProxy(idInversor) {
       <div class="es">Esta obligaci&oacute;n de confidencialidad permanecer&aacute; vigente durante toda la vigencia de la presente autorizaci&oacute;n y se mantendr&aacute; tras su expiraci&oacute;n o ejecuci&oacute;n, en la medida necesaria para la protecci&oacute;n de los intereses leg&iacute;timos de la Sociedad y de las dem&aacute;s partes de la Operaci&oacute;n.</div>
     </div>
 
-    <div class="proxy-seccio-titol" style="margin-top:28px;">Signature de l'actionnaire / Firma del accionista</div>
+    <div class="proxy-seccio-titol" style="margin-top:28px;"><strong>Signature de l'actionnaire</strong> / Firma del accionista</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Signature / Firma</td><td>&nbsp;</td></tr>
       <tr><td class="etiqueta">Date / Fecha</td><td>&nbsp;</td></tr>
