@@ -935,12 +935,29 @@ function generaProxy(idInversor) {
   const dEs = dataEs(avui);
   const dFr = dataFr(avui);
   const totalAccFmt = formatNum(totalAcc);
-  const nom = escapeHtml(inv.inversor);
+  const nomCognoms = `${escapeHtml(inv.inversor_nom || '')} ${escapeHtml(inv.inversor_cnom_rs || '')}`.trim();
   const tipusId = escapeHtml(inv.id_tipo || '');
   const numId = escapeHtml(inv.id_num || '');
+  const dniText = `${tipusId} ${numId}`.trim();
   const ciutat = escapeHtml(inv.ciudad_pob || '');
   const domiciliLinia = `${escapeHtml(inv.domicilio || '')}, ${escapeHtml(inv.cp || '')} ${ciutat} (${escapeHtml(inv.provincia || '')}), ${escapeHtml(inv.pais_es || '')}`;
   const ibanText = emmascaraIban(finan.iban);
+  const administrador = escapeHtml(inv.administrador || '');
+  const dniAdmin = escapeHtml(inv.dni_admin || '');
+  const administracio = escapeHtml(inv.administracion || '');
+
+  const peuNomRaw = `${inv.inversor_nom || ''} ${inv.inversor_cnom_rs || ''}`.trim();
+  const peuNomCss = peuNomRaw.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  document.getElementById('proxyFooterStyle').textContent = `
+    @page proxypag {
+      @bottom-center {
+        content: "${peuNomCss} - Page / Página " counter(page) " / " counter(pages);
+        font-size: 7pt;
+        color: #808080;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    }
+  `;
 
   document.getElementById('proxyContingut').innerHTML = `
   <div class="cert-pagina proxy-pag">
@@ -974,51 +991,113 @@ function generaProxy(idInversor) {
     </div>
 
     <div class="proxy-fila">
-      <div class="fr">Je fais suite &agrave; votre courrier de septembre 2026 ainsi qu'&agrave; l'Assembl&eacute;e G&eacute;n&eacute;rale du 30 septembre 2026, par lesquels vous m'avez inform&eacute;(e), en ma qualit&eacute; d'actionnaire de la soci&eacute;t&eacute; BIONURE INVESTMENT FRANCE, S.A.S. (ci-apr&egrave;s &laquo; la Soci&eacute;t&eacute; &raquo; ou &laquo; BIF &raquo;), de la possibilit&eacute; de c&eacute;der les actions dont je suis titulaire dans BIONURE INVESTMENT FRANCE, S.A.S. au profit de la Soci&eacute;t&eacute; elle-m&ecirc;me, dans le cadre de l'entr&eacute;e d'un nouvel Investisseur au capital de celle-ci.</div>
-      <div class="es">Me dirijo a ustedes en respuesta a su carta de septiembre de 2026 y a la posterior Junta General de 30 de septiembre de 2026, en virtud de las cuales me comunicaron, en mi calidad de accionista de la Compa&ntilde;&iacute;a BIONURE INVESTMENT FRANCE, S.A.S. (en adelante, &laquo;la Sociedad&raquo; o &laquo;BIF&raquo;), la posibilidad de venta de las acciones de las que soy titular en BIONURE INVESTMENT FRANCE, S.A.S. a favor de la propia Sociedad, dentro del marco de la entrada de un nuevo Inversor en la misma.</div>
+      <div class="fr">Je m'adresse à vous au sujet de la lettre reçue le 7 septembre 2026 et de l'assemblée générale des actionnaires de la société BIONURE INVESTMENT FRANCE, S.A.S. (ci-après dénommée la «Société» ou «BIF») tenue le 30 septembre 2026, au cours de laquelle j'ai été informé, en ma qualité d'actionnaire de la Société, de la possibilité de céder les actions que je détiens dans BIONURE INVESTMENT FRANCE, S.A.S. à la Société elle-même, ou à l'investisseur désigné par le président de la Société (l'«Investisseur»), dans le cadre de l'entrée d'un nouvel Investisseur au sein de celle-ci (l'«Opération»).</div>
+      <div class="es">Me dirijo a Ustedes en relación con la carta recibida en fecha 7 de septiembre de 2026 y con la asamblea general de accionistas de la sociedad BIONURE INVESTMENT FRANCE, S.A.S. (en adelante, la «Sociedad» o «BIF»), celebrada en fecha 30 de septiembre de 2026, en virtud de la cual se me informó, en mi calidad de accionista de la Sociedad, de la posibilidad de venta de las acciones de las que soy titular en BIONURE INVESTMENT FRANCE, S.A.S. a favor de la propia Sociedad, o a favor del inversor que designe el presidente de la Sociedad (el «Inversor»), dentro del marco de la operación de entrada de un nuevo Inversor en la misma (la «Operación»).</div>
     </div>
 
     <div class="proxy-fila">
-      <div class="fr">Par la pr&eacute;sente, je vous fais part de mani&egrave;re expresse de ma volont&eacute; et de mon consentement pour que, le cas &eacute;ch&eacute;ant, il soit proc&eacute;d&eacute; &agrave; la cession de la totalit&eacute; des actions que je d&eacute;tiens &agrave; ce jour dans BIONURE INVESTMENT FRANCE, S.A.S., au prix de 1,11423 euro par action de BIF (soit l'&eacute;quivalent de 156,00 euros pour chacune des anciennes parts sociales que je d&eacute;tenais dans Bionure Therapeutics, S.L.), au profit de la Soci&eacute;t&eacute; ou, &agrave; d&eacute;faut, de l'Investisseur d&eacute;sign&eacute; par le Pr&eacute;sident de la Soci&eacute;t&eacute;.</div>
-      <div class="es">En virtud de la presente, de forma fehaciente, les comunico mi voluntad y consentimiento para que, en su caso, procedan a la venta de la totalidad de las acciones que a fecha de hoy tengo en BIONURE INVESTMENT FRANCE, S.A.S., por un precio de 1,11423 euros por acci&oacute;n de BIF (equivalente a 156,00 euros por cada antigua participaci&oacute;n que ten&iacute;a en Bionure Therapeutics, S.L.), a favor de la Sociedad o, en su defecto, a favor del Inversor que designe el Presidente de la Sociedad.</div>
+      <div class="fr">Par la présente, je vous fais savoir de manière irréfutable ma volonté et mon consentement pour que, le cas échéant, vous procédiez à la cession de la totalité des actions que je détiens à ce jour dans la société BIONURE INVESTMENT FRANCE, S.A.S., (ci-après dénommées les «Actions») au prix de 1,11423 euros bruts par Action (équivalent à 156,00 euros pour chaque part sociale de BIONURE THERAPEUTICS, S.L. dont j'étais titulaire avant mon entrée en tant qu'actionnaire de BIF), au profit de la Société ou, à défaut, au profit de l'Investisseur désigné par le président de la Société.</div>
+      <div class="es">En virtud de la presente, de forma fehaciente, les comunico mi voluntad y consentimiento para que, en su caso, procedan a la venta de la totalidad de las acciones de las que a fecha de hoy soy titular de BIONURE INVESTMENT FRANCE, S.A.S., (en adelante, las «Acciones»), por un precio de 1,11423 euros brutos por Acción (equivalente a 156,00 euros por cada participación social de BIONURE THERAPEUTICS, S.L., de la que era titular con anterioridad a mi incorporación como accionista de BIF), a favor de la Sociedad o, en su defecto, a favor del Inversor que designe el presidente de la Sociedad.</div>
     </div>
 
     <div class="proxy-fila">
-      <div class="fr">&Agrave; cet effet, par la signature du pr&eacute;sent document, je conf&egrave;re les pouvoirs les plus &eacute;tendus &agrave; MONSIEUR PASCAL-ROGER-GASTON-BERNARD-J. NIZET (administrateur conjoint d'ALPHA LYRAE HOLDING, S.L., Pr&eacute;sident de la Soci&eacute;t&eacute;), majeur, de nationalit&eacute; belge, domicili&eacute; &agrave; cet effet &agrave; Barcelone (08031), paseo Maragall n&deg; 260, 3e &eacute;tage, porte 3, titulaire du passeport belge n&deg; EP311709 et du NIE n&deg; X-1882700-N, et &agrave; MADAME CARMEN SANFRANCISCO MILL&Aacute;N (administratrice conjointe d'ALPHA LYRAE HOLDING, S.L., Pr&eacute;sident de la Soci&eacute;t&eacute;), majeure, de nationalit&eacute; espagnole, domicili&eacute;e &agrave; Dosrius, calle Montserrat 25, titulaire du DNI n&deg; 38.085.986-X, agissant indistinctement ou solidairement l'un ou l'autre, afin d'exercer en mon nom les pouvoirs suivants&nbsp;:</div>
-      <div class="es">A tal fin, con la firma del presente documento, otorgo las m&aacute;s amplias facultades para que DON PASCAL-ROGER-GASTON-BERNARD-J. NIZET (Administrador mancomunado de ALPHA LYRAE HOLDING, S.L., presidente de la Sociedad), mayor de edad, de nacionalidad belga, con domicilio a estos efectos en 08031 Barcelona, paseo Maragall, n&uacute;mero 260, piso tercero, puerta tercera, provisto de pasaporte belga n&uacute;mero EP311709 y de NIE n&uacute;mero X-1882700-N; y DO&Ntilde;A CARMEN SANFRANCISCO MILL&Aacute;N (Administradora mancomunada de ALPHA LYRAE HOLDING, S.L., presidente de la Sociedad), mayor de edad, de nacionalidad espa&ntilde;ola, domiciliada en Dosrius, calle Montserrat 25, y provista de DNI n&uacute;mero 38.085.986-X, actuando de forma indistinta o solidaria cualquiera de ellos, puedan ejercitar en mi nombre las siguientes facultades:</div>
+      <div class="fr">En ce qui concerne les Actions, je déclare et garantis (ci-après les «Déclarations») que :</div>
+      <div class="es">En relación con las Acciones manifiesto y garantizo (en adelante, las «Manifestaciones») que:</div>
     </div>
 
     <div class="proxy-fila">
-      <div class="fr">1. C&eacute;der la totalit&eacute; de mes actions de BIONURE INVESTMENT FRANCE, S.A.S., au prix de 1,11423 euro brut par action, au profit de la Soci&eacute;t&eacute; ou, &agrave; d&eacute;faut, de l'Investisseur d&eacute;sign&eacute; par le Pr&eacute;sident de la Soci&eacute;t&eacute;, les mandataires &eacute;tant express&eacute;ment autoris&eacute;s &agrave; agir nonobstant toute situation de contrat avec soi-m&ecirc;me ou de conflit d'int&eacute;r&ecirc;ts pouvant exister.</div>
-      <div class="es">1. Vender la totalidad de mis acciones de BIONURE INVESTMENT FRANCE, S.A.S., por un precio de 1,11423 euros brutos por acci&oacute;n, a favor de la Sociedad o, en su defecto, del Inversor que designe el Presidente de la Sociedad, salvando los casos de autocontrataci&oacute;n y contraposici&oacute;n de intereses que pudieran existir.</div>
-    </div>
-    <div class="proxy-fila">
-      <div class="fr">2. Faire toutes d&eacute;clarations, attestations et garanties relatives auxdites actions de la Soci&eacute;t&eacute;.</div>
-      <div class="es">2. Otorgar las manifestaciones, declaraciones y garant&iacute;as en relaci&oacute;n con dichas acciones de la Sociedad.</div>
-    </div>
-    <div class="proxy-fila">
-      <div class="fr">3. Signer en mon nom tous actes authentiques et sous seing priv&eacute; n&eacute;cessaires &agrave; la r&eacute;alisation de la cession de mes actions de BIONURE INVESTMENT FRANCE, S.A.S., et notamment l'ordre de mouvement de valeurs mobili&egrave;res non admises sur un march&eacute; r&eacute;glement&eacute;.</div>
-      <div class="es">3. Firmar en mi nombre cuantos documentos p&uacute;blicos y privados fueran necesarios para otorgar la compraventa de mis acciones de BIONURE INVESTMENT FRANCE, S.A.S., y en especial para firmar el documento de movimiento de acciones (&laquo;ordre de mouvement de valeurs mobili&egrave;res non admises sur un march&eacute; r&eacute;glement&eacute;&raquo;).</div>
+      <div class="fr">Chacune des Actions est entièrement souscrite et libérée dans son intégralité et a une valeur nominale d'UN EURO (1,00&nbsp;€).</div>
+      <div class="es">Todas y cada una de las Acciones están íntegramente suscritas y desembolsadas en su totalidad y tienen un valor nominal de UN EURO (1,00&nbsp;€).</div>
     </div>
 
     <div class="proxy-fila">
-      <div class="fr">&Agrave; cet effet, les mandataires susvis&eacute;s pourront signer tous actes authentiques et sous seing priv&eacute; de cession n&eacute;cessaires et encaisser le prix de ladite cession, lequel devra &ecirc;tre vers&eacute; sur mon compte bancaire indiqu&eacute; au bas du pr&eacute;sent document.</div>
-      <div class="es">A tal fin, los apoderados antes indicados podr&aacute;n otorgar los documentos p&uacute;blicos y privados de compraventa que sean necesarios y cobrar el precio de dicha transmisi&oacute;n, que deber&aacute; ingresarse en mi cuenta bancaria indicada al pie del presente documento.</div>
+      <div class="fr">Chacune des Actions est à jour de tous les paiements dus et libre de toute charge, sûretés, restrictions de propriété, saisies et rétentions de quelque nature que ce soit, et il n'existe aucun droit ni espérance de droit au profit d'un tiers.</div>
+      <div class="es">Todas y cada una de las Acciones están al corriente de toda clase de pagos y libres de cargas, gravámenes, limitaciones de dominio, embargos y retenciones de clase alguna y no existe ningún derecho ni expectativa de derecho alguno a favor de ningún tercero.</div>
     </div>
 
     <div class="proxy-fila">
-      <div class="fr">La pr&eacute;sente autorisation implique la renonciation expresse &agrave; tous les droits de pr&eacute;emption que me reconnaissent les statuts et la loi en cas de cession d'actions par d'autres actionnaires de la Soci&eacute;t&eacute; dans le cadre de l'op&eacute;ration communiqu&eacute;e par l'&eacute;quipe de direction.</div>
-      <div class="es">La presente autorizaci&oacute;n implica la renuncia expresa a cuantos derechos de adquisici&oacute;n preferente (droit de pr&eacute;emption) me reconozcan los estatutos y la ley por la transmisi&oacute;n de las acciones de otros accionistas de la Sociedad en el marco de la operaci&oacute;n comunicada por el equipo directivo.</div>
+      <div class="fr">Les Actions ne font l'objet d'aucun droit d'option d'achat en vigueur ni d'aucun autre droit ou attente de droit susceptible d'affecter la pleine validité de l'Opération.</div>
+      <div class="es">Las Acciones no son objeto de derecho de opción de compra vigente ni de cualquier otro derecho ni expectativa de derecho que pudiera afectar a la plena validez de la Operación.</div>
     </div>
 
     <div class="proxy-fila">
-      <div class="fr">La pr&eacute;sente autorisation est valable jusqu'au 31 juillet 2027. Si, &agrave; cette date, le transfert de mes actions n'a pas &eacute;t&eacute; effectu&eacute;, une nouvelle &laquo; procuration &raquo; sera n&eacute;cessaire pour pouvoir le r&eacute;aliser apr&egrave;s cette date.</div>
-      <div class="es">La presente autorizaci&oacute;n se concede hasta el 31 de julio de 2027. Si en dicha fecha no se hubiese ejecutado la transmisi&oacute;n de mis acciones, ser&aacute; necesario un nuevo &laquo;proxy&raquo; para poder materializarla posteriormente a dicha fecha.</div>
+      <div class="fr">Chacune des Actions est ma propriété pleine et exclusive, et je n'ai cédé aucun droit juridique ou économique sur celles-ci en faveur d'un tiers.</div>
+      <div class="es">Todas y cada una de las Acciones son de mi plena y única propiedad, no habiendo cedido ningún derecho jurídico o económico sobre las mismas a favor de un tercero.</div>
     </div>
 
     <div class="proxy-fila">
-      <div class="fr">Le pr&eacute;sent document est &eacute;tabli en fran&ccedil;ais et en espagnol. En cas de divergence entre les deux versions, la version fran&ccedil;aise fait foi.</div>
-      <div class="es">El presente documento se redacta en franc&eacute;s y en espa&ntilde;ol. En caso de discrepancia entre ambas versiones, prevalecer&aacute; la versi&oacute;n francesa.</div>
+      <div class="fr">De même, je m'engage, pendant la durée de validité de la présente autorisation, à ne pas céder, grever ni constituer un droit réel sur les Actions sans en avoir préalablement informé la Société et les Mandataires (tels que définis ci-après).</div>
+      <div class="es">Asimismo, me comprometo, durante la vigencia de la presente autorización, a no transmitir, gravar ni constituir ningún derecho real sobre las Acciones sin el previo conocimiento de la Sociedad y de los Apoderados, (tal y como se definen posteriormente).</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">À cet effet, par la signature du présent document, j'accorde les pouvoirs les plus étendus prévus par la loi et je donne procuration à MONSIEUR PASCAL-ROGER-GASTON-BERNARD-J. NIZET (administrateur conjoint d'ALPHA LYRAE HOLDING, S.L., président de la Société), majeur, de nationalité belge, domicilié à ces fins à 08031 Barcelone, paseo Maragall n° 260, 3e étage, porte 3, titulaire du passeport belge n° EP311709 et du NIE n° X-1882700-N, en cours de validité, et à MADAME CARMEN SANFRANCISCO MILLÁN (administratrice conjointe d'ALPHA LYRAE HOLDING, S.L., présidente de la Société), majeure, de nationalité espagnole, domiciliée à Dosrius, calle Montserrat 25, titulaire de la carte d'identité n° 38.085.986-X, en cours de validité, (les «Mandataires»), afin que chacun d'entre eux puisse, agissant indistinctement ou solidairement, exercer en mon nom les pouvoirs suivants&nbsp;:</div>
+      <div class="es">A tal fin, con la firma del presente documento, otorgo las más amplias facultades como en Derecho sean necesarias y otorgo poderes a favor de DON PASCAL-ROGER-GASTON-BERNARD-J. NIZET (administrador mancomunado de ALPHA LYRAE HOLDING, S.L., presidente de la Sociedad), mayor de edad, de nacionalidad belga, con domicilio a estos efectos en 08031 Barcelona, paseo Maragall, número 260, piso tercero, puerta tercera, provisto de pasaporte belga número EP311709 y de NIE número X-1882700-N, vigentes; y DOÑA CARMEN SANFRANCISCO MILLÁN (administradora mancomunada de ALPHA LYRAE HOLDING, S.L., presidente de la Sociedad), mayor de edad, de nacionalidad española, domiciliada en Dosrius, calle Montserrat 25, y provista de DNI número 38.085.986-X, vigente (los “Apoderados”), para que cualquiera de ellos, actuando de forma indistinta o solidaria, pueda ejercer en mi nombre las siguientes facultades:</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Céder la totalité des Actions de BIONURE INVESTMENT FRANCE, S.A.S., dont j'ai la pleine propriété et la pleine disposition, au prix de 1,11423 euros bruts par action, au profit de la Société ou, à défaut, de l'Investisseur désigné par le président de la Société, y compris les cas d'autocontratation, de double ou multiple représentation ou de conflit d'intérêts, les Mandataires étant expressément autorisés à agir dans de tels cas, dans les conditions prévues à l'article 1161 du Code civil français. Le paiement du prix devra être effectué simultanément à la signature des documents mentionnés à la signature des documents mentionnés au point 3 ci-après, ou au plus tard dans un délai de 30 jour ouvrable à compter de la date de signature de ces documents.</div>
+      <div class="es">Vender la totalidad de las Acciones de las cuales tengo pleno dominio y titularidad de BIONURE INVESTMENT FRANCE, S.A.S., por un precio de 1,11423 euros brutos por acción, a favor de la Sociedad o, en su defecto, del Inversor que designe el presidente de la Sociedad, incluidos los supuestos de autocontratación, doble o múltiple representación o de contraposición de intereses, autorizando expresamente a los Apoderados en los términos previstos en el artículo 1161 del Código Civil francés. El pago del precio deberá ser simultáneo a la firma de los documentos referenciados en el Punto 3 siguiente, o como máximo, en el plazo de 30 días hábiles desde la fecha de firma de dichos documentos.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Faire toutes Déclarations, attestations et garanties nécessaires relatives auxdites Actions de la Société en vue de la réalisation de l'Opération.</div>
+      <div class="es">Realizar las Manifestaciones, declaraciones y garantías necesarias en relación con dichas Acciones de la Sociedad para la ejecución de la Operación.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Signer en mon nom tous actes authentiques et sous seing privé nécessaires à la réalisation de la cession de mes Actions de BIONURE INVESTMENT FRANCE, S.A.S., et, de manière générale, pour formaliser et mener à bien l'Opération, et notamment pour signer le document de mouvement d'Actions («ordre de mouvement de valeurs mobilières non admises sur un marché réglementé») et le contrat de cession d'Actions de la Société.</div>
+      <div class="es">Firmar cuantos documentos públicos y privados fueran necesarios para otorgar la compraventa de mis Acciones de BIONURE INVESTMENT FRANCE, S.A.S., y, en general, para formalizar y ejecutar la Operación, y en especial para firmar el documento de movimiento de Acciones («ordre de mouvement de valeurs mobilières non admises sur un marché réglementé») y el contrato de compraventa de Acciones de la Sociedad.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Communiquer à la Société et, le cas échéant, à l'Investisseur les coordonnées du compte bancaire dont je suis titulaire, telles qu'elles figurent à la section 2 du présent document, afin de recevoir le prix de la vente, et établir en mon nom les reçus et lettres de paiement correspondants.</div>
+      <div class="es">Comunicar a la Sociedad y, en su caso, al Inversor los datos de la cuenta bancaria de mi titularidad que consten en el Apartado 2 del presente documento a efectos de recibir el precio de la compraventa, otorgar en mi nombre los correspondientes recibos y cartas de pago.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Rédiger, sur la base des documents et informations fournis par moi-même ou dont dispose la Société, les déclarations nécessaires concernant ma propriété des Actions, ma légitimité à les céder et la ratification des Déclarations faites dans le présent document.</div>
+      <div class="es">Formular, sobre la base de la documentación e información facilitada por mí o de que disponga la Sociedad, las declaraciones necesarias relativas a mi titularidad sobre las Acciones, mi legitimación para transmitirlas y la ratificación de las Manifestaciones realizadas en este documento.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Communiquer et informer les administrations publiques compétentes, notamment le Registre du commerce (Greffe du Tribunal des Activités Économiques de Paris), de la cession de mes Actions ainsi que de toute autre information requise par la loi.</div>
+      <div class="es">Comunicar e informar a las administraciones públicas competentes, entre ellas el Registro de Comercio (Greffe du Tribunal des Activités Économiques de Paris), de la transmisión de mis Acciones y cualquier otra información requerida legalmente.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Procéder à l'annulation de mes Actions, une fois leur prix encaissé, en signant les documents nécessaires à cet effet, si la Société ou l'Investisseur le jugent nécessaire ou opportun.</div>
+      <div class="es">Amortizar y anular mis Acciones, una vez percibido el precio de las mismas, firmando los documentos necesarios al efecto, en caso de que la Sociedad o el Inversor lo consideren necesario o conveniente.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Préciser, compléter, rectifier et régulariser, en mon nom, les documents établis dans l'exercice des présents pouvoirs, ainsi qu'effectuer les démarches et formalités nécessaires à l'exécution de la vente.</div>
+      <div class="es">Aclarar, completar, rectificar y subsanar, en mi nombre, los documentos otorgados en ejercicio de las presentes facultades, así como realizar las gestiones y formalidades necesarias para la ejecución de la compraventa.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">À cet effet, les Mandataires susvisés pourront signer tous nécessaires et encaisser le prix de ladite cession, lequel devra être versé sur mon compte bancaire indiqué à la section 2, «Coordonnés bancaires», du présent document.</div>
+      <div class="es">A tal fin, los Apoderados antes indicados podrán otorgar los documentos públicos y privados de compraventa que sean necesarios y cobrar el precio de dicha transmisión, que deberá ingresarse en mi cuenta bancaria indicada en el Apartado 2, “Datos Bancarios”, del presente documento.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">La présente autorisation implique la renonciation expresse à tous les droits de préemption (droit de préemption), ainsi qu'à tous droits de priorité, d'opposition, de consentement ou d'autorisation que me reconnaissent les statuts de la Société et la loi, en cas de cession d'actions d'autres actionnaires de la Société dans le cadre de l'Opération.</div>
+      <div class="es">La presente autorización implica la renuncia expresa a cuantos derechos de adquisición preferente (droit de préemption), así como, en general, a cualesquiera derechos de prioridad, oposición, consentimiento o autorización que me reconozcan los Estatutos de la Sociedad o la legislación aplicable en relación con la transmisión de las Acciones de otros accionistas de la Sociedad en el marco de la Operación.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Les Mandataires ne pourront pas vendre les Actions à un prix inférieur à celui indiqué au Point 1 ci-dessus.</div>
+      <div class="es">Los Apoderados no podrán vender las Acciones por un precio inferior al indicado en el Punto 1 anterior.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">La présente autorisation prend effet à compter de la date de sa délivrance et restera en vigueur jusqu'à l'exécution complète des opérations qui en font l'objet et, en tout état de cause, au plus tard le 31 juillet 2027. Si, avant cette date, le transfert de mes actions n'a pas été effectué, il sera nécessaire de délivrer un nouveau proxy pour la réalisation de la vente de mes actions.</div>
+      <div class="es">La presente autorización surte efectos desde la fecha de su otorgamiento y permanecerá vigente hasta la completa ejecución de las actuaciones objeto de la misma y, en todo caso, como máximo hasta el 31 de julio de 2027. En caso de que antes de dicha fecha no se hubiere ejecutado la transmisión de mis Acciones, será necesario el otorgamiento de un nuevo proxy para la ejecución de la compraventa de mis Acciones.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Le présent document est établi en français et en espagnol. En cas de divergence entre les deux versions, la version française fait foi.</div>
+      <div class="es">El presente documento se redacta en francés y en español. En caso de discrepancia entre ambas versiones, prevalecerá la versión francesa.</div>
     </div>
 
     <div class="proxy-fila tancament">
@@ -1030,11 +1109,15 @@ function generaProxy(idInversor) {
   <div class="cert-pagina proxy-pag salt">
     <div class="proxy-seccio-titol">1A. Donn&eacute;es de l'actionnaire &ndash; personne physique / Datos del accionista &ndash; persona f&iacute;sica</div>
     <table class="proxy-taula">
-      <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>${nom}</td></tr>
-      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${tipusId} ${numId}</td></tr>
+      <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>${nomCognoms}</td></tr>
+      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${dniText}</td></tr>
       <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia}</td></tr>
       <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de acciones de BIF</td><td>${totalAccFmt}</td></tr>
     </table>
+    <div class="proxy-nota-final">
+      <div class="fr">* Je joins une photocopie de ma carte d'identit&eacute; nationale/de mon passeport.</div>
+      <div class="es">Adjunto fotocopia de mi documento nacional de identidad/pasaporte.</div>
+    </div>
     <table class="proxy-check-taula">
       <tr>
         <td class="pregunta">Les donn&eacute;es de l'actionnaire sont-elles exactes&nbsp;?<br>&iquest;Son correctos los datos del accionista?</td>
@@ -1045,7 +1128,7 @@ function generaProxy(idInversor) {
       <div class="fr">Si vous avez coch&eacute; &laquo; Non &raquo;, ou si l'une des donn&eacute;es est manquante, nous vous prions de bien vouloir indiquer ci-dessous vos donn&eacute;es exactes (uniquement celles &agrave; modifier).</div>
       <div class="es">En caso de haber marcado &laquo;No&raquo;, o si alguno de los datos no consta, le rogamos que indique a continuaci&oacute;n sus datos correctos (solo los que deban modificarse).</div>
     </div>
-    <div class="proxy-seccio-titol" style="margin-top:20px;">1B. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
+    <div class="proxy-seccio-titol" style="margin-top:20px;">1 bis. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>&nbsp;</td></tr>
       <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>&nbsp;</td></tr>
@@ -1055,12 +1138,26 @@ function generaProxy(idInversor) {
       <div class="fr">R&eacute;gime matrimonial&nbsp;: si vous &ecirc;tes mari&eacute;(e) sous un r&eacute;gime de communaut&eacute; de biens (par exemple, communaut&eacute; r&eacute;duite aux acqu&ecirc;ts), nous vous prions de bien vouloir nous en informer.</div>
       <div class="es">R&eacute;gimen econ&oacute;mico matrimonial: si est&aacute; casado/a en r&eacute;gimen de comunidad de bienes (por ejemplo, sociedad de gananciales), le rogamos que nos lo comunique.</div>
     </div>
+    <div class="proxy-seccio-titol" style="margin-top:20px;">1B. Donn&eacute;es de l'actionnaire &ndash; personne morale / Datos del accionista &ndash; persona jur&iacute;dica</div>
+    <table class="proxy-taula">
+      <tr><td class="etiqueta">D&eacute;nomination sociale<br>Denominaci&oacute;n social</td><td>${nomCognoms}</td></tr>
+      <tr><td class="etiqueta">SIREN / NIF</td><td>${dniText}</td></tr>
+      <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia}</td></tr>
+      <tr><td class="etiqueta">Nom et pr&eacute;nom de la personne physique signataire<br>Nombre y apellidos de la persona f&iacute;sica firmante</td><td>${administrador}</td></tr>
+      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${dniAdmin}</td></tr>
+      <tr><td class="etiqueta">Fonction de la personne physique signataire /cargo de la persona f&iacute;sica firmante *</td><td>${administracio}</td></tr>
+      <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de Acciones de BIF</td><td>${totalAccFmt}</td></tr>
+    </table>
+    <div class="proxy-nota-final">
+      <div class="fr">Je joins une photocopie de la carte d'identit&eacute;/passeport du repr&eacute;sentant physique et du document de repr&eacute;sentation de la personne morale actionnaire.</div>
+      <div class="es">Adjunto fotocopia del documento nacional de identidad/pasaporte de la persona f&iacute;sica representante y documento de representaci&oacute;n de la persona jur&iacute;dica accionista.</div>
+    </div>
   </div>
 
   <div class="cert-pagina proxy-pag salt">
-    <div class="proxy-seccio-titol">2. Coordonn&eacute;es bancaires / Datos bancarios</div>
+    <div class="proxy-seccio-titol">Coordonn&eacute;es bancaires / Datos bancarios</div>
     <table class="proxy-taula">
-      <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>${nom}</td></tr>
+      <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>${nomCognoms}</td></tr>
       <tr><td class="etiqueta">Compte bancaire (IBAN)<br>Cuenta bancaria (IBAN)</td><td>${ibanText}</td></tr>
     </table>
     <table class="proxy-check-taula">
@@ -1087,6 +1184,32 @@ function generaProxy(idInversor) {
     <div class="proxy-important">
       <div class="fr"><strong>Important&nbsp;:</strong> Si, dans les deux cas, la r&eacute;ponse est &laquo; Oui &raquo;, il n'est pas n&eacute;cessaire de nous faire parvenir &agrave; nouveau l'attestation de titularit&eacute; du compte bancaire. En revanche, si la case coch&eacute;e est &laquo; Non &raquo;, il est indispensable de nous faire parvenir une attestation de titularit&eacute; du compte bancaire d&eacute;livr&eacute;e par votre banque, avec le pr&eacute;sent document sign&eacute;.</div>
       <div class="es"><strong>Importante:</strong> Si en los dos casos el resultado es &laquo;S&iacute;&raquo;, no es necesario que nos haga llegar de nuevo el certificado de titularidad de la cuenta bancaria. Por el contrario, si lo que aparece marcado es &laquo;No&raquo;, es imprescindible que nos haga llegar un certificado de titularidad de la cuenta bancaria emitido por su entidad, junto con el presente documento firmado.</div>
+    </div>
+  </div>
+
+  <div class="cert-pagina proxy-pag salt">
+    <div class="proxy-seccio-titol">Protection des donn&eacute;es / Protecci&oacute;n de datos</div>
+    <div class="proxy-fila">
+      <div class="fr">J'autorise express&eacute;ment BIONURE INVESTMENT FRANCE, S.A.S., ainsi que les Mandataires d&eacute;sign&eacute;s dans le pr&eacute;sent document, &agrave; traiter mes donn&eacute;es &agrave; caract&egrave;re personnel, y compris mes donn&eacute;es d'identification et de contact, celles relatives &agrave; ma qualit&eacute; d'actionnaire et &agrave; la d&eacute;tention de mes Actions et, le cas &eacute;ch&eacute;ant, les coordonn&eacute;es bancaires fournies, dans la mesure o&ugrave; cela s'av&egrave;re n&eacute;cessaire &agrave; la gestion, &agrave; la formalisation, &agrave; l'ex&eacute;cution et au suivi de l'Op&eacute;ration.</div>
+      <div class="es">Autorizo expresamente a BIONURE INVESTMENT FRANCE, S.A.S., as&iacute; como a los Apoderados designados en el presente documento, a tratar mis datos personales, incluidos mis datos identificativos y de contacto, los relativos a mi condici&oacute;n de accionista y a la titularidad de mis Acciones y, en su caso, los datos bancarios facilitados, en la medida en que resulte necesario para la gesti&oacute;n, formalizaci&oacute;n, ejecuci&oacute;n y seguimiento de la Operaci&oacute;n.</div>
+    </div>
+    <div class="proxy-fila">
+      <div class="fr">De m&ecirc;me, j'autorise la Soci&eacute;t&eacute; et les Mandataires &agrave; communiquer ces donn&eacute;es, lorsque cela s'av&egrave;re n&eacute;cessaire &agrave; la formalisation ou &agrave; l'ex&eacute;cution de l'Op&eacute;ration, &agrave; l'acqu&eacute;reur des actions, aux &eacute;tablissements financiers charg&eacute;s de g&eacute;rer le paiement du prix, ainsi qu'aux notaires, conseillers juridiques, fiscaux ou financiers, prestataires de services intervenant dans l'Op&eacute;ration et aux administrations publiques, autorit&eacute;s ou organismes comp&eacute;tents lorsque cette communication s'av&egrave;re n&eacute;cessaire ou est exig&eacute;e par la r&eacute;glementation applicable.</div>
+      <div class="es">Asimismo, autorizo a la Sociedad y a los Apoderados a comunicar dichos datos, cuando resulte necesario para la formalizaci&oacute;n o ejecuci&oacute;n de la Operaci&oacute;n, al adquirente de las Acciones, a las entidades financieras encargadas de gestionar el pago del precio, as&iacute; como a notarios, asesores jur&iacute;dicos, fiscales o financieros, prestadores de servicios que intervengan en la Operaci&oacute;n y a las Administraciones P&uacute;blicas, autoridades u organismos competentes cuando dicha comunicaci&oacute;n resulte necesaria o venga exigida por la normativa aplicable.</div>
+    </div>
+    <div class="proxy-fila">
+      <div class="fr">Mes donn&eacute;es &agrave; caract&egrave;re personnel pourront &ecirc;tre conserv&eacute;es pendant la dur&eacute;e n&eacute;cessaire &agrave; la gestion et &agrave; l'ex&eacute;cution de la pr&eacute;sente autorisation et de l'Op&eacute;ration, puis pendant les d&eacute;lais l&eacute;galement fix&eacute;s et tant que des responsabilit&eacute;s pourraient d&eacute;couler des actes accomplis&nbsp;; &agrave; l'issue de ces d&eacute;lais, elles seront supprim&eacute;es ou bloqu&eacute;es conform&eacute;ment &agrave; la r&eacute;glementation applicable.</div>
+      <div class="es">Mis datos personales podr&aacute;n ser conservados durante el tiempo necesario para la gesti&oacute;n y ejecuci&oacute;n de la presente autorizaci&oacute;n y de la Operaci&oacute;n y, con posterioridad, durante los plazos legalmente establecidos y mientras puedan derivarse responsabilidades de las actuaciones realizadas, transcurridos los cuales ser&aacute;n suprimidos o bloqueados de conformidad con la normativa aplicable.</div>
+    </div>
+
+    <div class="proxy-seccio-titol" style="margin-top:20px;">Confidentialit&eacute; / Confidencialidad</div>
+    <div class="proxy-fila">
+      <div class="fr">Je m'engage &agrave; conserver la plus stricte confidentialit&eacute; en ce qui concerne le contenu du pr&eacute;sent document ainsi que les termes et conditions de l'Op&eacute;ration, et &agrave; ne pas divulguer ces informations &agrave; des tiers, sauf dans les cas suivants&nbsp;: (i) lorsque cette divulgation est requise par la loi, par une autorit&eacute; judiciaire ou administrative comp&eacute;tente&nbsp;; (ii) lorsqu'elle est n&eacute;cessaire pour mes conseillers juridiques, fiscaux ou financiers, eux-m&ecirc;mes tenus &agrave; une obligation de confidentialit&eacute; &eacute;quivalente&nbsp;; ou (iii) lorsque les informations concern&eacute;es sont ou deviennent publiques sans manquement de ma part &agrave; la pr&eacute;sente obligation.</div>
+      <div class="es">Me comprometo a mantener la m&aacute;s estricta confidencialidad respecto del contenido del presente documento, as&iacute; como de los t&eacute;rminos y condiciones de la Operaci&oacute;n, y a no divulgar dicha informaci&oacute;n a terceros, salvo en los siguientes supuestos: (i) cuando dicha divulgaci&oacute;n sea exigida por la ley, por una autoridad judicial o administrativa competente; (ii) cuando resulte necesaria para mis asesores jur&iacute;dicos, fiscales o financieros, quienes estar&aacute;n sujetos a una obligaci&oacute;n de confidencialidad equivalente; o (iii) cuando la informaci&oacute;n en cuesti&oacute;n sea o llegue a ser p&uacute;blica sin incumplimiento por mi parte de la presente obligaci&oacute;n.</div>
+    </div>
+    <div class="proxy-fila">
+      <div class="fr">Cette obligation de confidentialit&eacute; restera en vigueur pendant toute la dur&eacute;e de validit&eacute; de la pr&eacute;sente autorisation et se poursuivra apr&egrave;s son expiration ou son ex&eacute;cution, dans la mesure n&eacute;cessaire &agrave; la protection des int&eacute;r&ecirc;ts l&eacute;gitimes de la Soci&eacute;t&eacute; et des autres parties &agrave; l'Op&eacute;ration.</div>
+      <div class="es">Esta obligaci&oacute;n de confidencialidad permanecer&aacute; vigente durante toda la vigencia de la presente autorizaci&oacute;n y se mantendr&aacute; tras su expiraci&oacute;n o ejecuci&oacute;n, en la medida necesaria para la protecci&oacute;n de los intereses leg&iacute;timos de la Sociedad y de las dem&aacute;s partes de la Operaci&oacute;n.</div>
     </div>
 
     <div class="proxy-seccio-titol" style="margin-top:28px;">Signature de l'actionnaire / Firma del accionista</div>
