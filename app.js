@@ -1200,7 +1200,7 @@ function generaProxy(idInversor) {
     </div>
   </div>
 
-  <div class="cert-pagina proxy-pag salt">
+  <div class="cert-pagina proxy-pag salt pag-final">
     <div class="proxy-seccio-titol"><strong>Protection des donn&eacute;es</strong> / Protecci&oacute;n de datos</div>
     <div class="proxy-fila">
       <div class="fr">J'autorise express&eacute;ment BIONURE INVESTMENT FRANCE, S.A.S., ainsi que les Mandataires d&eacute;sign&eacute;s dans le pr&eacute;sent document, &agrave; traiter mes donn&eacute;es &agrave; caract&egrave;re personnel, y compris mes donn&eacute;es d'identification et de contact, celles relatives &agrave; ma qualit&eacute; d'actionnaire et &agrave; la d&eacute;tention de mes Actions et, le cas &eacute;ch&eacute;ant, les coordonn&eacute;es bancaires fournies, dans la mesure o&ugrave; cela s'av&egrave;re n&eacute;cessaire &agrave; la gestion, &agrave; la formalisation, &agrave; l'ex&eacute;cution et au suivi de l'Op&eacute;ration.</div>
@@ -1215,7 +1215,7 @@ function generaProxy(idInversor) {
       <div class="es">Mis datos personales podr&aacute;n ser conservados durante el tiempo necesario para la gesti&oacute;n y ejecuci&oacute;n de la presente autorizaci&oacute;n y de la Operaci&oacute;n y, con posterioridad, durante los plazos legalmente establecidos y mientras puedan derivarse responsabilidades de las actuaciones realizadas, transcurridos los cuales ser&aacute;n suprimidos o bloqueados de conformidad con la normativa aplicable.</div>
     </div>
 
-    <div class="proxy-seccio-titol" style="margin-top:20px;"><strong>Confidentialit&eacute;</strong> / Confidencialidad</div>
+    <div class="proxy-seccio-titol" style="margin-top:8px;"><strong>Confidentialit&eacute;</strong> / Confidencialidad</div>
     <div class="proxy-fila">
       <div class="fr">Je m'engage &agrave; conserver la plus stricte confidentialit&eacute; en ce qui concerne le contenu du pr&eacute;sent document ainsi que les termes et conditions de l'Op&eacute;ration, et &agrave; ne pas divulguer ces informations &agrave; des tiers, sauf dans les cas suivants&nbsp;: (i) lorsque cette divulgation est requise par la loi, par une autorit&eacute; judiciaire ou administrative comp&eacute;tente&nbsp;; (ii) lorsqu'elle est n&eacute;cessaire pour mes conseillers juridiques, fiscaux ou financiers, eux-m&ecirc;mes tenus &agrave; une obligation de confidentialit&eacute; &eacute;quivalente&nbsp;; ou (iii) lorsque les informations concern&eacute;es sont ou deviennent publiques sans manquement de ma part &agrave; la pr&eacute;sente obligation.</div>
       <div class="es">Me comprometo a mantener la m&aacute;s estricta confidencialidad respecto del contenido del presente documento, as&iacute; como de los t&eacute;rminos y condiciones de la Operaci&oacute;n, y a no divulgar dicha informaci&oacute;n a terceros, salvo en los siguientes supuestos: (i) cuando dicha divulgaci&oacute;n sea exigida por la ley, por una autoridad judicial o administrativa competente; (ii) cuando resulte necesaria para mis asesores jur&iacute;dicos, fiscales o financieros, quienes estar&aacute;n sujetos a una obligaci&oacute;n de confidencialidad equivalente; o (iii) cuando la informaci&oacute;n en cuesti&oacute;n sea o llegue a ser p&uacute;blica sin incumplimiento por mi parte de la presente obligaci&oacute;n.</div>
@@ -1225,7 +1225,7 @@ function generaProxy(idInversor) {
       <div class="es">Esta obligaci&oacute;n de confidencialidad permanecer&aacute; vigente durante toda la vigencia de la presente autorizaci&oacute;n y se mantendr&aacute; tras su expiraci&oacute;n o ejecuci&oacute;n, en la medida necesaria para la protecci&oacute;n de los intereses leg&iacute;timos de la Sociedad y de las dem&aacute;s partes de la Operaci&oacute;n.</div>
     </div>
 
-    <div class="proxy-seccio-titol" style="margin-top:28px;"><strong>Signature de l'actionnaire</strong> / Firma del accionista</div>
+    <div class="proxy-seccio-titol" style="margin-top:14px;"><strong>Signature de l'actionnaire</strong> / Firma del accionista</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Signature / Firma</td><td style="height:23mm;vertical-align:bottom;">${signantNom}</td></tr>
       <tr><td class="etiqueta">Date / Fecha</td><td>&nbsp;</td></tr>
