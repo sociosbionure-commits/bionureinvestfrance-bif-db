@@ -957,6 +957,7 @@ function generaProxy(idInversor) {
   const administrador1B = esJuridica ? administrador : '';
   const dniAdmin1B = esJuridica ? dniAdmin : '';
   const administracio1B = esJuridica ? administracio : '';
+  const signantNom = esJuridica ? administrador : nomCognoms;
 
   const peuNomRaw = `${inv.inversor_nom || ''} ${inv.inversor_cnom_rs || ''}`.trim();
   const peuNomCss = peuNomRaw.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
@@ -1226,7 +1227,7 @@ function generaProxy(idInversor) {
 
     <div class="proxy-seccio-titol" style="margin-top:28px;"><strong>Signature de l'actionnaire</strong> / Firma del accionista</div>
     <table class="proxy-taula">
-      <tr><td class="etiqueta">Signature / Firma</td><td style="height:23mm;">&nbsp;</td></tr>
+      <tr><td class="etiqueta">Signature / Firma</td><td style="height:23mm;vertical-align:bottom;">${signantNom}</td></tr>
       <tr><td class="etiqueta">Date / Fecha</td><td>&nbsp;</td></tr>
     </table>
     <div class="proxy-nota-final">
