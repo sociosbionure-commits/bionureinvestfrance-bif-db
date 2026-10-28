@@ -110,7 +110,7 @@ tbody tr:hover{background:#eef3fb;}
 .proxy-fila{display:flex;gap:24px;margin-bottom:8px;}
 .proxy-fila .fr,.proxy-fila .es{flex:1;text-align:justify;}
 .proxy-fila.tancament{margin-top:10px;margin-bottom:0;}
-.cert-pagina.proxy-pag{padding:30mm 20mm 20mm;}
+.cert-pagina.proxy-pag{padding:20mm;}
 .cert-pagina.proxy-pag.salt{break-before:page;page-break-before:always;}
 .proxy-taula{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:10pt;}
 .proxy-taula td{border:1px solid #999;padding:5px 8px;vertical-align:top;}
@@ -128,7 +128,7 @@ tbody tr:hover{background:#eef3fb;}
 
 @media print {
   @page{size:A4;margin:0;}
-  @page proxypag{size:A4;margin:30mm 20mm 20mm;}
+  @page proxypag{size:A4;margin:20mm;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   body > *:not(.cert-overlay){display:none !important;}
   .cert-overlay{position:static !important;background:#fff;overflow:visible;}

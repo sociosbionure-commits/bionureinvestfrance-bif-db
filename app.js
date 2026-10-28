@@ -964,8 +964,8 @@ function generaProxy(idInversor) {
     @page proxypag {
       @bottom-center {
         content: "${peuNomCss} - Page / Página " counter(page) " / " counter(pages);
-        font-size: 7pt;
-        color: #808080;
+        font-size: 9pt;
+        color: #000000;
         font-family: Arial, Helvetica, sans-serif;
       }
     }
@@ -1226,7 +1226,7 @@ function generaProxy(idInversor) {
 
     <div class="proxy-seccio-titol" style="margin-top:28px;"><strong>Signature de l'actionnaire</strong> / Firma del accionista</div>
     <table class="proxy-taula">
-      <tr><td class="etiqueta">Signature / Firma</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta">Signature / Firma</td><td style="height:23mm;">&nbsp;</td></tr>
       <tr><td class="etiqueta">Date / Fecha</td><td>&nbsp;</td></tr>
     </table>
     <div class="proxy-nota-final">
