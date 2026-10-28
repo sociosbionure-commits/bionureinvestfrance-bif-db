@@ -908,7 +908,7 @@ function emmascaraIban(iban) {
 }
 
 function casella(marcada) {
-  return marcada ? '&#9745;' : '&#9744;';
+  return marcada ? '<span style="color:#c00;">&#9745;</span>' : '&#9744;';
 }
 
 function generaProxy(idInversor) {
