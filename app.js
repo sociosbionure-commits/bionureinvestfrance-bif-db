@@ -1120,11 +1120,11 @@ function generaProxy(idInversor) {
 
   <div class="cert-pagina proxy-pag salt">
     <div class="proxy-seccio-titol"><strong>1A. Donn&eacute;es de l'actionnaire &ndash; personne physique</strong> / Datos del accionista &ndash; persona f&iacute;sica</div>
-    <table class="proxy-taula">
-      <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>${nomCognoms1A}</td></tr>
-      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${dniText1A}</td></tr>
-      <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia1A}</td></tr>
-      <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de acciones de BIF</td><td>${totalAccFmt1A}</td></tr>
+    <table class="proxy-taula persona">
+      <tr><td class="etiqueta"><strong>Nom et pr&eacute;nom</strong><br>Nombre y apellidos</td><td>${nomCognoms1A}</td></tr>
+      <tr><td class="etiqueta"><strong>Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)</strong><br>DNI/NIF &ndash; Pasaporte</td><td>${dniText1A}</td></tr>
+      <tr><td class="etiqueta"><strong>Domicile</strong> / Domicilio</td><td>${domiciliLinia1A}</td></tr>
+      <tr><td class="etiqueta"><strong>Nombre d'actions BIF</strong><br>N&ordm; de acciones de BIF</td><td>${totalAccFmt1A}</td></tr>
     </table>
     <div class="proxy-nota-final">
       <div class="fr">* Je joins une photocopie de ma carte d'identit&eacute; nationale/de mon passeport.</div>
@@ -1141,24 +1141,24 @@ function generaProxy(idInversor) {
       <div class="es">En caso de haber marcado &laquo;No&raquo;, o si alguno de los datos no consta, le rogamos que indique a continuaci&oacute;n sus datos correctos (solo los que deban modificarse).</div>
     </div>
     <div class="proxy-seccio-titol" style="margin-top:20px;"><strong>1 bis. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique</strong> / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
-    <table class="proxy-taula">
-      <tr><td class="etiqueta">Nom et pr&eacute;nom<br>Nombre y apellidos</td><td>&nbsp;</td></tr>
-      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>&nbsp;</td></tr>
-      <tr><td class="etiqueta">Domicile / Domicilio</td><td>&nbsp;</td></tr>
+    <table class="proxy-taula persona">
+      <tr><td class="etiqueta"><strong>Nom et pr&eacute;nom</strong><br>Nombre y apellidos</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta"><strong>Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)</strong><br>DNI/NIF &ndash; Pasaporte</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta"><strong>Domicile</strong> / Domicilio</td><td>&nbsp;</td></tr>
     </table>
     <div class="proxy-fila">
       <div class="fr">R&eacute;gime matrimonial&nbsp;: si vous &ecirc;tes mari&eacute;(e) sous un r&eacute;gime de communaut&eacute; de biens (par exemple, communaut&eacute; r&eacute;duite aux acqu&ecirc;ts), nous vous prions de bien vouloir nous en informer.</div>
       <div class="es">R&eacute;gimen econ&oacute;mico matrimonial: si est&aacute; casado/a en r&eacute;gimen de comunidad de bienes (por ejemplo, sociedad de gananciales), le rogamos que nos lo comunique.</div>
     </div>
     <div class="proxy-seccio-titol" style="margin-top:20px;"><strong>1B. Donn&eacute;es de l'actionnaire &ndash; personne morale</strong> / Datos del accionista &ndash; persona jur&iacute;dica</div>
-    <table class="proxy-taula">
-      <tr><td class="etiqueta">D&eacute;nomination sociale<br>Denominaci&oacute;n social</td><td>${nomCognoms1B}</td></tr>
-      <tr><td class="etiqueta">SIREN / NIF</td><td>${dniText1B}</td></tr>
-      <tr><td class="etiqueta">Domicile / Domicilio</td><td>${domiciliLinia1B}</td></tr>
-      <tr><td class="etiqueta">Nom et pr&eacute;nom de la personne physique signataire<br>Nombre y apellidos de la persona f&iacute;sica firmante</td><td>${administrador1B}</td></tr>
-      <tr><td class="etiqueta">Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)<br>DNI/NIF &ndash; Pasaporte</td><td>${dniAdmin1B}</td></tr>
-      <tr><td class="etiqueta">Fonction de la personne physique signataire /cargo de la persona f&iacute;sica firmante *</td><td>${administracio1B}</td></tr>
-      <tr><td class="etiqueta">Nombre d'actions BIF<br>N&ordm; de Acciones de BIF</td><td>${totalAccFmt1B}</td></tr>
+    <table class="proxy-taula persona">
+      <tr><td class="etiqueta"><strong>D&eacute;nomination sociale</strong><br>Denominaci&oacute;n social</td><td>${nomCognoms1B}</td></tr>
+      <tr><td class="etiqueta"><strong>SIREN</strong> / NIF</td><td>${dniText1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Domicile</strong> / Domicilio</td><td>${domiciliLinia1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Nom et pr&eacute;nom de la personne physique signataire</strong><br>Nombre y apellidos de la persona f&iacute;sica firmante</td><td>${administrador1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)</strong><br>DNI/NIF &ndash; Pasaporte</td><td>${dniAdmin1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Fonction de la personne physique signataire</strong> /cargo de la persona f&iacute;sica firmante *</td><td>${administracio1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Nombre d'actions BIF</strong><br>N&ordm; de Acciones de BIF</td><td>${totalAccFmt1B}</td></tr>
     </table>
     <div class="proxy-nota-final">
       <div class="fr">Je joins une photocopie de la carte d'identit&eacute;/passeport du repr&eacute;sentant physique et du document de repr&eacute;sentation de la personne morale actionnaire.</div>
