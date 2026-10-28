@@ -1157,7 +1157,7 @@ function generaProxy(idInversor) {
       <tr><td class="etiqueta"><strong>Domicile</strong> / Domicilio</td><td>${domiciliLinia1B}</td></tr>
       <tr><td class="etiqueta"><strong>Nom et pr&eacute;nom de la personne physique signataire</strong><br>Nombre y apellidos de la persona f&iacute;sica firmante</td><td>${administrador1B}</td></tr>
       <tr><td class="etiqueta"><strong>Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)</strong><br>DNI/NIF &ndash; Pasaporte</td><td>${dniAdmin1B}</td></tr>
-      <tr><td class="etiqueta"><strong>Fonction de la personne physique signataire</strong> /cargo de la persona f&iacute;sica firmante *</td><td>${administracio1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Fonction de la personne physique signataire</strong><br>/cargo de la persona f&iacute;sica firmante *</td><td>${administracio1B}</td></tr>
       <tr><td class="etiqueta"><strong>Nombre d'actions BIF</strong><br>N&ordm; de Acciones de BIF</td><td>${totalAccFmt1B}</td></tr>
     </table>
     <div class="proxy-nota-final">
