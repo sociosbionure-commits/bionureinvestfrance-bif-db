@@ -945,7 +945,8 @@ function generaProxy(idInversor) {
   const administrador = escapeHtml(inv.administrador || '');
   const dniAdmin = escapeHtml(inv.dni_admin || '');
   const administracio = escapeHtml(inv.administracion || '');
-  const esJuridica = (inv.id_tipo || '').trim().toUpperCase() === 'NIF';
+  const idTipoUpper = (inv.id_tipo || '').trim().toUpperCase();
+  const esJuridica = idTipoUpper !== 'DNI' && idTipoUpper !== 'NIE';
   const nomCognoms1A = esJuridica ? '' : nomCognoms;
   const dniText1A = esJuridica ? '' : dniText;
   const domiciliLinia1A = esJuridica ? '' : domiciliLinia;
