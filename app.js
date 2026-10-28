@@ -1228,14 +1228,16 @@ function generaProxy(idInversor) {
       <div class="es">Esta obligaci&oacute;n de confidencialidad permanecer&aacute; vigente durante toda la vigencia de la presente autorizaci&oacute;n y se mantendr&aacute; tras su expiraci&oacute;n o ejecuci&oacute;n, en la medida necesaria para la protecci&oacute;n de los intereses leg&iacute;timos de la Sociedad y de las dem&aacute;s partes de la Operaci&oacute;n.</div>
     </div>
 
-    <div class="proxy-seccio-titol" style="margin-top:14px;"><strong>Signature de l'actionnaire</strong> / Firma del accionista</div>
-    <table class="proxy-taula">
-      <tr><td class="etiqueta">Signature / Firma</td><td style="height:23mm;vertical-align:bottom;">${signantNom}</td></tr>
-      <tr><td class="etiqueta">Date / Fecha</td><td>&nbsp;</td></tr>
-    </table>
-    <div class="proxy-nota-final">
-      <div class="fr">Le pr&eacute;sent document peut &ecirc;tre sign&eacute; de mani&egrave;re manuscrite (imprim&eacute;, sign&eacute; et num&eacute;ris&eacute;) ou au moyen d'une signature &eacute;lectronique avec certificat num&eacute;rique.</div>
-      <div class="es">El presente documento puede firmarse de forma manuscrita (impreso, firmado y escaneado) o mediante firma electr&oacute;nica con certificado digital.</div>
+    <div class="proxy-signatura-bloc">
+      <div class="proxy-seccio-titol" style="margin-top:14px;"><strong>Signature de l'actionnaire</strong> / Firma del accionista</div>
+      <table class="proxy-taula">
+        <tr><td class="etiqueta">Signature / Firma</td><td style="height:23mm;vertical-align:bottom;">${signantNom}</td></tr>
+        <tr><td class="etiqueta">Date / Fecha</td><td>&nbsp;</td></tr>
+      </table>
+      <div class="proxy-nota-final">
+        <div class="fr">Le pr&eacute;sent document peut &ecirc;tre sign&eacute; de mani&egrave;re manuscrite (imprim&eacute;, sign&eacute; et num&eacute;ris&eacute;) ou au moyen d'une signature &eacute;lectronique avec certificat num&eacute;rique.</div>
+        <div class="es">El presente documento puede firmarse de forma manuscrita (impreso, firmado y escaneado) o mediante firma electr&oacute;nica con certificado digital.</div>
+      </div>
     </div>
   </div>
   `;
