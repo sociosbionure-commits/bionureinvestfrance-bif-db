@@ -1113,9 +1113,12 @@ function generaProxy(idInversor) {
       <div class="es">El presente documento se redacta en francés y en español. En caso de discrepancia entre ambas versiones, <strong>prevalecerá la versión francesa.</strong></div>
     </div>
 
-    <div class="proxy-fila tancament">
-      <div class="fr">Veuillez agr&eacute;er, Madame, Monsieur, l'expression de mes salutations distingu&eacute;es.</div>
-      <div class="es">Atentamente,</div>
+    <div class="proxy-tancament-bloc">
+      <div class="proxy-fila tancament">
+        <div class="fr">Veuillez agr&eacute;er, Madame, Monsieur, l'expression de mes salutations distingu&eacute;es.</div>
+        <div class="es">Atentamente,</div>
+      </div>
+      <div class="proxy-nom-firma-carta">${signantNom}</div>
     </div>
   </div>
 
