@@ -1141,7 +1141,7 @@ function generaProxy(idInversor) {
       <div class="fr">Si vous avez coch&eacute; &laquo; Non &raquo;, ou si l'une des donn&eacute;es est manquante, nous vous prions de bien vouloir indiquer ci-dessous vos donn&eacute;es exactes (uniquement celles &agrave; modifier).</div>
       <div class="es">En caso de haber marcado &laquo;No&raquo;, o si alguno de los datos no consta, le rogamos que indique a continuaci&oacute;n sus datos correctos (solo los que deban modificarse).</div>
     </div>
-    <div class="proxy-seccio-titol" style="margin-top:20px;"><strong>1 bis. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique</strong> / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
+    <div class="proxy-seccio-titol" style="margin-top:12px;"><strong>1 bis. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique</strong> / Datos correctos del accionista &ndash; persona f&iacute;sica</div>
     <table class="proxy-taula persona">
       <tr><td class="etiqueta"><strong>Nom et pr&eacute;nom</strong><br>Nombre y apellidos</td><td>&nbsp;</td></tr>
       <tr><td class="etiqueta"><strong>Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)</strong><br>DNI/NIF &ndash; Pasaporte</td><td>&nbsp;</td></tr>
@@ -1151,7 +1151,7 @@ function generaProxy(idInversor) {
       <div class="fr">R&eacute;gime matrimonial&nbsp;: si vous &ecirc;tes mari&eacute;(e) sous un r&eacute;gime de communaut&eacute; de biens (par exemple, communaut&eacute; r&eacute;duite aux acqu&ecirc;ts), nous vous prions de bien vouloir nous en informer.</div>
       <div class="es">R&eacute;gimen econ&oacute;mico matrimonial: si est&aacute; casado/a en r&eacute;gimen de comunidad de bienes (por ejemplo, sociedad de gananciales), le rogamos que nos lo comunique.</div>
     </div>
-    <div class="proxy-seccio-titol" style="margin-top:20px;"><strong>1B. Donn&eacute;es de l'actionnaire &ndash; personne morale</strong> / Datos del accionista &ndash; persona jur&iacute;dica</div>
+    <div class="proxy-seccio-titol" style="margin-top:12px;"><strong>1B. Donn&eacute;es de l'actionnaire &ndash; personne morale</strong> / Datos del accionista &ndash; persona jur&iacute;dica</div>
     <table class="proxy-taula persona">
       <tr><td class="etiqueta"><strong>D&eacute;nomination sociale</strong><br>Denominaci&oacute;n social</td><td>${nomCognoms1B}</td></tr>
       <tr><td class="etiqueta"><strong>SIREN</strong> / NIF</td><td>${dniText1B}</td></tr>
