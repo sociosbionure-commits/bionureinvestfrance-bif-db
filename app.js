@@ -907,6 +907,17 @@ function emmascaraIban(iban) {
   return `${inici} ${mig} ${final}`;
 }
 
+function emmascaraInfoFin(text) {
+  const net = String(text || '');
+  if (!net.trim()) return '';
+  const teClauCompte = /(compte|cuenta|account|acc\.?|rout(?:ing)?|iban|n[ºo°]?\s*(?:de\s*)?(?:compte|cuenta|cta))/i;
+  const maskat = net.split('\n').map(linia => {
+    if (!teClauCompte.test(linia)) return linia;
+    return linia.replace(/\d{5,}/g, m => m.slice(0, 2) + 'X'.repeat(m.length - 4) + m.slice(-2));
+  }).join('\n');
+  return escapeHtml(maskat).replace(/\n/g, '<br>');
+}
+
 function casella(marcada) {
   return marcada ? '<span style="color:#c00;">&#9745;</span>' : '&#9744;';
 }
@@ -941,7 +952,8 @@ function generaProxy(idInversor) {
   const dniText = `${tipusId} ${numId}`.trim();
   const ciutat = escapeHtml(inv.ciudad_pob || '');
   const domiciliLinia = `${escapeHtml(inv.domicilio || '')}, ${escapeHtml(inv.cp || '')} ${ciutat} (${escapeHtml(inv.provincia || '')}), ${escapeHtml(inv.pais_es || '')}`;
-  const ibanText = emmascaraIban(finan.iban);
+  const ibanRaw = String(finan.iban || '').trim();
+  const ibanText = ibanRaw ? emmascaraIban(finan.iban) : emmascaraInfoFin(finan.notas_infofin);
   const administrador = escapeHtml(inv.administrador || '');
   const dniAdmin = escapeHtml(inv.dni_admin || '');
   const administracio = escapeHtml(inv.administracion || '');
@@ -1175,7 +1187,7 @@ function generaProxy(idInversor) {
     <div class="proxy-seccio-titol"><strong>Coordonn&eacute;es bancaires</strong> / Datos bancarios</div>
     <table class="proxy-taula">
       <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>${nomCognoms}</td></tr>
-      <tr><td class="etiqueta">Compte bancaire (IBAN)<br>Cuenta bancaria (IBAN)</td><td>${ibanText}</td></tr>
+      <tr><td class="etiqueta">Compte bancaire (IBAN / SWIFT)<br>Cuenta bancaria (IBAN / SWIFT)</td><td>${ibanText}</td></tr>
     </table>
     <table class="proxy-check-taula">
       <tr>
@@ -1195,7 +1207,7 @@ function generaProxy(idInversor) {
     </div>
     <table class="proxy-taula" style="margin-top:10px;">
       <tr><td class="etiqueta">Titulaire du compte<br>Titular de la cuenta</td><td>&nbsp;</td></tr>
-      <tr><td class="etiqueta">Compte bancaire (IBAN)<br>Cuenta bancaria (IBAN)</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta">Compte bancaire (IBAN / SWIFT)<br>Cuenta bancaria (IBAN / SWIFT)</td><td>&nbsp;</td></tr>
     </table>
 
     <div class="proxy-important">
