@@ -589,6 +589,7 @@ const VISTES = {
   certificats: { barra: 'barraCertificats', vista: 'vistaCertificats' },
   resum: { barra: 'barraResum', vista: 'vistaResum' },
   proxys: { barra: 'barraProxys', vista: 'vistaProxys' },
+  finances: { barra: 'barraFinances', vista: 'vistaFinances' },
 };
 
 function mostrarVista(nom) {
@@ -627,6 +628,129 @@ let dadesFinan = [];
 async function carregaDadesFinanSiCal() {
   if (dadesFinan.length === 0) dadesFinan = await apiQuery('listInversorFinan');
 }
+
+// ---------------- Dades bancaries (Finances) ----------------
+
+function renderFinances() {
+  const tbody = document.getElementById('tbodyFinances');
+  const filtre = document.getElementById('cercaFinances').value.trim().toLowerCase();
+
+  let files = dadesFinan;
+  if (filtre) {
+    files = files.filter(r =>
+      ['id_inversor', 'inversor'].some(c => (r[c] !== null && r[c] !== undefined) && String(r[c]).toLowerCase().includes(filtre))
+    );
+  }
+  files = [...files].sort((a, b) => a.id_inversor - b.id_inversor);
+
+  document.getElementById('comptadorFinances').textContent = `${files.length} de ${dadesFinan.length} inversors`;
+
+  if (files.length === 0) {
+    tbody.innerHTML = '<tr><td class="empty" colspan="7">Cap resultat</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = files.map(r => {
+    const teCert = r.cert_banc === 'OK';
+    const notes = escapeHtml(r.notas_infofin || '');
+    return `
+    <tr>
+      <td>${escapeHtml(r.id_inversor)}</td>
+      <td>${escapeHtml(r.inversor)}</td>
+      <td>${escapeHtml(r.iban)}</td>
+      <td>${escapeHtml(r.bic_swift)}</td>
+      <td><span style="color:${teCert ? '#2a8a3a' : '#b00020'};font-weight:600;">${teCert ? 'Si' : 'No'}</span></td>
+      <td title="${notes}">${notes}</td>
+      <td><button class="btn icona secundari" data-edit-finan="${r.id_inversor}" title="Edita">&#9998;</button></td>
+    </tr>
+  `;
+  }).join('');
+}
+
+async function carregarFinances() {
+  try {
+    dadesFinan = await apiQuery('listInversorFinan');
+    renderFinances();
+  } catch (e) {
+    document.getElementById('tbodyFinances').innerHTML =
+      `<tr><td class="error" colspan="7">Error carregant dades: ${escapeHtml(e.message)}</td></tr>`;
+  }
+}
+
+function obrirModalFinan(registre) {
+  document.getElementById('errorFinan').textContent = '';
+  document.getElementById('titolModalFinan').textContent = `Dades bancaries ${registre.id_inversor} - ${registre.inversor || ''}`;
+  document.getElementById('fin_id_inversor').value = registre.id_inversor;
+  document.getElementById('fin_nom_inversor').value = registre.inversor || '';
+  document.getElementById('fin_iban').value = registre.iban || '';
+  document.getElementById('fin_bic_swift').value = registre.bic_swift || '';
+  document.getElementById('fin_iban_proof').value = registre.iban_proof || '';
+  document.getElementById('fin_tipo_tansf').value = registre.tipo_tansf || '';
+  document.getElementById('fin_banco_bionure').value = registre.banco_bionure || '';
+  document.getElementById('fin_concepto').value = registre.concepto || '';
+  document.getElementById('fin_cert_banc').checked = registre.cert_banc === 'OK';
+  document.getElementById('fin_notas_infofin').value = registre.notas_infofin || '';
+  document.getElementById('overlayFinan').classList.remove('oculta');
+}
+
+function tancarModalFinan() {
+  document.getElementById('overlayFinan').classList.add('oculta');
+}
+
+document.getElementById('btnCancelarFinan').addEventListener('click', tancarModalFinan);
+
+document.getElementById('tbodyFinances').addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-edit-finan]');
+  if (!btn) return;
+  const id = Number(btn.dataset.editFinan);
+  const registre = dadesFinan.find(r => r.id_inversor === id);
+  if (registre) obrirModalFinan(registre);
+});
+
+document.getElementById('btnGuardarFinan').addEventListener('click', async () => {
+  const errorEl = document.getElementById('errorFinan');
+  errorEl.textContent = '';
+  const payload = {
+    id_inversor: Number(document.getElementById('fin_id_inversor').value),
+    iban: document.getElementById('fin_iban').value,
+    bic_swift: document.getElementById('fin_bic_swift').value,
+    iban_proof: document.getElementById('fin_iban_proof').value,
+    tipo_tansf: document.getElementById('fin_tipo_tansf').value,
+    banco_bionure: document.getElementById('fin_banco_bionure').value,
+    concepto: document.getElementById('fin_concepto').value,
+    cert_banc: document.getElementById('fin_cert_banc').checked ? 'OK' : '',
+    notas_infofin: document.getElementById('fin_notas_infofin').value,
+  };
+  try {
+    await apiQuery('updateInversorFinan', payload);
+    tancarModalFinan();
+    await carregarFinances();
+  } catch (e) {
+    errorEl.textContent = e.message;
+  }
+});
+
+document.getElementById('cercaFinances').addEventListener('input', () => {
+  document.getElementById('cercaFinancesWrap').classList.toggle('te-text', document.getElementById('cercaFinances').value.length > 0);
+  renderFinances();
+});
+document.getElementById('cercaFinancesNeteja').addEventListener('click', () => {
+  const input = document.getElementById('cercaFinances');
+  input.value = '';
+  input.focus();
+  document.getElementById('cercaFinancesWrap').classList.remove('te-text');
+  renderFinances();
+});
+
+document.getElementById('btnInversorsFinances').addEventListener('click', async () => {
+  mostrarVista('finances');
+  await carregarFinances();
+});
+document.getElementById('btnProxyFinances').addEventListener('click', async () => {
+  mostrarVista('finances');
+  await carregarFinances();
+});
+document.getElementById('btnFinancesInversors').addEventListener('click', () => mostrarVista('inversors'));
 
 document.getElementById('btnPerInversorProxys').addEventListener('click', async () => {
   mostrarVista('proxys');

@@ -48,6 +48,9 @@ tbody tr:hover{background:#eef3fb;}
 #taula th:nth-child(13),#taula td:nth-child(13){white-space:normal;}
 #taula th:nth-child(14),#taula td:nth-child(14){white-space:normal;}
 
+#taulaFinances{table-layout:fixed;width:auto;}
+#taulaFinances th:nth-child(6),#taulaFinances td:nth-child(6){white-space:normal;}
+
 #taulaTitols{table-layout:fixed;width:auto;}
 #taulaTitols th:nth-child(1),#taulaTitols td:nth-child(1){text-align:right;}
 #taulaTitols th:nth-child(2),#taulaTitols td:nth-child(2){white-space:normal;}
@@ -173,6 +176,7 @@ tbody tr:hover{background:#eef3fb;}
   <span class="count" id="estatImport"></span>
   <button class="btn secundari" id="btnResumAccions">Resum accions</button>
   <button class="btn secundari" id="btnMoviments">Moviments de titols</button>
+  <button class="btn secundari" id="btnInversorsFinances">Dades banc&agrave;ries</button>
   <button class="btn" id="btnNouInversor">+ Nou inversor</button>
 </div>
 
@@ -390,6 +394,7 @@ tbody tr:hover{background:#eef3fb;}
   <button class="btn secundari oculta" id="btnImportFinan">Importar dades banc&agrave;ries</button>
   <input type="file" id="fitxerImportFinan" accept=".xlsx,.xls,.csv" class="oculta">
   <span class="count oculta" id="estatImportFinan"></span>
+  <button class="btn secundari" id="btnProxyFinances">Dades banc&agrave;ries</button>
   <button class="btn secundari" id="btnProxyPerInversor">Per inversor</button>
   <button class="btn secundari" id="btnProxyInversors">Veure inversors</button>
 </div>
@@ -440,6 +445,64 @@ tbody tr:hover{background:#eef3fb;}
     <div class="modal-accions">
       <button class="btn secundari" id="btnCancelarInversor">Cancela</button>
       <button class="btn" id="btnGuardarInversor">Guarda</button>
+    </div>
+  </div>
+</div>
+
+<div class="top-bar oculta" id="barraFinances">
+  <h1>Cap Table BIF &mdash; Dades banc&agrave;ries</h1>
+  <span class="cerca-wrap" id="cercaFinancesWrap">
+    <input type="text" id="cercaFinances" placeholder="Cerca per ID o nom...">
+    <button type="button" class="cerca-neteja" id="cercaFinancesNeteja" title="Neteja la cerca">&times;</button>
+  </span>
+  <span class="count" id="comptadorFinances"></span>
+  <button class="btn secundari" id="btnFinancesInversors">Veure inversors</button>
+</div>
+
+<div class="table-wrap oculta" id="vistaFinances">
+  <table id="taulaFinances">
+    <colgroup>
+      <col style="width:55px"><col style="width:260px"><col style="width:230px"><col style="width:140px">
+      <col style="width:110px"><col style="width:420px"><col style="width:44px">
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="no-sort">ID</th>
+        <th class="no-sort">Inversor</th>
+        <th class="no-sort">IBAN</th>
+        <th class="no-sort">BIC/SWIFT</th>
+        <th class="no-sort">Cert. bancari</th>
+        <th class="no-sort">Notes info. financera</th>
+        <th class="no-sort"></th>
+      </tr>
+    </thead>
+    <tbody id="tbodyFinances">
+      <tr><td class="loading" colspan="7">Carregant dades de Neon...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="overlay oculta" id="overlayFinan">
+  <div class="modal">
+    <h2 id="titolModalFinan">Dades banc&agrave;ries</h2>
+    <div class="camps">
+      <div class="camp"><label>ID inversor</label><input type="text" id="fin_id_inversor" disabled></div>
+      <div class="camp"><label>Inversor</label><input type="text" id="fin_nom_inversor" disabled></div>
+      <div class="camp full"><label>IBAN</label><input type="text" id="fin_iban"></div>
+      <div class="camp"><label>BIC/SWIFT</label><input type="text" id="fin_bic_swift"></div>
+      <div class="camp"><label>IBAN (prova/confirmaci&oacute;)</label><input type="text" id="fin_iban_proof"></div>
+      <div class="camp"><label>Tipus transfer&egrave;ncia</label><input type="text" id="fin_tipo_tansf"></div>
+      <div class="camp"><label>Banc Bionure</label><input type="text" id="fin_banco_bionure"></div>
+      <div class="camp"><label>Concepte</label><input type="text" id="fin_concepto"></div>
+      <div class="camp full">
+        <label><input type="checkbox" id="fin_cert_banc"> Disposem del certificat de titularitat banc&agrave;ria (RIB certificat)</label>
+      </div>
+      <div class="camp full"><label>Notes info. financera</label><textarea id="fin_notas_infofin" rows="5"></textarea></div>
+    </div>
+    <div class="modal-error" id="errorFinan"></div>
+    <div class="modal-accions">
+      <button class="btn secundari" id="btnCancelarFinan">Cancela</button>
+      <button class="btn" id="btnGuardarFinan">Guarda</button>
     </div>
   </div>
 </div>

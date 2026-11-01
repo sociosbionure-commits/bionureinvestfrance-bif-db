@@ -121,6 +121,25 @@ module.exports = async (req, res) => {
       return results;
     },
 
+    // Desa les dades bancaries d'un inversor concret (UPSERT: la majoria
+    // d'inversors ja tenen fila a inversor_bif_infofin, pero no tots).
+    updateInversorFinan: () => sql`
+      INSERT INTO inversor_bif_infofin
+        (id_inversor, iban, iban_proof, bic_swift, cert_banc, tipo_tansf, concepto, banco_bionure, notas_infofin)
+      VALUES
+        (${n(p.id_inversor)}, ${n(p.iban)}, ${n(p.iban_proof)}, ${n(p.bic_swift)}, ${n(p.cert_banc)},
+         ${n(p.tipo_tansf)}, ${n(p.concepto)}, ${n(p.banco_bionure)}, ${n(p.notas_infofin)})
+      ON CONFLICT (id_inversor) DO UPDATE SET
+        iban = EXCLUDED.iban,
+        iban_proof = EXCLUDED.iban_proof,
+        bic_swift = EXCLUDED.bic_swift,
+        cert_banc = EXCLUDED.cert_banc,
+        tipo_tansf = EXCLUDED.tipo_tansf,
+        concepto = EXCLUDED.concepto,
+        banco_bionure = EXCLUDED.banco_bionure,
+        notas_infofin = EXCLUDED.notas_infofin
+      RETURNING id_inversor`,
+
     addTitol: () => sql`
       INSERT INTO titulos_bif (num_orden, id_inversor, adquisicion, enajenacion, de, a, titulo, fecha)
       SELECT COALESCE(MAX(num_orden), -1) + 1, ${n(p.id_inversor)}, ${n(p.adquisicion)}, ${n(p.enajenacion)},
