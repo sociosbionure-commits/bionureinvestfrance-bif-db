@@ -111,7 +111,7 @@ tbody tr:hover{background:#eef3fb;}
 .proxy-destinatari{margin-bottom:24px;}
 .proxy-salutacio{margin-bottom:20px;}
 .proxy-fila{display:flex;gap:24px;margin-bottom:6px;}
-.proxy-fila .fr,.proxy-fila .es{flex:1;text-align:justify;}
+.proxy-fila .fr,.proxy-fila .es,.proxy-fila .en{flex:1;text-align:justify;}
 .proxy-fila.tancament{margin-top:10px;margin-bottom:0;}
 .cert-pagina.proxy-pag{padding:20mm;line-height:1.18;}
 .cert-pagina.proxy-pag.salt{break-before:page;page-break-before:always;}
@@ -125,9 +125,9 @@ tbody tr:hover{background:#eef3fb;}
 .proxy-check-linia{display:flex;gap:24px;align-items:center;white-space:nowrap;}
 .proxy-seccio-titol{font-size:11.5pt;margin:0 0 6px;}
 .proxy-important{background:#fbe9ec;border-radius:3px;padding:8px 14px;margin:10px 0 0;display:flex;gap:24px;font-size:9pt;}
-.proxy-important .fr,.proxy-important .es{flex:1;}
+.proxy-important .fr,.proxy-important .es,.proxy-important .en{flex:1;}
 .proxy-nota-final{display:flex;gap:24px;font-size:9pt;color:#444;margin-top:6px;}
-.proxy-nota-final .fr,.proxy-nota-final .es{flex:1;}
+.proxy-nota-final .fr,.proxy-nota-final .es,.proxy-nota-final .en{flex:1;}
 .pag-final{line-height:1.08;}
 .pag-final .proxy-fila{margin-bottom:3px;}
 .proxy-avis-imprimir{font-size:9pt;color:#b00020;}
@@ -391,6 +391,7 @@ tbody tr:hover{background:#eef3fb;}
     <button type="button" class="cerca-neteja" id="cercaProxyNeteja" title="Neteja la cerca">&times;</button>
   </span>
   <button class="btn" id="btnGenerarProxy">Generar proxy</button>
+  <button class="btn secundari" id="btnGenerarProxyEN">Generar proxy (EN)</button>
   <button class="btn secundari oculta" id="btnImportFinan">Importar dades banc&agrave;ries</button>
   <input type="file" id="fitxerImportFinan" accept=".xlsx,.xls,.csv" class="oculta">
   <span class="count oculta" id="estatImportFinan"></span>

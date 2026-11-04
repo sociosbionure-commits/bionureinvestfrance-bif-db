@@ -909,6 +909,7 @@ const LOGO_BIONURE_B64 = 'iVBORw0KGgoAAAANSUhEUgAABQAAAAHyCAYAAAC08WP2AAAgAElEQV
 
 const MESOS_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 const MESOS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+const MESOS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 function dataEs(d) {
   return `${d.getDate()} de ${MESOS_ES[d.getMonth()]} de ${d.getFullYear()}`;
@@ -916,6 +917,10 @@ function dataEs(d) {
 
 function dataFr(d) {
   return `${d.getDate()} ${MESOS_FR[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function dataEn(d) {
+  return `${MESOS_EN[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
 function generaCertificat(idInversor) {
@@ -1381,6 +1386,341 @@ function generaProxy(idInversor) {
   document.getElementById('overlayProxy').classList.remove('oculta');
 }
 
+function generaProxyEN(idInversor) {
+  const errorEl = document.getElementById('proxyError');
+  errorEl.textContent = '';
+
+  const inv = dades.find(r => r.id_inversor === idInversor);
+  if (!inv) {
+    errorEl.textContent = `No s'ha trobat cap inversor amb ID ${idInversor}.`;
+    return;
+  }
+  const totalAcc = dadesTitols
+    .filter(r => r.id_inversor === idInversor)
+    .reduce((acc, r) => acc + (Number(r.total_acc) || 0), 0);
+  if (totalAcc <= 0) {
+    errorEl.textContent = `L'inversor ${idInversor} no te accions registrades.`;
+    return;
+  }
+
+  const finan = dadesFinan.find(r => r.id_inversor === idInversor) || {};
+  const teCertBanc = finan.cert_banc === 'OK';
+
+  const avui = new Date();
+  const dFr = dataFr(avui);
+  const dEn = dataEn(avui);
+  const totalAccFmt = formatNum(totalAcc);
+  const nomCognoms = `${escapeHtml(inv.inversor_nom || '')} ${escapeHtml(inv.inversor_cnom_rs || '')}`.trim();
+  const tipusId = escapeHtml(inv.id_tipo || '');
+  const numId = escapeHtml(inv.id_num || '');
+  const dniText = `${tipusId} ${numId}`.trim();
+  const ciutat = escapeHtml(inv.ciudad_pob || '');
+  const domiciliLinia = `${escapeHtml(inv.domicilio || '')}, ${escapeHtml(inv.cp || '')} ${ciutat} (${escapeHtml(inv.provincia || '')}), ${escapeHtml(inv.pais_es || '')}`;
+  const ibanRaw = String(finan.iban || '').trim();
+  const ibanText = ibanRaw ? emmascaraIban(finan.iban) : emmascaraInfoFin(finan.notas_infofin);
+  const administrador = escapeHtml(inv.administrador || '');
+  const dniAdmin = escapeHtml(inv.dni_admin || '');
+  const administracio = escapeHtml(inv.administracion || '');
+  const idTipoUpper = (inv.id_tipo || '').trim().toUpperCase();
+  const esJuridica = idTipoUpper !== 'DNI' && idTipoUpper !== 'NIE';
+  const nomCognoms1A = esJuridica ? '' : nomCognoms;
+  const dniText1A = esJuridica ? '' : dniText;
+  const domiciliLinia1A = esJuridica ? '' : domiciliLinia;
+  const totalAccFmt1A = esJuridica ? '' : totalAccFmt;
+  const nomCognoms1B = esJuridica ? nomCognoms : '';
+  const dniText1B = esJuridica ? dniText : '';
+  const domiciliLinia1B = esJuridica ? domiciliLinia : '';
+  const totalAccFmt1B = esJuridica ? totalAccFmt : '';
+  const administrador1B = esJuridica ? administrador : '';
+  const dniAdmin1B = esJuridica ? dniAdmin : '';
+  const administracio1B = esJuridica ? administracio : '';
+  const signantNom = esJuridica ? administrador : nomCognoms;
+
+  const peuNomRaw = `${inv.inversor_nom || ''} ${inv.inversor_cnom_rs || ''}`.trim();
+  const peuNomCss = peuNomRaw.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  document.getElementById('proxyFooterStyle').textContent = `
+    @page proxypag {
+      @bottom-center {
+        content: "${peuNomCss} - Page " counter(page) " / " counter(pages);
+        font-size: 9pt;
+        color: #000000;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    }
+  `;
+
+  document.getElementById('proxyContingut').innerHTML = `
+  <div class="cert-pagina proxy-pag">
+    <img class="cert-logo" src="data:image/png;base64,${LOGO_BIONURE_B64}" alt="Bionure">
+    <div class="cert-cap-empresa">
+      BIONURE INVESTMENT FRANCE, S.A.S. au capital de 37 284 680,00 &euro; (fixe)<br>
+      Si&egrave;ge social&nbsp;: 10 rue de Penthi&egrave;vre, 75008 Paris (France)<br>
+      RCS de Paris sous le n&deg; 942 104 944
+    </div>
+    <div class="proxy-titol">
+      POUVOIR AUX FINS DE LA CESSION D'ACTIONS DE LA SOCI&Eacute;T&Eacute; &laquo; BIONURE INVESTMENT FRANCE, S.A.S. &raquo; (PROXY)<br>
+      POWER OF ATTORNEY FOR THE SALE OF SHARES OF THE COMPANY &laquo;BIONURE INVESTMENT FRANCE, S.A.S.&raquo; (PROXY)
+    </div>
+    <div class="proxy-dates">
+      &Agrave; ${ciutat}, ${dFr}.<br>
+      In ${ciutat}, ${dEn}.
+    </div>
+    <div class="proxy-destinatari">
+      BIONURE INVESTMENT FRANCE, S.A.S.<br>
+      10 rue de Penthi&egrave;vre<br>
+      75008 Paris (France)
+      <br><br>
+      &Agrave; l'attention de / For the attention of&nbsp;:<br>
+      Madame / Mrs. Carmen Sanfrancisco Mill&aacute;n<br>
+      Repr&eacute;sentante d' / Representative of ALPHA LYRAE HOLDING, S.L.,<br>
+      Pr&eacute;sidente de / Chairwoman of BIONURE INVESTMENT FRANCE, S.A.S.
+    </div>
+    <div class="proxy-salutacio">
+      Madame, Monsieur,<br>
+      Dear Sir or Madam,
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Je m'adresse à vous au sujet de la lettre reçue le 7 septembre 2026 et de l'assemblée générale des actionnaires de la société <strong>BIONURE INVESTMENT FRANCE, S.A.S.</strong> (ci-après dénommée la «<strong>Société</strong>» ou «<strong>BIF</strong>») tenue le 30 septembre 2026, au cours de laquelle j'ai été informé, en ma qualité d'actionnaire de la Société, de la possibilité de céder les actions que je détiens dans BIONURE INVESTMENT FRANCE, S.A.S. à la Société elle-même, ou à l'investisseur désigné par le président de la Société (l'«<strong>Investisseur</strong>»), dans le cadre de l'entrée d'un nouvel Investisseur au sein de celle-ci (l'«<strong>Opération</strong>»).</div>
+      <div class="en">I am writing to you in relation to the letter received on September 7, 2026 and the general shareholders' meeting of the company <strong>BIONURE INVESTMENT FRANCE, S.A.S.</strong> (hereinafter, the «<strong>Company</strong>» or «<strong>BIF</strong>»), held on September 30, 2026, whereby I was informed, in my capacity as a shareholder of the Company, of the possibility of selling the shares I hold in BIONURE INVESTMENT FRANCE, S.A.S. to the Company itself, or to the investor designated by the chairman of the Company (the «<strong>Investor</strong>»), within the framework of the transaction involving the entry of a new Investor into the Company (the «<strong>Transaction</strong>»).</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Par la présente, je vous fais savoir de manière irréfutable ma volonté et mon consentement pour que, le cas échéant, vous procédiez à la cession de la totalité des actions que je détiens à ce jour dans la société BIONURE INVESTMENT FRANCE, S.A.S., (ci-après dénommées les «<strong>Actions</strong>») au <strong>prix de 1,11423 euros bruts par Action</strong> (équivalent à 156,00 euros pour chaque part sociale de BIONURE THERAPEUTICS, S.L. dont j'étais titulaire avant mon entrée en tant qu'actionnaire de BIF), au profit de la Société ou, à défaut, au profit de l'Investisseur désigné par le président de la Société.</div>
+      <div class="en">By means of this document, I hereby irrevocably notify you of my will and consent for you to proceed, as applicable, with the sale of all the shares of which I am the holder as of today in BIONURE INVESTMENT FRANCE, S.A.S. (hereinafter, the «<strong>Shares</strong>»), <strong>at a price of EUR 1.11423 gross per Share</strong> (equivalent to EUR 156.00 for each equity interest of BIONURE THERAPEUTICS, S.L. that I held prior to becoming a shareholder of BIF), in favor of the Company or, failing that, in favor of the Investor designated by the chairman of the Company.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">En ce qui concerne les Actions, je déclare et garantis (ci-après les «<strong>Déclarations</strong>») que :</div>
+      <div class="en">With respect to the Shares, I represent and warrant (hereinafter, the «<strong>Representations</strong>») that:</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Chacune des Actions est entièrement souscrite et libérée dans son intégralité et a une valeur nominale d'UN EURO (1,00&nbsp;€).</div>
+      <div class="en">Each and every one of the Shares is fully subscribed and paid up in full and has a nominal value of ONE EURO (&euro;1.00).</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Chacune des Actions est à jour de tous les paiements dus et libre de toute charge, sûretés, restrictions de propriété, saisies et rétentions de quelque nature que ce soit, et il n'existe aucun droit ni espérance de droit au profit d'un tiers.</div>
+      <div class="en">Each and every one of the Shares is current on all payments due and free of any liens, encumbrances, ownership limitations, attachments and withholdings of any kind, and there is no right or expectation of any right in favor of any third party.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Les Actions ne font l'objet d'aucun droit d'option d'achat en vigueur ni d'aucun autre droit ou attente de droit susceptible d'affecter la pleine validité de l'Opération.</div>
+      <div class="en">The Shares are not subject to any outstanding purchase option, nor to any other right or expectation of right that could affect the full validity of the Transaction.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Chacune des Actions est ma propriété pleine et exclusive, et je n'ai cédé aucun droit juridique ou économique sur celles-ci en faveur d'un tiers.</div>
+      <div class="en">Each and every one of the Shares is my full and sole property, and I have not assigned any legal or economic right over them in favor of any third party.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">De même, je m'engage, pendant la durée de validité de la présente autorisation, à ne pas céder, grever ni constituer un droit réel sur les Actions sans en avoir préalablement informé la Société et les Mandataires (tels que définis ci-après).</div>
+      <div class="en">Likewise, I undertake, for the duration of this authorization, not to transfer, encumber or create any right in rem over the Shares without prior notice to the Company and the Proxy Holders (as defined below).</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">À cet effet, par la signature du présent document, <strong>j'accorde les pouvoirs les plus étendus</strong> prévus par la loi et je donne procuration à <strong>MONSIEUR PASCAL-ROGER-GASTON-BERNARD-J. NIZET</strong> (administrateur conjoint d'ALPHA LYRAE HOLDING, S.L., président de la Société), majeur, de nationalité belge, domicilié à ces fins à 08031 Barcelone, paseo Maragall n° 260, 3e étage, porte 3, titulaire du passeport belge n° EP311709 et du NIE n° X-1882700-N, en cours de validité, et à <strong>MADAME CARMEN SANFRANCISCO MILLÁN</strong> (administratrice conjointe d'ALPHA LYRAE HOLDING, S.L., présidente de la Société), majeure, de nationalité espagnole, domiciliée à Dosrius, calle Montserrat 25, titulaire de la carte d'identité n° 38.085.986-X, en cours de validité, (les «<strong>Mandataires</strong>»), afin que chacun d'entre eux puisse, <strong>agissant indistinctement ou solidairement</strong>, exercer en mon nom les pouvoirs suivants&nbsp;:</div>
+      <div class="en">To this end, by signing this document, I <strong>grant the broadest powers</strong> permitted by law and grant powers of attorney in favor of <strong>MR. PASCAL-ROGER-GASTON-BERNARD-J. NIZET</strong> (joint administrator of ALPHA LYRAE HOLDING, S.L., chairman of the Company), of legal age, of Belgian nationality, domiciled for these purposes at 08031 Barcelona, paseo Maragall, number 260, 3rd floor, door 3, holder of Belgian passport number EP311709 and NIE number X-1882700-N, both valid; and <strong>MRS. CARMEN SANFRANCISCO MILLÁN</strong> (joint administrator of ALPHA LYRAE HOLDING, S.L., chairwoman of the Company), of legal age, of Spanish nationality, domiciled at Dosrius, calle Montserrat 25, holder of national identity card number 38.085.986-X, valid, (the «<strong>Proxy Holders</strong>»), so that either of them, <strong>acting severally or jointly</strong>, may exercise on my behalf the following powers:</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Céder la totalité des Actions de BIONURE INVESTMENT FRANCE, S.A.S., dont j'ai la pleine propriété et la pleine disposition, au <strong>prix de 1,11423 euros bruts par action</strong>, au profit de la Société ou, à défaut, de l'Investisseur désigné par le président de la Société, y compris les cas d'autocontratation, de double ou multiple représentation ou de conflit d'intérêts, les Mandataires étant expressément autorisés à agir dans de tels cas, dans les conditions prévues à l'article 1161 du Code civil français. Le paiement du prix devra être effectué simultanément à la signature des documents mentionnés à la signature des documents mentionnés au point 3 ci-après, ou au plus tard dans un délai de 30 jour ouvrable à compter de la date de signature de ces documents.</div>
+      <div class="en">To sell all the Shares of BIONURE INVESTMENT FRANCE, S.A.S. of which I have full ownership and disposal, <strong>at a price of EUR 1.11423 gross per share</strong>, in favor of the Company or, failing that, of the Investor designated by the chairman of the Company, including cases of self-dealing, double or multiple representation or conflict of interest, the Proxy Holders being expressly authorized to act in such cases, under the terms provided for in Article 1161 of the French Civil Code. Payment of the price must be made simultaneously with the signing of the documents referred to in Point 3 below, or, at the latest, within 30 business days from the date of signing of such documents.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Faire toutes Déclarations, attestations et garanties nécessaires relatives auxdites Actions de la Société en vue de la réalisation de l'Opération.</div>
+      <div class="en">To make all Representations, declarations and warranties necessary in relation to said Shares of the Company for the completion of the Transaction.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Signer en mon nom tous actes authentiques et sous seing privé nécessaires à la réalisation de la cession de mes Actions de BIONURE INVESTMENT FRANCE, S.A.S., et, de manière générale, pour formaliser et mener à bien l'Opération, et notamment pour signer le document de mouvement d'Actions («ordre de mouvement de valeurs mobilières non admises sur un marché réglementé») et le contrat de cession d'Actions de la Société.</div>
+      <div class="en">To sign on my behalf all public and private documents necessary to carry out the sale of my Shares of BIONURE INVESTMENT FRANCE, S.A.S., and, in general, to formalize and complete the Transaction, and in particular to sign the share transfer document («ordre de mouvement de valeurs mobilières non admises sur un marché réglementé») and the Company's share purchase agreement.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Communiquer à la Société et, le cas échéant, à l'Investisseur les coordonnées du compte bancaire dont je suis titulaire, telles qu'elles figurent à la section 2 du présent document, afin de recevoir le prix de la vente, et établir en mon nom les reçus et lettres de paiement correspondants.</div>
+      <div class="en">To communicate to the Company and, where applicable, to the Investor the details of the bank account of which I am the holder, as set out in Section 2 of this document, for the purpose of receiving the sale price, and to issue on my behalf the corresponding receipts and payment letters.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Rédiger, sur la base des documents et informations fournis par moi-même ou dont dispose la Société, les déclarations nécessaires concernant ma propriété des Actions, ma légitimité à les céder et la ratification des Déclarations faites dans le présent document.</div>
+      <div class="en">To draw up, on the basis of the documentation and information provided by me or available to the Company, the statements necessary regarding my ownership of the Shares, my authority to transfer them and the ratification of the Representations made in this document.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Communiquer et informer les administrations publiques compétentes, notamment le Registre du commerce (Greffe du Tribunal des Activités Économiques de Paris), de la cession de mes Actions ainsi que de toute autre information requise par la loi.</div>
+      <div class="en">To communicate and inform the competent public authorities, including the Commercial Registry (Greffe du Tribunal des Activités Économiques de Paris), of the transfer of my Shares and any other information legally required.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Procéder à l'annulation de mes Actions, une fois leur prix encaissé, en signant les documents nécessaires à cet effet, si la Société ou l'Investisseur le jugent nécessaire ou opportun.</div>
+      <div class="en">To redeem and cancel my Shares, once their price has been received, by signing the documents necessary for this purpose, should the Company or the Investor consider it necessary or appropriate.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Préciser, compléter, rectifier et régulariser, en mon nom, les documents établis dans l'exercice des présents pouvoirs, ainsi qu'effectuer les démarches et formalités nécessaires à l'exécution de la vente.</div>
+      <div class="en">To clarify, complete, rectify and remedy, on my behalf, the documents executed in the exercise of these powers, as well as to carry out the steps and formalities necessary for the completion of the sale.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">À cet effet, les Mandataires susvisés pourront signer tous nécessaires et encaisser le prix de ladite cession, lequel devra être versé sur mon compte bancaire indiqué à la section 2, «Coordonnés bancaires», du présent document.</div>
+      <div class="en">To this end, the above-mentioned Proxy Holders may execute all necessary public and private sale documents and collect the price of said transfer, which must be paid into my bank account indicated in Section 2, «Bank Details», of this document.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">La présente autorisation implique la renonciation expresse à tous les droits de préemption (droit de préemption), ainsi qu'à tous droits de priorité, d'opposition, de consentement ou d'autorisation que me reconnaissent les statuts de la Société et la loi, en cas de cession d'actions d'autres actionnaires de la Société dans le cadre de l'Opération.</div>
+      <div class="en">This authorization entails the express waiver of any pre-emption rights (droit de préemption), as well as, in general, any rights of priority, opposition, consent or authorization recognized in my favor by the Company's bylaws or applicable law in connection with the transfer of shares by other shareholders of the Company within the framework of the Transaction.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Les Mandataires ne pourront pas vendre les Actions à un prix inférieur à celui indiqué au Point 1 ci-dessus.</div>
+      <div class="en">The Proxy Holders may not sell the Shares at a price lower than that indicated in Point 1 above.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">La présente autorisation prend effet à compter de la date de sa délivrance et restera en vigueur jusqu'à l'exécution complète des opérations qui en font l'objet et, en tout état de cause, au plus tard le 31 juillet 2027. Si, avant cette date, le transfert de mes actions n'a pas été effectué, il sera nécessaire de délivrer un nouveau proxy pour la réalisation de la vente de mes actions.</div>
+      <div class="en">This authorization shall take effect as of the date of its granting and shall remain in force until the complete execution of the actions that are its purpose and, in any event, at the latest until July 31, 2027. Should the transfer of my Shares not have been completed before that date, a new proxy will be required for the completion of the sale of my Shares.</div>
+    </div>
+
+    <div class="proxy-fila">
+      <div class="fr">Le présent document est établi en français et en anglais. En cas de divergence entre les deux versions, <strong>la version française fait foi.</strong></div>
+      <div class="en">This document is drawn up in French and English. In the event of any discrepancy between the two versions, <strong>the French version shall prevail.</strong></div>
+    </div>
+
+    <div class="proxy-tancament-bloc">
+      <div class="proxy-fila tancament">
+        <div class="fr">Veuillez agr&eacute;er, Madame, Monsieur, l'expression de mes salutations distingu&eacute;es.</div>
+        <div class="en">Yours faithfully,</div>
+      </div>
+      <div class="proxy-nom-firma-carta">${signantNom}</div>
+    </div>
+  </div>
+
+  <div class="cert-pagina proxy-pag salt">
+    <div class="proxy-seccio-titol"><strong>1A. Donn&eacute;es de l'actionnaire &ndash; personne physique</strong> / Shareholder details &ndash; individual</div>
+    <table class="proxy-taula persona">
+      <tr><td class="etiqueta"><strong>Nom et pr&eacute;nom</strong><br>First name and surname</td><td>${nomCognoms1A}</td></tr>
+      <tr><td class="etiqueta"><strong>Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)</strong><br>ID document (DNI/NIF, passport)</td><td>${dniText1A}</td></tr>
+      <tr><td class="etiqueta"><strong>Domicile</strong> / Address</td><td>${domiciliLinia1A}</td></tr>
+      <tr><td class="etiqueta"><strong>Nombre d'actions BIF</strong><br>No. of BIF shares</td><td>${totalAccFmt1A}</td></tr>
+    </table>
+    <div class="proxy-nota-final">
+      <div class="fr">* Je joins une photocopie de ma carte d'identit&eacute; nationale/de mon passeport.</div>
+      <div class="en">I enclose a photocopy of my national identity card/passport.</div>
+    </div>
+    <table class="proxy-check-taula">
+      <tr>
+        <td class="pregunta">Les donn&eacute;es de l'actionnaire sont-elles exactes&nbsp;?<br>Is the shareholder's information correct?</td>
+        <td><span class="proxy-check-linia">${casella(false)} Oui / Yes&nbsp;&nbsp;&nbsp;${casella(false)} Non / No</span></td>
+      </tr>
+    </table>
+    <div class="proxy-fila">
+      <div class="fr">Si vous avez coch&eacute; &laquo; Non &raquo;, ou si l'une des donn&eacute;es est manquante, nous vous prions de bien vouloir indiquer ci-dessous vos donn&eacute;es exactes (uniquement celles &agrave; modifier).</div>
+      <div class="en">If you have checked «No», or if any of the information is missing, please indicate below your correct information (only the fields that need to be changed).</div>
+    </div>
+    <div class="proxy-seccio-titol" style="margin-top:12px;"><strong>1 bis. Donn&eacute;es correctes de l'actionnaire &ndash; personne physique</strong> / Corrected shareholder details &ndash; individual</div>
+    <table class="proxy-taula persona">
+      <tr><td class="etiqueta"><strong>Nom et pr&eacute;nom</strong><br>First name and surname</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta"><strong>Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)</strong><br>ID document (DNI/NIF, passport)</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta"><strong>Domicile</strong> / Address</td><td>&nbsp;</td></tr>
+    </table>
+    <div class="proxy-fila">
+      <div class="fr">R&eacute;gime matrimonial&nbsp;: si vous &ecirc;tes mari&eacute;(e) sous un r&eacute;gime de communaut&eacute; de biens (par exemple, communaut&eacute; r&eacute;duite aux acqu&ecirc;ts), nous vous prions de bien vouloir nous en informer.</div>
+      <div class="en">Marital property regime: if you are married under a community property regime (e.g., limited community of acquests), please inform us.</div>
+    </div>
+    <div class="proxy-seccio-titol" style="margin-top:12px;"><strong>1B. Donn&eacute;es de l'actionnaire &ndash; personne morale</strong> / Shareholder details &ndash; legal entity</div>
+    <table class="proxy-taula persona">
+      <tr><td class="etiqueta"><strong>D&eacute;nomination sociale</strong><br>Company name</td><td>${nomCognoms1B}</td></tr>
+      <tr><td class="etiqueta"><strong>SIREN</strong> / Tax ID (NIF)</td><td>${dniText1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Domicile</strong> / Registered address</td><td>${domiciliLinia1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Nom et pr&eacute;nom de la personne physique signataire</strong><br>First name and surname of the signing individual</td><td>${administrador1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Pi&egrave;ce d'identit&eacute; (DNI/NIF, passeport)</strong><br>ID document (DNI/NIF, passport)</td><td>${dniAdmin1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Fonction de la personne physique signataire</strong><br>Position of the signing individual *</td><td>${administracio1B}</td></tr>
+      <tr><td class="etiqueta"><strong>Nombre d'actions BIF</strong><br>No. of BIF Shares</td><td>${totalAccFmt1B}</td></tr>
+    </table>
+    <div class="proxy-nota-final">
+      <div class="fr">Je joins une photocopie de la carte d'identit&eacute;/passeport du repr&eacute;sentant physique et du document de repr&eacute;sentation de la personne morale actionnaire.</div>
+      <div class="en">I enclose a photocopy of the national identity card/passport of the individual representative and the document evidencing representation of the legal entity shareholder.</div>
+    </div>
+  </div>
+
+  <div class="cert-pagina proxy-pag salt">
+    <div class="proxy-seccio-titol"><strong>Coordonn&eacute;es bancaires</strong> / Bank details</div>
+    <table class="proxy-taula">
+      <tr><td class="etiqueta">Titulaire du compte<br>Account holder</td><td>${nomCognoms}</td></tr>
+      <tr><td class="etiqueta">Compte bancaire (IBAN / SWIFT)<br>Bank account (IBAN / SWIFT)</td><td>${ibanText}</td></tr>
+    </table>
+    <table class="proxy-check-taula">
+      <tr>
+        <td class="pregunta">Ces coordonn&eacute;es bancaires sont-elles toujours exactes&nbsp;?<br>Are these bank details still correct?</td>
+        <td><span class="proxy-check-linia">${casella(false)} Oui / Yes&nbsp;&nbsp;&nbsp;${casella(false)} Non / No</span></td>
+      </tr>
+    </table>
+    <table class="proxy-check-taula">
+      <tr>
+        <td class="pregunta">Nous disposons du RIB certifi&eacute; de ce compte bancaire<br>We have the certified bank account ownership certificate for this account</td>
+        <td><span class="proxy-check-linia">${casella(teCertBanc)} Oui / Yes&nbsp;&nbsp;&nbsp;${casella(!teCertBanc)} Non / No</span></td>
+      </tr>
+    </table>
+    <div class="proxy-fila">
+      <div class="fr">Cochez &laquo; Oui &raquo; si le compte reste le m&ecirc;me. Si vous avez coch&eacute; &laquo; Non &raquo; (erreur ou changement de compte), nous vous prions de bien vouloir indiquer ci-dessous vos nouvelles coordonn&eacute;es bancaires&nbsp;:</div>
+      <div class="en">Check «Yes» if the account remains the same. If you have checked «No» (error or change of account), please indicate below your new bank details:</div>
+    </div>
+    <table class="proxy-taula" style="margin-top:10px;">
+      <tr><td class="etiqueta">Titulaire du compte<br>Account holder</td><td>&nbsp;</td></tr>
+      <tr><td class="etiqueta">Compte bancaire (IBAN / SWIFT)<br>Bank account (IBAN / SWIFT)</td><td>&nbsp;</td></tr>
+    </table>
+
+    <div class="proxy-important">
+      <div class="fr"><strong>Important&nbsp;:</strong> Si, dans les deux cas, la r&eacute;ponse est &laquo; Oui &raquo;, il n'est pas n&eacute;cessaire de nous faire parvenir &agrave; nouveau l'attestation de titularit&eacute; du compte bancaire. En revanche, si la case coch&eacute;e est &laquo; Non &raquo;, il est indispensable de nous faire parvenir une attestation de titularit&eacute; du compte bancaire d&eacute;livr&eacute;e par votre banque, avec le pr&eacute;sent document sign&eacute;.</div>
+      <div class="en"><strong>Important:</strong> If the answer is «Yes» in both cases, there is no need to send us the bank account ownership certificate again. However, if «No» is checked, it is essential that you send us a bank account ownership certificate issued by your bank, together with this signed document.</div>
+    </div>
+  </div>
+
+  <div class="cert-pagina proxy-pag salt pag-final">
+    <div class="proxy-seccio-titol"><strong>Protection des donn&eacute;es</strong> / Data protection</div>
+    <div class="proxy-fila">
+      <div class="fr">J'autorise express&eacute;ment BIONURE INVESTMENT FRANCE, S.A.S., ainsi que les Mandataires d&eacute;sign&eacute;s dans le pr&eacute;sent document, &agrave; traiter mes donn&eacute;es &agrave; caract&egrave;re personnel, y compris mes donn&eacute;es d'identification et de contact, celles relatives &agrave; ma qualit&eacute; d'actionnaire et &agrave; la d&eacute;tention de mes Actions et, le cas &eacute;ch&eacute;ant, les coordonn&eacute;es bancaires fournies, dans la mesure o&ugrave; cela s'av&egrave;re n&eacute;cessaire &agrave; la gestion, &agrave; la formalisation, &agrave; l'ex&eacute;cution et au suivi de l'Op&eacute;ration.</div>
+      <div class="en">I expressly authorize BIONURE INVESTMENT FRANCE, S.A.S., as well as the Proxy Holders designated in this document, to process my personal data, including my identification and contact details, those relating to my status as a shareholder and ownership of my Shares and, where applicable, the bank details provided, to the extent necessary for the management, formalization, execution and monitoring of the Transaction.</div>
+    </div>
+    <div class="proxy-fila">
+      <div class="fr">De m&ecirc;me, j'autorise la Soci&eacute;t&eacute; et les Mandataires &agrave; communiquer ces donn&eacute;es, lorsque cela s'av&egrave;re n&eacute;cessaire &agrave; la formalisation ou &agrave; l'ex&eacute;cution de l'Op&eacute;ration, &agrave; l'acqu&eacute;reur des actions, aux &eacute;tablissements financiers charg&eacute;s de g&eacute;rer le paiement du prix, ainsi qu'aux notaires, conseillers juridiques, fiscaux ou financiers, prestataires de services intervenant dans l'Op&eacute;ration et aux administrations publiques, autorit&eacute;s ou organismes comp&eacute;tents lorsque cette communication s'av&egrave;re n&eacute;cessaire ou est exig&eacute;e par la r&eacute;glementation applicable.</div>
+      <div class="en">Likewise, I authorize the Company and the Proxy Holders to disclose such data, when necessary for the formalization or execution of the Transaction, to the acquirer of the Shares, to the financial institutions responsible for managing payment of the price, as well as to notaries, legal, tax or financial advisors, service providers involved in the Transaction, and to the competent public authorities, bodies or agencies when such disclosure is necessary or required by applicable regulations.</div>
+    </div>
+    <div class="proxy-fila">
+      <div class="fr">Mes donn&eacute;es &agrave; caract&egrave;re personnel pourront &ecirc;tre conserv&eacute;es pendant la dur&eacute;e n&eacute;cessaire &agrave; la gestion et &agrave; l'ex&eacute;cution de la pr&eacute;sente autorisation et de l'Op&eacute;ration, puis pendant les d&eacute;lais l&eacute;galement fix&eacute;s et tant que des responsabilit&eacute;s pourraient d&eacute;couler des actes accomplis&nbsp;; &agrave; l'issue de ces d&eacute;lais, elles seront supprim&eacute;es ou bloqu&eacute;es conform&eacute;ment &agrave; la r&eacute;glementation applicable.</div>
+      <div class="en">My personal data may be retained for as long as necessary for the management and execution of this authorization and of the Transaction, and thereafter for the periods legally established and for as long as liability may arise from the actions carried out; upon expiry of such periods, the data will be deleted or blocked in accordance with applicable regulations.</div>
+    </div>
+
+    <div class="proxy-seccio-titol" style="margin-top:8px;"><strong>Confidentialit&eacute;</strong> / Confidentiality</div>
+    <div class="proxy-fila">
+      <div class="fr">Je m'engage &agrave; conserver la plus stricte confidentialit&eacute; en ce qui concerne le contenu du pr&eacute;sent document ainsi que les termes et conditions de l'Op&eacute;ration, et &agrave; ne pas divulguer ces informations &agrave; des tiers, sauf dans les cas suivants&nbsp;: (i) lorsque cette divulgation est requise par la loi, par une autorit&eacute; judiciaire ou administrative comp&eacute;tente&nbsp;; (ii) lorsqu'elle est n&eacute;cessaire pour mes conseillers juridiques, fiscaux ou financiers, eux-m&ecirc;mes tenus &agrave; une obligation de confidentialit&eacute; &eacute;quivalente&nbsp;; ou (iii) lorsque les informations concern&eacute;es sont ou deviennent publiques sans manquement de ma part &agrave; la pr&eacute;sente obligation.</div>
+      <div class="en">I undertake to maintain the strictest confidentiality regarding the content of this document as well as the terms and conditions of the Transaction, and not to disclose such information to third parties, except in the following cases: (i) where such disclosure is required by law, by a competent judicial or administrative authority; (ii) where it is necessary for my legal, tax or financial advisors, who shall themselves be subject to an equivalent duty of confidentiality; or (iii) where the information concerned is or becomes public without any breach on my part of this obligation.</div>
+    </div>
+    <div class="proxy-fila">
+      <div class="fr">Cette obligation de confidentialit&eacute; restera en vigueur pendant toute la dur&eacute;e de validit&eacute; de la pr&eacute;sente autorisation et se poursuivra apr&egrave;s son expiration ou son ex&eacute;cution, dans la mesure n&eacute;cessaire &agrave; la protection des int&eacute;r&ecirc;ts l&eacute;gitimes de la Soci&eacute;t&eacute; et des autres parties &agrave; l'Op&eacute;ration.</div>
+      <div class="en">This confidentiality obligation shall remain in force for the entire duration of this authorization and shall continue after its expiry or execution, to the extent necessary to protect the legitimate interests of the Company and the other parties to the Transaction.</div>
+    </div>
+
+    <div class="proxy-signatura-bloc">
+      <div class="proxy-seccio-titol" style="margin-top:14px;"><strong>Signature de l'actionnaire</strong> / Shareholder's signature</div>
+      <table class="proxy-taula">
+        <tr><td class="etiqueta">Signature</td><td style="height:23mm;vertical-align:bottom;">${signantNom}</td></tr>
+        <tr><td class="etiqueta">Date</td><td>&nbsp;</td></tr>
+      </table>
+      <div class="proxy-nota-final">
+        <div class="fr">Le pr&eacute;sent document peut &ecirc;tre sign&eacute; de mani&egrave;re manuscrite (imprim&eacute;, sign&eacute; et num&eacute;ris&eacute;) ou au moyen d'une signature &eacute;lectronique avec certificat num&eacute;rique.</div>
+        <div class="en">This document may be signed by hand (printed, signed and scanned) or by means of an electronic signature with a digital certificate.</div>
+      </div>
+    </div>
+  </div>
+  `;
+  document.getElementById('overlayProxy').classList.remove('oculta');
+}
+
 document.getElementById('btnGenerarProxy').addEventListener('click', () => {
   const errorEl = document.getElementById('proxyError');
   errorEl.textContent = '';
@@ -1391,6 +1731,18 @@ document.getElementById('btnGenerarProxy').addEventListener('click', () => {
     return;
   }
   generaProxy(Number(match[1]));
+});
+
+document.getElementById('btnGenerarProxyEN').addEventListener('click', () => {
+  const errorEl = document.getElementById('proxyError');
+  errorEl.textContent = '';
+  const valor = document.getElementById('cercaProxy').value.trim();
+  const match = valor.match(/^(\d+)/);
+  if (!match) {
+    errorEl.textContent = 'Cerca i selecciona un inversor de la llista.';
+    return;
+  }
+  generaProxyEN(Number(match[1]));
 });
 
 document.getElementById('btnImprimirProxy').addEventListener('click', () => window.print());
